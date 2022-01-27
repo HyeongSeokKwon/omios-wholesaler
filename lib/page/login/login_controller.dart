@@ -1,5 +1,7 @@
 import 'package:deepy_wholesaler/http/http_service.dart';
 import 'package:deepy_wholesaler/model/login_model.dart';
+import 'package:deepy_wholesaler/page/deepy_home/home.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/state_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -51,6 +53,7 @@ class LoginController extends GetxController {
     if (prefs.getBool("isChecked") == true) {
       try {
         httpservice.updateToken();
+        Get.to(() => Home());
       } catch (e) {
         rethrow;
       }

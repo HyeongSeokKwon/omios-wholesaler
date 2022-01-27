@@ -1,3 +1,4 @@
+import 'package:deepy_wholesaler/page/deepy_home/home.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
@@ -193,7 +194,7 @@ class _LoginState extends State<Login> {
       padding: EdgeInsets.symmetric(horizontal: 22.0 * Scale.width),
       child: Stack(
         children: [
-          Container(
+          SizedBox(
             child: TextFormField(
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
@@ -201,8 +202,9 @@ class _LoginState extends State<Login> {
               validator: (text) {
                 if (text!.trim().isNotEmpty && text.trim().length < 4) {
                   return "비밀번호는 6글자 이상 입력해주세요";
-                } else
+                } else {
                   return null;
+                }
               },
               textInputAction: TextInputAction.next,
               maxLength: 30,
@@ -344,6 +346,7 @@ class _LoginState extends State<Login> {
                 idTextController.text, pwdTextController.text);
 
             if (isLoginSuccess) {
+              Get.to(() => const Home());
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
