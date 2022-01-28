@@ -387,6 +387,7 @@ class _LoginState extends State<Login> {
           style: textStyle(
               const Color(0xff999999), FontWeight.w400, "NotoSansKR", 14.0)),
       onTap: () {
+        Get.to(const Home());
         if (findTarget == "아이디 찾기") {
           //아이디 찾기에 따른 로직
         } else {
