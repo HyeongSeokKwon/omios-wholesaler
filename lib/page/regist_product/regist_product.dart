@@ -1,3 +1,4 @@
+import 'package:deepy_wholesaler/page/regist_product/image_controller.dart';
 import 'package:deepy_wholesaler/page/regist_product/regist_controller.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:flutter/material.dart';
@@ -54,9 +55,16 @@ class _RegistProductState extends State<RegistProduct> {
         child: Column(
           children: [
             precautionsArea(),
+            SizedBox(height: 8 * Scale.height),
             selectCategoryArea(),
+            SizedBox(height: 8 * Scale.height),
             writeProductName(),
-            writePriceArea()
+            SizedBox(height: 8 * Scale.height),
+            writePriceArea(),
+            SizedBox(height: 40 * Scale.height),
+            selectColorArea(),
+            SizedBox(height: 30 * Scale.height),
+            registPhotoArea(),
           ],
         ),
       ),
@@ -242,6 +250,169 @@ class _RegistProductState extends State<RegistProduct> {
           ],
         )
       ],
+    );
+  }
+
+  Widget selectColorArea() {
+    List<String> colorList = [
+      "블랙",
+      "화이트",
+      "브라운",
+      "베이지",
+      "남색",
+      "네이비",
+      "옐로우",
+      "레드",
+      "초록",
+      "블루",
+      "카키",
+      "핑크",
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "색상 선택 및 입력(필수)",
+          style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+        ),
+        GetBuilder<RegistController>(
+          init: registController,
+          builder: (controller) {
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                  horizontal: 17 * Scale.width, vertical: 15 * Scale.height),
+              itemCount: colorList.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                mainAxisSpacing: 30 * Scale.height,
+                crossAxisSpacing: 10 * Scale.width,
+                childAspectRatio: 1.4,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(8),
+                      ),
+                      border: Border.all(
+                          color: controller.selectedColor
+                                  .contains(colorList[index])
+                              ? Colors.indigo[400]!
+                              : Colors.grey[300]!),
+                    ),
+                    child: Center(
+                      child: Text(
+                        colorList[index],
+                        style: textStyle(
+                            controller.selectedColor.contains(colorList[index])
+                                ? Colors.black
+                                : Colors.grey[400]!,
+                            FontWeight.w500,
+                            "NotoSansKR",
+                            13.0),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    controller.clickColorButton(colorList[index]);
+                  },
+                );
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget registPhotoArea() {
+    return DefaultTabController(
+      length: 3,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "색상 선택 및 입력(필수)",
+            style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+          ),
+          TabBar(
+            indicatorColor: Colors.indigo[300],
+            tabs: [
+              Tab(
+                  child: Text("기본 이미지",
+                      style: textStyle(
+                          Colors.black, FontWeight.w700, "NotoSansKR", 12.0))),
+              Tab(
+                  child: Text("색상별 이미지",
+                      style: textStyle(
+                          Colors.black, FontWeight.w700, "NotoSansKR", 12.0))),
+              Tab(
+                  child: Text("디테일 컷",
+                      style: textStyle(
+                          Colors.black, FontWeight.w700, "NotoSansKR", 12.0)))
+            ],
+          ),
+          Container(
+              width: double.infinity,
+              height: 500 * Scale.height,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]!),
+                  borderRadius: const BorderRadius.all(Radius.circular(8))),
+              child: TabBarView(
+                children: [
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(20.0 * Scale.width),
+                        child: Container(
+                          width: double.infinity,
+                          height: 300,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[50],
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                          ),
+                          child: Center(
+                            child: GestureDetector(
+                              onTap: () {
+                                registController.getImageFromGallery();
+                              },
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(8),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SvgPicture.asset(
+                                        "assets/images/svg/searchImage.svg"),
+                                    Text(
+                                      "  상품사진 선택하기",
+                                      style: textStyle(Colors.black,
+                                          FontWeight.w500, "NotoSansKR", 12.0),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const Divider(),
+                    ],
+                  ),
+                  Container(),
+                  Container(),
+                ],
+              )),
+        ],
+      ),
     );
   }
 }
