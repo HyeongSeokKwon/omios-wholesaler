@@ -1,4 +1,3 @@
-import 'package:deepy_wholesaler/page/regist_product/image_controller.dart';
 import 'package:deepy_wholesaler/page/regist_product/regist_controller.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,8 @@ class RegistProduct extends StatefulWidget {
   _RegistProductState createState() => _RegistProductState();
 }
 
-class _RegistProductState extends State<RegistProduct> {
+class _RegistProductState extends State<RegistProduct>
+    with TickerProviderStateMixin {
   RegistController registController = RegistController();
   @override
   Widget build(BuildContext context) {
@@ -362,6 +362,7 @@ class _RegistProductState extends State<RegistProduct> {
                   border: Border.all(color: Colors.grey[300]!),
                   borderRadius: const BorderRadius.all(Radius.circular(8))),
               child: TabBarView(
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   Column(
                     children: [
@@ -407,7 +408,134 @@ class _RegistProductState extends State<RegistProduct> {
                       const Divider(),
                     ],
                   ),
-                  Container(),
+                  Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(20.0 * Scale.width),
+                        child: GetBuilder<RegistController>(
+                          init: registController,
+                          builder: (controller) {
+                            List<Tab> tabList = [];
+                            List<Widget> tabBarViewList = [];
+                            TabController colorTabController = TabController(
+                                length: controller.selectedColor.length,
+                                vsync: this);
+                            for (var color in controller.selectedColor) {
+                              tabList.add(
+                                Tab(
+                                  height: 20 * Scale.height,
+                                  child: Text(
+                                    color,
+                                    style: textStyle(Colors.black,
+                                        FontWeight.w500, "NotoSansKR", 12.0),
+                                  ),
+                                ),
+                              );
+                              tabBarViewList.add(
+                                Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[50],
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(8),
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        registController.getImageFromGallery();
+                                      },
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(8),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                                "assets/images/svg/searchImage.svg"),
+                                            Text(
+                                              "  상품사진 선택하기",
+                                              style: textStyle(
+                                                  Colors.black,
+                                                  FontWeight.w500,
+                                                  "NotoSansKR",
+                                                  12.0),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                            return Column(
+                              children: [
+                                TabBar(
+                                  controller: colorTabController,
+                                  isScrollable: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  tabs: tabList,
+                                ),
+                                SizedBox(
+                                  height: 300 * Scale.height,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      TabBarView(
+                                          controller: colorTabController,
+                                          children: tabBarViewList),
+                                      colorTabController.index <
+                                              controller.selectedColor.length -
+                                                  1
+                                          ? Positioned(
+                                              right: 5,
+                                              child: GestureDetector(
+                                                child: const Icon(
+                                                    Icons.keyboard_arrow_right,
+                                                    size: 40),
+                                                onTap: () {
+                                                  if (colorTabController.index <
+                                                      controller.selectedColor
+                                                              .length -
+                                                          1) {
+                                                    colorTabController.index++;
+                                                  }
+                                                },
+                                              ),
+                                            )
+                                          : Container(),
+                                      colorTabController.index >= 0
+                                          ? Positioned(
+                                              left: 5,
+                                              child: GestureDetector(
+                                                child: const Icon(
+                                                    Icons.keyboard_arrow_left,
+                                                    size: 40),
+                                                onTap: () {
+                                                  if (colorTabController.index >
+                                                      0) {
+                                                    colorTabController.index--;
+                                                  }
+                                                },
+                                              ),
+                                            )
+                                          : Container(),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      const Divider(),
+                    ],
+                  ),
                   Container(),
                 ],
               )),

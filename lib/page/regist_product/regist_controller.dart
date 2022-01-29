@@ -7,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 class RegistController extends GetxController {
   TextEditingController priceEditController = TextEditingController();
   List<String> selectedColor = [];
+  List<dynamic> basicImages = [];
+
   XFile? pickedFile;
   Image? previewImage;
   final ImagePicker _picker = ImagePicker();

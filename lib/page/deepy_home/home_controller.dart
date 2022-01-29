@@ -13,7 +13,7 @@ class HomeController extends GetxController {
         await httpService.httpGet("product", queryParams).catchError((e) {
       throw e;
     });
-
+    print(response);
     productData = response['data']['results'];
     update();
     return response['data']['results'];
