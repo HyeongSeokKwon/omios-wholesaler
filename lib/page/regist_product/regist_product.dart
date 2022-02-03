@@ -298,8 +298,7 @@ class _RegistProductState extends State<RegistProduct>
                         Radius.circular(8),
                       ),
                       border: Border.all(
-                          color: controller.selectedColor
-                                  .contains(colorList[index])
+                          color: controller.isColorSelected(colorList[index])
                               ? Colors.indigo[400]!
                               : Colors.grey[300]!),
                     ),
@@ -307,7 +306,7 @@ class _RegistProductState extends State<RegistProduct>
                       child: Text(
                         colorList[index],
                         style: textStyle(
-                            controller.selectedColor.contains(colorList[index])
+                            controller.isColorSelected(colorList[index])
                                 ? Colors.black
                                 : Colors.grey[400]!,
                             FontWeight.w500,
@@ -335,7 +334,7 @@ class _RegistProductState extends State<RegistProduct>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "색상 선택 및 입력(필수)",
+            "사진등록(필수)",
             style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
           ),
           TabBar(
@@ -380,7 +379,7 @@ class _RegistProductState extends State<RegistProduct>
                           child: Center(
                             child: GestureDetector(
                               onTap: () {
-                                registController.getImageFromGallery();
+                                registController.getImageFromGallery('basic');
                               },
                               child: Container(
                                 decoration: const BoxDecoration(
@@ -417,116 +416,143 @@ class _RegistProductState extends State<RegistProduct>
                           builder: (controller) {
                             List<Tab> tabList = [];
                             List<Widget> tabBarViewList = [];
-                            TabController colorTabController = TabController(
+                            controller.colorTabController = TabController(
+                                initialIndex: controller.colorTabBarViewIndex,
                                 length: controller.selectedColor.length,
                                 vsync: this);
+                            controller.colorTabController.addListener(() {
+                              controller.clickColorTabBar(
+                                  controller.colorTabController.index);
+                            });
+
                             for (var color in controller.selectedColor) {
                               tabList.add(
                                 Tab(
                                   height: 20 * Scale.height,
                                   child: Text(
-                                    color,
+                                    color['color'],
                                     style: textStyle(Colors.black,
                                         FontWeight.w500, "NotoSansKR", 12.0),
                                   ),
                                 ),
                               );
                               tabBarViewList.add(
-                                Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[50],
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(8),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        registController.getImageFromGallery();
-                                      },
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.all(
+                                GetBuilder<RegistController>(
+                                    id: 'imageArea',
+                                    init: registController,
+                                    builder: (controller) {
+                                      return Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[50],
+                                          borderRadius: const BorderRadius.all(
                                             Radius.circular(8),
                                           ),
                                         ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            SvgPicture.asset(
-                                                "assets/images/svg/searchImage.svg"),
-                                            Text(
-                                              "  상품사진 선택하기",
-                                              style: textStyle(
-                                                  Colors.black,
-                                                  FontWeight.w500,
-                                                  "NotoSansKR",
-                                                  12.0),
+                                        child: Center(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              registController
+                                                  .getImageFromGallery('color');
+                                            },
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(8),
+                                                ),
+                                              ),
+                                              child: controller.selectedColor[
+                                                      controller
+                                                          .colorTabController
+                                                          .index]['image'] ??
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      SvgPicture.asset(
+                                                          "assets/images/svg/searchImage.svg"),
+                                                      Text(
+                                                        "  상품사진 선택하기", // 선택한 이미지 들어갈 곳
+                                                        style: textStyle(
+                                                            Colors.black,
+                                                            FontWeight.w500,
+                                                            "NotoSansKR",
+                                                            12.0),
+                                                      ),
+                                                    ],
+                                                  ),
                                             ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                                      );
+                                    }),
                               );
                             }
                             return Column(
                               children: [
                                 TabBar(
-                                  controller: colorTabController,
+                                  controller: controller.colorTabController,
                                   isScrollable: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   tabs: tabList,
                                 ),
                                 SizedBox(
                                   height: 300 * Scale.height,
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      TabBarView(
-                                          controller: colorTabController,
-                                          children: tabBarViewList),
-                                      colorTabController.index <
-                                              controller.selectedColor.length -
-                                                  1
-                                          ? Positioned(
+                                  child: GetBuilder<RegistController>(
+                                      id: 'color',
+                                      init: registController,
+                                      builder: (context) {
+                                        return Stack(
+                                          alignment: Alignment.center,
+                                          children: [
+                                            TabBarView(
+                                                physics:
+                                                    const NeverScrollableScrollPhysics(),
+                                                controller: controller
+                                                    .colorTabController,
+                                                children: tabBarViewList),
+                                            Positioned(
                                               right: 5,
-                                              child: GestureDetector(
-                                                child: const Icon(
-                                                    Icons.keyboard_arrow_right,
-                                                    size: 40),
-                                                onTap: () {
-                                                  if (colorTabController.index <
+                                              child: controller
+                                                          .colorTabBarViewIndex ==
                                                       controller.selectedColor
                                                               .length -
-                                                          1) {
-                                                    colorTabController.index++;
-                                                  }
-                                                },
-                                              ),
-                                            )
-                                          : Container(),
-                                      colorTabController.index >= 0
-                                          ? Positioned(
+                                                          1
+                                                  ? Container()
+                                                  : GestureDetector(
+                                                      child: const Icon(
+                                                          Icons
+                                                              .keyboard_arrow_right,
+                                                          size: 40),
+                                                      onTap: () {
+                                                        controller
+                                                            .colorTabController
+                                                            .index++;
+                                                      },
+                                                    ),
+                                            ),
+                                            Positioned(
                                               left: 5,
-                                              child: GestureDetector(
-                                                child: const Icon(
-                                                    Icons.keyboard_arrow_left,
-                                                    size: 40),
-                                                onTap: () {
-                                                  if (colorTabController.index >
-                                                      0) {
-                                                    colorTabController.index--;
-                                                  }
-                                                },
-                                              ),
+                                              child: controller
+                                                          .colorTabBarViewIndex ==
+                                                      0
+                                                  ? Container()
+                                                  : GestureDetector(
+                                                      child: const Icon(
+                                                          Icons
+                                                              .keyboard_arrow_left,
+                                                          size: 40),
+                                                      onTap: () {
+                                                        controller
+                                                            .colorTabController
+                                                            .index--;
+                                                      },
+                                                    ),
                                             )
-                                          : Container(),
-                                    ],
-                                  ),
+                                          ],
+                                        );
+                                      }),
                                 ),
                               ],
                             );
