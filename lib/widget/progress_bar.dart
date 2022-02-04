@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 Widget progressBar() {
   if (Platform.isIOS) {
-    return Center(child: const CupertinoActivityIndicator());
+    return const Center(child: CupertinoActivityIndicator());
   } else {
     return Center(
       child: CircularProgressIndicator(

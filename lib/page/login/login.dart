@@ -176,7 +176,7 @@ class _LoginState extends State<Login> {
                   borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
                 ),
                 focusedErrorBorder: const OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(14)),
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
                   borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
                 ),
               ),
