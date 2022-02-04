@@ -8,10 +8,11 @@ class RegistController extends GetxController {
   TextEditingController priceEditController = TextEditingController();
   late TabController colorTabController;
   List<Map<String, dynamic>> selectedColor = [];
-
+  List<String> selectedSize = [];
+  List<Map<String, dynamic>> selectedMaterialList = [];
   List<dynamic> basicImages = [];
-  int colorTabBarViewIndex = 0;
 
+  int colorTabBarViewIndex = 0;
   XFile? pickedFile;
   Image? previewImage;
   final ImagePicker _picker = ImagePicker();
@@ -34,6 +35,22 @@ class RegistController extends GetxController {
     return false;
   }
 
+  bool isSizedSelected(String size) {
+    if (selectedSize.contains(size)) {
+      return true;
+    }
+    return false;
+  }
+
+  bool isMaterialSelected(String material) {
+    for (var i in selectedMaterialList) {
+      if (i['name'] == material) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void clickColorButton(String color) {
     for (var i in selectedColor) {
       if (i['color'] == color) {
@@ -47,9 +64,101 @@ class RegistController extends GetxController {
     update();
   }
 
+  void clickSizeButton(String size) {
+    if (isSizedSelected(size)) {
+      selectedSize.remove(size);
+      update();
+      return;
+    }
+    switch (size) {
+      case "S-M":
+        if (!isSizedSelected("S") || !isSizedSelected("M")) {
+          if (!isSizedSelected("S")) {
+            selectedSize.add("S");
+          }
+          if (!isSizedSelected("M")) {
+            selectedSize.add("M");
+          }
+        } else {
+          selectedSize.remove("S");
+          selectedSize.remove("M");
+        }
+        update();
+        return;
+      case "S-L":
+        if (!isSizedSelected("S") ||
+            !isSizedSelected("M") ||
+            !isSizedSelected("L")) {
+          if (!isSizedSelected("S")) {
+            selectedSize.add("S");
+          }
+          if (!isSizedSelected("M")) {
+            selectedSize.add("M");
+          }
+          if (!isSizedSelected("L")) {
+            selectedSize.add("L");
+          }
+        } else {
+          selectedSize.remove("S");
+          selectedSize.remove("M");
+          selectedSize.remove("L");
+        }
+
+        update();
+        return;
+      case "S-XL":
+        if (!isSizedSelected("S") ||
+            !isSizedSelected("M") ||
+            !isSizedSelected("L") ||
+            !isSizedSelected("XL")) {
+          if (!isSizedSelected("S")) {
+            selectedSize.add("S");
+          }
+          if (!isSizedSelected("M")) {
+            selectedSize.add("M");
+          }
+          if (!isSizedSelected("L")) {
+            selectedSize.add("L");
+          }
+          if (!isSizedSelected("XL")) {
+            selectedSize.add("XL");
+          }
+        } else {
+          selectedSize.remove("S");
+          selectedSize.remove("M");
+          selectedSize.remove("L");
+          selectedSize.remove("XL");
+        }
+        update();
+        return;
+      default:
+    }
+    selectedSize.add(size);
+    update();
+    return;
+  }
+
+  void removeSize(index) {
+    selectedSize.removeAt(index);
+    update();
+  }
+
   void clickColorTabBar(int index) {
     colorTabBarViewIndex = index;
     update(['color']);
+  }
+
+  void clickMaterialButton(String material) {
+    if (!isMaterialSelected(material)) {
+      selectedMaterialList.add({'name': material, 'percent': null});
+      update();
+      return;
+    } else {
+      selectedMaterialList
+          .removeWhere((element) => element['name'] == material);
+      update();
+      return;
+    }
   }
 
   void getImageFromGallery(String imageType) async {
