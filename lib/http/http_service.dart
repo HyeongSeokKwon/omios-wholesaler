@@ -104,14 +104,13 @@ class HttpService {
           );
 
           responseJson = _response(response);
+          print(responseJson);
           setAccessToken(responseJson['data']['access']);
           setRefreshToken(responseJson['data']['refresh']);
         } on SocketException {
           throw FetchDataException("연결된 인터넷이 없습니다.");
         }
       }
-    } else {
-      print("access token is valid");
     }
   }
 
