@@ -1,6 +1,7 @@
 import 'package:deepy_wholesaler/page/regist_product/regist_controller.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -56,7 +57,7 @@ class _RegistProductState extends State<RegistProduct>
           children: [
             precautionsArea(),
             SizedBox(height: 8 * Scale.height),
-            selectCategoryArea(),
+            //selectCategoryArea(),
             SizedBox(height: 8 * Scale.height),
             writeProductName(),
             SizedBox(height: 8 * Scale.height),
@@ -65,6 +66,14 @@ class _RegistProductState extends State<RegistProduct>
             selectColorArea(),
             SizedBox(height: 30 * Scale.height),
             registPhotoArea(),
+            SizedBox(height: 30 * Scale.height),
+            selectSizeArea(),
+            SizedBox(height: 30 * Scale.height),
+            registPriceByOptionArea(),
+            SizedBox(height: 30 * Scale.height),
+            materialArea(),
+            SizedBox(height: 30 * Scale.height),
+            additionalInfo(),
           ],
         ),
       ),
@@ -93,7 +102,7 @@ class _RegistProductState extends State<RegistProduct>
       children: [
         Text(
           "카테고리 선택(필수)",
-          style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 14),
+          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 14),
         ),
       ],
     );
@@ -107,7 +116,7 @@ class _RegistProductState extends State<RegistProduct>
           padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
           child: Text(
             "상품명 입력(필수)",
-            style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 15.0),
           ),
         ),
         TextField(
@@ -188,7 +197,7 @@ class _RegistProductState extends State<RegistProduct>
           padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
           child: Text(
             "단가(필수)",
-            style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 15.0),
           ),
         ),
         GetBuilder<RegistController>(
@@ -273,7 +282,7 @@ class _RegistProductState extends State<RegistProduct>
       children: [
         Text(
           "색상 선택 및 입력(필수)",
-          style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
         ),
         GetBuilder<RegistController>(
           init: registController,
@@ -335,7 +344,7 @@ class _RegistProductState extends State<RegistProduct>
         children: [
           Text(
             "사진등록(필수)",
-            style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
           ),
           TabBar(
             indicatorColor: Colors.indigo[300],
@@ -355,218 +364,839 @@ class _RegistProductState extends State<RegistProduct>
             ],
           ),
           Container(
-              width: double.infinity,
-              height: 500 * Scale.height,
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: const BorderRadius.all(Radius.circular(8))),
-              child: TabBarView(
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(20.0 * Scale.width),
-                        child: Container(
-                          width: double.infinity,
-                          height: 300,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(8),
-                            ),
+            width: double.infinity,
+            height: 500 * Scale.height,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(Radius.circular(8))),
+            child: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(20.0 * Scale.width),
+                      child: Container(
+                        width: double.infinity,
+                        height: 300,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[50],
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
                           ),
-                          child: Center(
-                            child: GestureDetector(
-                              onTap: () {
-                                registController.getImageFromGallery('basic');
-                              },
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8),
+                        ),
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              registController.getImageFromGallery('basic');
+                            },
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                      "assets/images/svg/searchImage.svg"),
+                                  Text(
+                                    "  상품사진 선택하기",
+                                    style: textStyle(Colors.black,
+                                        FontWeight.w500, "NotoSansKR", 12.0),
                                   ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SvgPicture.asset(
-                                        "assets/images/svg/searchImage.svg"),
-                                    Text(
-                                      "  상품사진 선택하기",
-                                      style: textStyle(Colors.black,
-                                          FontWeight.w500, "NotoSansKR", 12.0),
-                                    ),
-                                  ],
-                                ),
+                                ],
                               ),
                             ),
                           ),
                         ),
                       ),
-                      const Divider(),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(20.0 * Scale.width),
-                        child: GetBuilder<RegistController>(
-                          init: registController,
-                          builder: (controller) {
-                            List<Tab> tabList = [];
-                            List<Widget> tabBarViewList = [];
-                            controller.colorTabController = TabController(
-                                initialIndex: controller.colorTabBarViewIndex,
-                                length: controller.selectedColor.length,
-                                vsync: this);
-                            controller.colorTabController.addListener(() {
-                              controller.clickColorTabBar(
-                                  controller.colorTabController.index);
-                            });
+                    ),
+                    const Divider(),
+                  ],
+                ),
+                Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(20.0 * Scale.width),
+                      child: GetBuilder<RegistController>(
+                        init: registController,
+                        builder: (controller) {
+                          List<Tab> tabList = [];
+                          List<Widget> tabBarViewList = [];
+                          controller.colorTabController = TabController(
+                              initialIndex: controller.colorTabBarViewIndex,
+                              length: controller.selectedColor.length,
+                              vsync: this);
+                          controller.colorTabController.addListener(() {
+                            controller.clickColorTabBar(
+                                controller.colorTabController.index);
+                          });
 
-                            for (var color in controller.selectedColor) {
-                              tabList.add(
-                                Tab(
-                                  height: 20 * Scale.height,
-                                  child: Text(
-                                    color['color'],
-                                    style: textStyle(Colors.black,
-                                        FontWeight.w500, "NotoSansKR", 12.0),
-                                  ),
+                          for (var color in controller.selectedColor) {
+                            tabList.add(
+                              Tab(
+                                height: 20 * Scale.height,
+                                child: Text(
+                                  color['color'],
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, "NotoSansKR", 12.0),
                                 ),
-                              );
-                              tabBarViewList.add(
-                                GetBuilder<RegistController>(
-                                    id: 'imageArea',
+                              ),
+                            );
+                            tabBarViewList.add(
+                              GetBuilder<RegistController>(
+                                  id: 'imageArea',
+                                  init: registController,
+                                  builder: (controller) {
+                                    return Container(
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey[50],
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(8),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            registController
+                                                .getImageFromGallery('color');
+                                          },
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(8),
+                                              ),
+                                            ),
+                                            child: controller.selectedColor[
+                                                    controller
+                                                        .colorTabController
+                                                        .index]['image'] ??
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    SvgPicture.asset(
+                                                        "assets/images/svg/searchImage.svg"),
+                                                    Text(
+                                                      "  상품사진 선택하기", // 선택한 이미지 들어갈 곳
+                                                      style: textStyle(
+                                                          Colors.black,
+                                                          FontWeight.w500,
+                                                          "NotoSansKR",
+                                                          12.0),
+                                                    ),
+                                                  ],
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                            );
+                          }
+                          return Column(
+                            children: [
+                              TabBar(
+                                controller: controller.colorTabController,
+                                isScrollable: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                tabs: tabList,
+                              ),
+                              SizedBox(
+                                height: 300 * Scale.height,
+                                child: GetBuilder<RegistController>(
+                                    id: 'color',
                                     init: registController,
                                     builder: (controller) {
-                                      return Container(
-                                        width: double.infinity,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[50],
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(8),
+                                      return Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          controller.selectedColor.isEmpty
+                                              ? Center(
+                                                  child: Text("색상을 추가해주세요",
+                                                      style: textStyle(
+                                                          Colors.black,
+                                                          FontWeight.w500,
+                                                          "NotoSansKR",
+                                                          16.0)),
+                                                )
+                                              : TabBarView(
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(),
+                                                  controller: controller
+                                                      .colorTabController,
+                                                  children: tabBarViewList),
+                                          Positioned(
+                                            right: 5,
+                                            child:
+                                                controller.colorTabBarViewIndex ==
+                                                            controller
+                                                                    .selectedColor
+                                                                    .length -
+                                                                1 ||
+                                                        controller.selectedColor
+                                                            .isEmpty
+                                                    ? Container()
+                                                    : GestureDetector(
+                                                        child: const Icon(
+                                                            Icons
+                                                                .keyboard_arrow_right,
+                                                            size: 40),
+                                                        onTap: () {
+                                                          controller
+                                                              .colorTabController
+                                                              .index++;
+                                                        },
+                                                      ),
                                           ),
-                                        ),
-                                        child: Center(
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              registController
-                                                  .getImageFromGallery('color');
-                                            },
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                  Radius.circular(8),
-                                                ),
-                                              ),
-                                              child: controller.selectedColor[
+                                          Positioned(
+                                            left: 5,
+                                            child: controller
+                                                        .colorTabBarViewIndex ==
+                                                    0
+                                                ? Container()
+                                                : GestureDetector(
+                                                    child: const Icon(
+                                                        Icons
+                                                            .keyboard_arrow_left,
+                                                        size: 40),
+                                                    onTap: () {
                                                       controller
                                                           .colorTabController
-                                                          .index]['image'] ??
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      SvgPicture.asset(
-                                                          "assets/images/svg/searchImage.svg"),
-                                                      Text(
-                                                        "  상품사진 선택하기", // 선택한 이미지 들어갈 곳
-                                                        style: textStyle(
-                                                            Colors.black,
-                                                            FontWeight.w500,
-                                                            "NotoSansKR",
-                                                            12.0),
-                                                      ),
-                                                    ],
+                                                          .index--;
+                                                    },
                                                   ),
-                                            ),
-                                          ),
-                                        ),
+                                          )
+                                        ],
                                       );
                                     }),
-                              );
-                            }
-                            return Column(
-                              children: [
-                                TabBar(
-                                  controller: controller.colorTabController,
-                                  isScrollable: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  tabs: tabList,
-                                ),
-                                SizedBox(
-                                  height: 300 * Scale.height,
-                                  child: GetBuilder<RegistController>(
-                                      id: 'color',
-                                      init: registController,
-                                      builder: (context) {
-                                        return Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            TabBarView(
-                                                physics:
-                                                    const NeverScrollableScrollPhysics(),
-                                                controller: controller
-                                                    .colorTabController,
-                                                children: tabBarViewList),
-                                            Positioned(
-                                              right: 5,
-                                              child: controller
-                                                          .colorTabBarViewIndex ==
-                                                      controller.selectedColor
-                                                              .length -
-                                                          1
-                                                  ? Container()
-                                                  : GestureDetector(
-                                                      child: const Icon(
-                                                          Icons
-                                                              .keyboard_arrow_right,
-                                                          size: 40),
-                                                      onTap: () {
-                                                        controller
-                                                            .colorTabController
-                                                            .index++;
-                                                      },
-                                                    ),
-                                            ),
-                                            Positioned(
-                                              left: 5,
-                                              child: controller
-                                                          .colorTabBarViewIndex ==
-                                                      0
-                                                  ? Container()
-                                                  : GestureDetector(
-                                                      child: const Icon(
-                                                          Icons
-                                                              .keyboard_arrow_left,
-                                                          size: 40),
-                                                      onTap: () {
-                                                        controller
-                                                            .colorTabController
-                                                            .index--;
-                                                      },
-                                                    ),
-                                            )
-                                          ],
-                                        );
-                                      }),
-                                ),
-                              ],
-                            );
-                          },
-                        ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
-                      const Divider(),
-                    ],
-                  ),
-                  Container(),
-                ],
-              )),
+                    ),
+                    const Divider(),
+                  ],
+                ),
+                Container(),
+              ],
+            ),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget selectSizeArea() {
+    List<String> sizeList = [
+      "S-M",
+      "S-L",
+      "S-XL",
+      "Free",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "2XL",
+      "3XL",
+      "55",
+      "66",
+      "77",
+      "88",
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "사이즈 선택(필수)",
+          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+        ),
+        SizedBox(height: 10 * Scale.height),
+        GetBuilder<RegistController>(
+          init: registController,
+          builder: (controller) {
+            return Column(
+              children: [
+                Container(
+                  width: double.maxFinite,
+                  height: 50 * Scale.height,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(8)),
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: controller.selectedSize.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.all(5 * Scale.width),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(8)),
+                              color: Colors.grey[200],
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(8 * Scale.width),
+                              child: Center(
+                                child: GestureDetector(
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        controller.selectedSize[index],
+                                        style: textStyle(
+                                            Colors.black,
+                                            FontWeight.w500,
+                                            "NotoSansKR",
+                                            12.0),
+                                      ),
+                                      SizedBox(width: 4 * Scale.width),
+                                      const Icon(
+                                        Icons.clear,
+                                        size: 15,
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    controller.removeSize(index);
+                                  },
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                ),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 17 * Scale.width,
+                      vertical: 15 * Scale.height),
+                  itemCount: 14,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 30 * Scale.height,
+                    crossAxisSpacing: 10 * Scale.width,
+                    childAspectRatio: 1.4,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                          border: Border.all(
+                              color: controller.isSizedSelected(sizeList[index])
+                                  ? Colors.indigo[400]!
+                                  : Colors.grey[300]!),
+                        ),
+                        child: Center(
+                          child: Text(
+                            sizeList[index],
+                            style: textStyle(
+                                controller.isSizedSelected(sizeList[index])
+                                    ? Colors.black
+                                    : Colors.grey[400]!,
+                                FontWeight.w500,
+                                "NotoSansKR",
+                                13.0),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        controller.clickSizeButton(sizeList[index]);
+                      },
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        ),
+        Table(
+          border: TableBorder.all(color: Colors.grey[200]!),
+          children: <TableRow>[
+            TableRow(children: [
+              TableCell(
+                child: Container(
+                  child: Center(
+                    child: Text("사이즈",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
+                  ),
+                ),
+              ),
+              TableCell(
+                child: Container(
+                  child: Center(
+                    child: Text("허리둘레",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
+                  ),
+                ),
+              ),
+              TableCell(
+                child: Container(
+                  child: Center(
+                    child: Text("힙둘레",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
+                  ),
+                ),
+              ),
+              TableCell(
+                child: Container(
+                  child: Center(
+                    child: Text("밑위길이",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
+                  ),
+                ),
+              ),
+              TableCell(
+                child: Container(
+                  child: Center(
+                    child: Text("허벅지둘레",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
+                  ),
+                ),
+              ),
+              TableCell(
+                child: Container(
+                  child: Center(
+                    child: Text("밑단둘레",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
+                  ),
+                ),
+              ),
+              TableCell(
+                child: Container(
+                  child: Center(
+                    child: Text("총길이",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
+                  ),
+                ),
+              ),
+            ])
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget registPriceByOptionArea() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "옵션별 단가 등록하기",
+          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+        ),
+        Divider(
+          color: Colors.black,
+          thickness: 2 * Scale.height,
+        ),
+        Row(
+          children: [
+            Checkbox(value: false, onChanged: (value) {}),
+            Text(
+              "옵션별로 단가를 등록하려면 체크해주세요.",
+              style: textStyle(
+                  Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
+            ),
+          ],
+        ),
+        Divider(
+          color: Colors.grey[200],
+          thickness: 1 * Scale.height,
+        ),
+        Text(
+          "재고 수량을 적어주시면 더 많은 리스트에 노출 됩니다. (미 작성시 수량은 무제한으로 간주합니다.)",
+          style:
+              textStyle(Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
+        ),
+        Row(
+          children: [
+            Checkbox(value: false, onChanged: (value) {}),
+            Text(
+              "옵션별로 단가를 등록하려면 체크해주세요.",
+              style: textStyle(
+                  Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget materialArea() {
+    List<String> materialList = [
+      "면",
+      "폴리에스테르",
+      "나일론",
+      "레이온",
+      "울",
+      "아크릴",
+      "린넨",
+      "스판",
+      "폴리우레탄",
+      "가죽",
+      "캐시미어",
+      "모달"
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "소재",
+          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+        ),
+        Divider(
+          color: Colors.black,
+          thickness: 2 * Scale.height,
+        ),
+        Container(
+          width: double.maxFinite,
+          height: 50 * Scale.height,
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            border: Border.all(color: Colors.grey[300]!),
+          ),
+          child: Center(
+            child: Text(
+              " 소재와 혼용률을 직접 입력할 수 있습니다. 띄어쓰기로 구분해 입력됩니다.",
+              style: textStyle(
+                  Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
+            ),
+          ),
+        ),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const ScrollPhysics(),
+          padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+          itemCount: materialList.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 2.5,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            TextEditingController textEditingController =
+                TextEditingController();
+            FocusNode myFocusNode = FocusNode();
+            return GetBuilder<RegistController>(
+                init: registController,
+                builder: (controller) {
+                  return GestureDetector(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[300]!),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Transform.scale(
+                                  scale: 0.8,
+                                  child: SizedBox(
+                                      width: 25 * Scale.width,
+                                      height: 25 * Scale.width,
+                                      child: Checkbox(
+                                          value: controller.isMaterialSelected(
+                                              materialList[index]),
+                                          onChanged: (value) {
+                                            if (value!) {
+                                              myFocusNode.requestFocus();
+                                            } else {
+                                              myFocusNode.toDiagnosticsNode();
+                                            }
+                                            controller.clickMaterialButton(
+                                                materialList[index]);
+                                          }))),
+                              Text(
+                                materialList[index],
+                                style: textStyle(Colors.black, FontWeight.w500,
+                                    "NotoSansKR", 11.0),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  width: 90 * Scale.width,
+                                  height: 40 * Scale.height,
+                                  child: TextFormField(
+                                    controller: textEditingController,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                          RegExp('[0-9]')),
+                                    ],
+                                    focusNode: myFocusNode,
+                                    style: const TextStyle(
+                                      color: Color(0xff666666),
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: "NotoSansKR",
+                                      fontSize: 13.0,
+                                    ),
+                                    maxLength: 3,
+                                    enabled: controller.isMaterialSelected(
+                                            materialList[index])
+                                        ? true
+                                        : false,
+                                    decoration: InputDecoration(
+                                      counterText: "",
+                                      contentPadding: EdgeInsets.zero,
+                                      hintText: "숫자만 입력  %",
+                                      hintStyle: textStyle(
+                                          const Color(0xffcccccc),
+                                          FontWeight.w500,
+                                          "NotoSansKR",
+                                          11.0),
+                                      border: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5)),
+                                        borderSide: BorderSide(
+                                            color: Color(0xffcccccc), width: 1),
+                                      ),
+                                      focusedBorder: const OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(5)),
+                                        borderSide: BorderSide(
+                                            color: Color(0xffcccccc), width: 1),
+                                      ),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    onTap: () {},
+                  );
+                });
+          },
+        )
+      ],
+    );
+  }
+
+  Widget additionalInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "추가정보",
+          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+        ),
+        Divider(
+          color: Colors.black,
+          thickness: 2 * Scale.height,
+        ),
+        Column(
+          children: [
+            SizedBox(
+              height: 35 * Scale.height,
+              child: Row(
+                children: [
+                  Text(
+                    "두께감",
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  ),
+                  SizedBox(width: 40 * Scale.width),
+                  Expanded(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        List<String> buttonType = ["두꺼움", "중간", "없음"];
+                        return Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10 * Scale.width,
+                              ),
+                              child: Text(
+                                buttonType[index],
+                                style: textStyle(Colors.black, FontWeight.w500,
+                                    "NotoSansKR", 12.0),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 15 * Scale.width,
+                              child: Radio(
+                                value: 0,
+                                groupValue: 0,
+                                onChanged: (_) {},
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            SizedBox(
+              height: 35 * Scale.height,
+              child: Row(
+                children: [
+                  Text(
+                    "비침",
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  ),
+                  SizedBox(width: 40 * Scale.width),
+                  Expanded(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        List<String> buttonType = ["높음", "중간", "없음"];
+                        return Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10 * Scale.width,
+                              ),
+                              child: Text(
+                                buttonType[index],
+                                style: textStyle(Colors.black, FontWeight.w500,
+                                    "NotoSansKR", 12.0),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 15 * Scale.width,
+                              child: Radio(
+                                value: 0,
+                                groupValue: 0,
+                                onChanged: (_) {},
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            SizedBox(
+              height: 35 * Scale.height,
+              child: Row(
+                children: [
+                  Text(
+                    "신축성",
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  ),
+                  SizedBox(width: 40 * Scale.width),
+                  Expanded(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: 4,
+                      itemBuilder: (context, index) {
+                        List<String> buttonType = ["높음", "중간", "없음", "벤딩"];
+                        return Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10 * Scale.width,
+                              ),
+                              child: Text(
+                                buttonType[index],
+                                style: textStyle(Colors.black, FontWeight.w500,
+                                    "NotoSansKR", 12.0),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 15 * Scale.width,
+                              child: Radio(
+                                value: 0,
+                                groupValue: 0,
+                                onChanged: (_) {},
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            SizedBox(
+              height: 35 * Scale.height,
+              child: Row(
+                children: [
+                  Text(
+                    "안감",
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  ),
+                  SizedBox(width: 40 * Scale.width),
+                  Expanded(
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: 2,
+                      itemBuilder: (context, index) {
+                        List<String> buttonType = ["있음", "없음"];
+                        return Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10 * Scale.width,
+                              ),
+                              child: Text(
+                                buttonType[index],
+                                style: textStyle(Colors.black, FontWeight.w500,
+                                    "NotoSansKR", 12.0),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 15 * Scale.width,
+                              child: Radio(
+                                value: 0,
+                                groupValue: 0,
+                                onChanged: (_) {},
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
