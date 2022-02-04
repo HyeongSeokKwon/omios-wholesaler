@@ -53,7 +53,7 @@ class LoginController extends GetxController {
     if (prefs.getBool("isChecked") == true) {
       try {
         httpservice.updateToken();
-        Get.to(() => Home());
+        Get.to(() => const Home());
       } catch (e) {
         rethrow;
       }
