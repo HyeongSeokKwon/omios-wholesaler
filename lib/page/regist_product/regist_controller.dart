@@ -7,10 +7,15 @@ import 'package:image_picker/image_picker.dart';
 class RegistController extends GetxController {
   TextEditingController priceEditController = TextEditingController();
   late TabController colorTabController;
+
   List<Map<String, dynamic>> selectedColor = [];
   List<String> selectedSize = [];
   List<Map<String, dynamic>> selectedMaterialList = [];
   List<dynamic> basicImages = [];
+  Map<String, String> selectedPropertyInfo = {};
+  List<String> selectedWashingInfo = [];
+  List<String> selectedStyleInfo = [];
+  bool pricePerOptionClicked = false;
 
   int colorTabBarViewIndex = 0;
   XFile? pickedFile;
@@ -49,6 +54,32 @@ class RegistController extends GetxController {
       }
     }
     return false;
+  }
+
+  bool isPropertySelected(String type, String info) {
+    if (selectedPropertyInfo[type] == info) {
+      return true;
+    }
+    return false;
+  }
+
+  bool isWashingInfoSelected(String info) {
+    if (selectedWashingInfo.contains(info)) {
+      return true;
+    }
+    return false;
+  }
+
+  bool isStyleInfoSelected(String style) {
+    if (selectedStyleInfo.contains(style)) {
+      return true;
+    }
+    return false;
+  }
+
+  void isPricePerOptionClicked() {
+    pricePerOptionClicked = !pricePerOptionClicked;
+    update();
   }
 
   void clickColorButton(String color) {
@@ -159,6 +190,35 @@ class RegistController extends GetxController {
       update();
       return;
     }
+  }
+
+  void clickPropertyInfo(String type, dynamic info) {
+    selectedPropertyInfo[type] = info;
+
+    update();
+    return;
+  }
+
+  void clickWashingInfo(String info) {
+    if (isWashingInfoSelected(info)) {
+      selectedWashingInfo.remove(info);
+      update();
+      return;
+    }
+    selectedWashingInfo.add(info);
+    update();
+    return;
+  }
+
+  void clickStyle(String style) {
+    if (isStyleInfoSelected(style)) {
+      selectedStyleInfo.remove(style);
+      update();
+      return;
+    }
+    selectedStyleInfo.add(style);
+    update();
+    return;
   }
 
   void getImageFromGallery(String imageType) async {

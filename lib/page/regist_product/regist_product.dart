@@ -824,16 +824,55 @@ class _RegistProductState extends State<RegistProduct>
           style:
               textStyle(Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
         ),
-        Row(
-          children: [
-            Checkbox(value: false, onChanged: (value) {}),
-            Text(
-              "옵션별로 단가를 등록하려면 체크해주세요.",
-              style: textStyle(
-                  Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
-            ),
-          ],
-        ),
+        GetBuilder<RegistController>(
+            init: registController,
+            builder: (controller) {
+              return Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Row(
+                    children: [
+                      Checkbox(
+                          value: controller.pricePerOptionClicked,
+                          onChanged: (value) {
+                            controller.isPricePerOptionClicked();
+                          }),
+                      Text(
+                        "옵션별로 단가를 등록하려면 체크해주세요.",
+                        style: textStyle(Colors.grey[600]!, FontWeight.w500,
+                            "NotoSansKR", 11.0),
+                      ),
+                    ],
+                  ),
+                  controller.pricePerOptionClicked == true
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: controller.selectedColor.length,
+                          itemBuilder: (context, index) {
+                            return ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: controller.selectedSize.length,
+                                itemBuilder: (context, index2) {
+                                  return Container(
+                                    height: 50,
+                                    child: Row(
+                                      children: [
+                                        Text(controller.selectedColor[index]
+                                            ['color']),
+                                        Text(controller.selectedSize[index2]),
+                                        Text(controller
+                                            .priceEditController.text),
+                                      ],
+                                    ),
+                                  );
+                                });
+                          })
+                      : const SizedBox(),
+                ],
+              );
+            })
       ],
     );
   }
@@ -892,112 +931,180 @@ class _RegistProductState extends State<RegistProduct>
             TextEditingController textEditingController =
                 TextEditingController();
             FocusNode myFocusNode = FocusNode();
+            myFocusNode.addListener(() {});
             return GetBuilder<RegistController>(
-                init: registController,
-                builder: (controller) {
-                  return GestureDetector(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
+              init: registController,
+              builder: (controller) {
+                return GestureDetector(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Transform.scale(
+                              scale: 0.8,
+                              child: SizedBox(
+                                width: 25 * Scale.width,
+                                height: 25 * Scale.width,
+                                child: Checkbox(
+                                  value: controller
+                                      .isMaterialSelected(materialList[index]),
+                                  onChanged: (value) {
+                                    controller.clickMaterialButton(
+                                        materialList[index]);
+                                  },
+                                ),
+                              ),
+                            ),
+                            Text(
+                              materialList[index],
+                              style: textStyle(Colors.black, FontWeight.w500,
+                                  "NotoSansKR", 11.0),
+                            ),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Transform.scale(
-                                  scale: 0.8,
-                                  child: SizedBox(
-                                      width: 25 * Scale.width,
-                                      height: 25 * Scale.width,
-                                      child: Checkbox(
-                                          value: controller.isMaterialSelected(
-                                              materialList[index]),
-                                          onChanged: (value) {
-                                            if (value!) {
-                                              myFocusNode.requestFocus();
-                                            } else {
-                                              myFocusNode.toDiagnosticsNode();
-                                            }
-                                            controller.clickMaterialButton(
-                                                materialList[index]);
-                                          }))),
-                              Text(
-                                materialList[index],
-                                style: textStyle(Colors.black, FontWeight.w500,
-                                    "NotoSansKR", 11.0),
+                              SizedBox(
+                                width: 90 * Scale.width,
+                                height: 40 * Scale.height,
+                                child: TextFormField(
+                                  controller: textEditingController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp('[0-9]')),
+                                  ],
+                                  style: const TextStyle(
+                                    color: Color(0xff666666),
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: "NotoSansKR",
+                                    fontSize: 13.0,
+                                  ),
+                                  maxLength: 3,
+                                  enabled: controller.isMaterialSelected(
+                                          materialList[index])
+                                      ? true
+                                      : false,
+                                  decoration: InputDecoration(
+                                    counterText: "",
+                                    contentPadding: EdgeInsets.zero,
+                                    hintText: "숫자만 입력  %",
+                                    hintStyle: textStyle(
+                                        const Color(0xffcccccc),
+                                        FontWeight.w500,
+                                        "NotoSansKR",
+                                        11.0),
+                                    border: const OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                      borderSide: BorderSide(
+                                          color: Color(0xffcccccc), width: 1),
+                                    ),
+                                    focusedBorder: const OutlineInputBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5)),
+                                      borderSide: BorderSide(
+                                          color: Color(0xffcccccc), width: 1),
+                                    ),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
                             ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                SizedBox(
-                                  width: 90 * Scale.width,
-                                  height: 40 * Scale.height,
-                                  child: TextFormField(
-                                    controller: textEditingController,
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp('[0-9]')),
-                                    ],
-                                    focusNode: myFocusNode,
-                                    style: const TextStyle(
-                                      color: Color(0xff666666),
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: "NotoSansKR",
-                                      fontSize: 13.0,
-                                    ),
-                                    maxLength: 3,
-                                    enabled: controller.isMaterialSelected(
-                                            materialList[index])
-                                        ? true
-                                        : false,
-                                    decoration: InputDecoration(
-                                      counterText: "",
-                                      contentPadding: EdgeInsets.zero,
-                                      hintText: "숫자만 입력  %",
-                                      hintStyle: textStyle(
-                                          const Color(0xffcccccc),
-                                          FontWeight.w500,
-                                          "NotoSansKR",
-                                          11.0),
-                                      border: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5)),
-                                        borderSide: BorderSide(
-                                            color: Color(0xffcccccc), width: 1),
-                                      ),
-                                      focusedBorder: const OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(5)),
-                                        borderSide: BorderSide(
-                                            color: Color(0xffcccccc), width: 1),
-                                      ),
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    onTap: () {},
-                  );
-                });
+                  ),
+                  onTap: () {},
+                );
+              },
+            );
           },
-        )
+        ),
       ],
     );
   }
 
+  Widget addtionalInfoButtonList(String type, List<String> buttonType) {
+    return GetBuilder<RegistController>(
+      init: registController,
+      builder: (controller) {
+        return ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: buttonType.length,
+          itemBuilder: (context, index) {
+            return Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10 * Scale.width,
+                  ),
+                  child: Text(
+                    buttonType[index],
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  ),
+                ),
+                SizedBox(
+                  width: 15 * Scale.width,
+                  child: Radio(
+                    value: buttonType[index],
+                    activeColor: Colors.grey[500],
+                    groupValue: controller.selectedPropertyInfo[type],
+                    onChanged: (value) {
+                      controller.clickPropertyInfo(type, buttonType[index]);
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget additionalInfo() {
+    List<String> thickness = ["두꺼움", "중간", "없음"];
+    List<String> seeThrough = ["높음", "중간", "없음"];
+    List<String> elasticity = ["높음", "중간", "없음", "벤딩"];
+    List<String> lining = ["있음", "없음"];
+    List<String> washingInfo = [
+      "손세탁",
+      "드라이클리닝",
+      "물세탁",
+      "단독세탁",
+      "울세탁",
+      "표백제 사용금지",
+      "다림질 금지",
+      "세탁기 금지"
+    ];
+    List<String> style = [
+      "로맨틱",
+      "시크",
+      "럭셔리",
+      "미시",
+      "마담",
+      "오피스",
+      "캐쥬얼",
+      "섹시",
+      "모던",
+      "유니크",
+      "명품 스타일",
+      "연예인",
+      "심플/베이직"
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1015,43 +1122,17 @@ class _RegistProductState extends State<RegistProduct>
               height: 35 * Scale.height,
               child: Row(
                 children: [
-                  Text(
-                    "두께감",
-                    style: textStyle(
-                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  SizedBox(
+                    width: 50 * Scale.width,
+                    child: Text(
+                      "두께감",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 14.0),
+                    ),
                   ),
                   SizedBox(width: 40 * Scale.width),
                   Expanded(
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: 3,
-                      itemBuilder: (context, index) {
-                        List<String> buttonType = ["두꺼움", "중간", "없음"];
-                        return Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10 * Scale.width,
-                              ),
-                              child: Text(
-                                buttonType[index],
-                                style: textStyle(Colors.black, FontWeight.w500,
-                                    "NotoSansKR", 12.0),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 15 * Scale.width,
-                              child: Radio(
-                                value: 0,
-                                groupValue: 0,
-                                onChanged: (_) {},
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                    child: addtionalInfoButtonList("두께감", thickness),
                   ),
                 ],
               ),
@@ -1061,43 +1142,17 @@ class _RegistProductState extends State<RegistProduct>
               height: 35 * Scale.height,
               child: Row(
                 children: [
-                  Text(
-                    "비침",
-                    style: textStyle(
-                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  SizedBox(
+                    width: 50 * Scale.width,
+                    child: Text(
+                      "비침",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 14.0),
+                    ),
                   ),
                   SizedBox(width: 40 * Scale.width),
                   Expanded(
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: 3,
-                      itemBuilder: (context, index) {
-                        List<String> buttonType = ["높음", "중간", "없음"];
-                        return Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10 * Scale.width,
-                              ),
-                              child: Text(
-                                buttonType[index],
-                                style: textStyle(Colors.black, FontWeight.w500,
-                                    "NotoSansKR", 12.0),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 15 * Scale.width,
-                              child: Radio(
-                                value: 0,
-                                groupValue: 0,
-                                onChanged: (_) {},
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                    child: addtionalInfoButtonList("비침", seeThrough),
                   ),
                 ],
               ),
@@ -1107,43 +1162,17 @@ class _RegistProductState extends State<RegistProduct>
               height: 35 * Scale.height,
               child: Row(
                 children: [
-                  Text(
-                    "신축성",
-                    style: textStyle(
-                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  SizedBox(
+                    width: 50 * Scale.width,
+                    child: Text(
+                      "신축성",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 14.0),
+                    ),
                   ),
                   SizedBox(width: 40 * Scale.width),
                   Expanded(
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: 4,
-                      itemBuilder: (context, index) {
-                        List<String> buttonType = ["높음", "중간", "없음", "벤딩"];
-                        return Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10 * Scale.width,
-                              ),
-                              child: Text(
-                                buttonType[index],
-                                style: textStyle(Colors.black, FontWeight.w500,
-                                    "NotoSansKR", 12.0),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 15 * Scale.width,
-                              child: Radio(
-                                value: 0,
-                                groupValue: 0,
-                                onChanged: (_) {},
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                    child: addtionalInfoButtonList("신축성", elasticity),
                   ),
                 ],
               ),
@@ -1153,49 +1182,145 @@ class _RegistProductState extends State<RegistProduct>
               height: 35 * Scale.height,
               child: Row(
                 children: [
-                  Text(
-                    "안감",
-                    style: textStyle(
-                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  SizedBox(
+                    width: 50 * Scale.width,
+                    child: Text(
+                      "안감",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 14.0),
+                    ),
                   ),
                   SizedBox(width: 40 * Scale.width),
                   Expanded(
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: 2,
-                      itemBuilder: (context, index) {
-                        List<String> buttonType = ["있음", "없음"];
-                        return Row(
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10 * Scale.width,
-                              ),
-                              child: Text(
-                                buttonType[index],
-                                style: textStyle(Colors.black, FontWeight.w500,
-                                    "NotoSansKR", 12.0),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 15 * Scale.width,
-                              child: Radio(
-                                value: 0,
-                                groupValue: 0,
-                                onChanged: (_) {},
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                    child: addtionalInfoButtonList("안감", lining),
                   ),
                 ],
               ),
             ),
           ],
         ),
+        SizedBox(height: 20 * Scale.height),
+        Text(
+          "세탁정보 선택",
+          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 14.0),
+        ),
+        GetBuilder<RegistController>(
+            init: registController,
+            builder: (controller) {
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const ScrollPhysics(),
+                padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+                itemCount: washingInfo.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 30 * Scale.height,
+                  crossAxisSpacing: 10 * Scale.width,
+                  childAspectRatio: 1.4,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(
+                          Radius.circular(8),
+                        ),
+                        border: Border.all(
+                            color: controller
+                                    .isWashingInfoSelected(washingInfo[index])
+                                ? Colors.indigo[400]!
+                                : Colors.grey[300]!),
+                      ),
+                      child: Center(
+                        child: Text(
+                          washingInfo[index],
+                          style: textStyle(
+                              controller
+                                      .isWashingInfoSelected(washingInfo[index])
+                                  ? Colors.black
+                                  : Colors.grey[400]!,
+                              FontWeight.w500,
+                              "NotoSansKR",
+                              13.0),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      controller.clickWashingInfo(washingInfo[index]);
+                    },
+                  );
+                },
+              );
+            }),
+        Text(
+          "스타일",
+          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+        ),
+        Divider(
+          color: Colors.black,
+          thickness: 2 * Scale.height,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            "스타일을 선택하면 더 많은 리스트에서 노출됩니다.",
+            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 12.0),
+          ),
+        ),
+        GridView.builder(
+            shrinkWrap: true,
+            physics: const ScrollPhysics(),
+            padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+            itemCount: style.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 2.5,
+            ),
+            itemBuilder: (BuildContext context, int index) {
+              return GetBuilder<RegistController>(
+                init: registController,
+                builder: (controller) {
+                  return GestureDetector(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[300]!),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Transform.scale(
+                                scale: 0.8,
+                                child: SizedBox(
+                                  width: 25 * Scale.width,
+                                  height: 25 * Scale.width,
+                                  child: Checkbox(
+                                    value: controller
+                                        .isMaterialSelected(style[index]),
+                                    onChanged: (value) {
+                                      controller
+                                          .clickMaterialButton(style[index]);
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                style[index],
+                                style: textStyle(Colors.black, FontWeight.w500,
+                                    "NotoSansKR", 11.0),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    onTap: () {},
+                  );
+                },
+              );
+            })
       ],
     );
   }
