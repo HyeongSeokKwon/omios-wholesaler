@@ -104,7 +104,6 @@ class HttpService {
           );
 
           responseJson = _response(response);
-          print(responseJson);
           setAccessToken(responseJson['data']['access']);
           setRefreshToken(responseJson['data']['refresh']);
         } on SocketException {
@@ -126,7 +125,6 @@ class HttpService {
       //responseBody = utf8.decode(response.bodyBytes);
 
       responseJson = _response(response);
-
       return responseJson;
     } on SocketException {
       throw FetchDataException("연결된 인터넷이 없습니다!!");
@@ -136,6 +134,8 @@ class HttpService {
   Future<dynamic> httpPost(String addtionalUrl, var body) async {
     http.Response response;
     Map<String, dynamic> responseJson;
+
+    print(refreshToken);
 
     if (addtionalUrl != "/token/") {
       updateToken();

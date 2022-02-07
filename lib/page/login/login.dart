@@ -31,7 +31,6 @@ class _LoginState extends State<Login> {
       showAlertDialog(context, e);
       setState(() {});
     });
-    // loginController.autoLogin();
 
     getVibratePermission();
   }
