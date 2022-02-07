@@ -16,6 +16,7 @@ class RegistController extends GetxController {
   List<String> selectedWashingInfo = [];
   List<String> selectedStyleInfo = [];
   bool pricePerOptionClicked = false;
+  List<dynamic> pricePerOption = [];
 
   int colorTabBarViewIndex = 0;
   XFile? pickedFile;
@@ -79,6 +80,25 @@ class RegistController extends GetxController {
 
   void isPricePerOptionClicked() {
     pricePerOptionClicked = !pricePerOptionClicked;
+
+    for (var color in selectedColor) {
+      for (var size in selectedSize) {
+        pricePerOption.add({
+          "color": color['color'],
+          "size": size,
+          "price_difference": 0,
+        });
+      }
+    }
+    update();
+  }
+
+  void changingPricePerOption(String type, int index) {
+    if (type == "plus") {
+      pricePerOption[index]["price_difference"] += 500;
+    } else {
+      pricePerOption[index]["price_difference"] -= 500;
+    }
     update();
   }
 

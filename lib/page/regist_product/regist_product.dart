@@ -825,54 +825,87 @@ class _RegistProductState extends State<RegistProduct>
               textStyle(Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
         ),
         GetBuilder<RegistController>(
-            init: registController,
-            builder: (controller) {
-              return Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Row(
-                    children: [
-                      Checkbox(
-                          value: controller.pricePerOptionClicked,
-                          onChanged: (value) {
-                            controller.isPricePerOptionClicked();
-                          }),
-                      Text(
-                        "옵션별로 단가를 등록하려면 체크해주세요.",
-                        style: textStyle(Colors.grey[600]!, FontWeight.w500,
-                            "NotoSansKR", 11.0),
-                      ),
-                    ],
-                  ),
-                  controller.pricePerOptionClicked == true
-                      ? ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: controller.selectedColor.length,
-                          itemBuilder: (context, index) {
-                            return ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: controller.selectedSize.length,
-                                itemBuilder: (context, index2) {
-                                  return Container(
-                                    height: 50,
-                                    child: Row(
-                                      children: [
-                                        Text(controller.selectedColor[index]
-                                            ['color']),
-                                        Text(controller.selectedSize[index2]),
-                                        Text(controller
-                                            .priceEditController.text),
-                                      ],
-                                    ),
-                                  );
-                                });
-                          })
-                      : const SizedBox(),
-                ],
-              );
-            })
+          init: registController,
+          builder: (controller) {
+            return Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Row(
+                  children: [
+                    Checkbox(
+                        value: controller.pricePerOptionClicked,
+                        onChanged: (value) {
+                          controller.isPricePerOptionClicked();
+                        }),
+                    Text(
+                      "옵션별로 단가를 등록하려면 체크해주세요.",
+                      style: textStyle(Colors.grey[600]!, FontWeight.w500,
+                          "NotoSansKR", 11.0),
+                    ),
+                  ],
+                ),
+                controller.pricePerOptionClicked == true
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: controller.pricePerOption.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                    border:
+                                        Border.all(color: Colors.grey[300]!),
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8))),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 22 * Scale.width,
+                                      vertical: 20 * Scale.height),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(controller.pricePerOption[index]
+                                          ['color']),
+                                      Text(controller.pricePerOption[index]
+                                          ['size']),
+                                      Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              controller.changingPricePerOption(
+                                                  "minus", index);
+                                            },
+                                            child: SvgPicture.asset(
+                                                "assets/images/svg/minus.svg"),
+                                          ),
+                                          Text(
+                                              "${int.parse(controller.priceEditController.text) + controller.pricePerOption[index]['price_difference']}"),
+                                          GestureDetector(
+                                            onTap: () {
+                                              controller.changingPricePerOption(
+                                                  "plus", index);
+                                            },
+                                            child: SvgPicture.asset(
+                                                "assets/images/svg/plus.svg"),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 5 * Scale.height),
+                            ],
+                          );
+                        },
+                      )
+                    : const SizedBox(),
+              ],
+            );
+          },
+        ),
       ],
     );
   }
