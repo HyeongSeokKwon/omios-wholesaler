@@ -23,12 +23,12 @@ class LoginController extends GetxController {
 
     if (isAutoLoginChecked == null) {
       isAutoLoginChecked = false;
-      await prefs.setBool('isChecked', isAutoLoginChecked!);
+      await prefs.setBool('isChecked', false);
     }
 
     if (httpservice.isRefreshExpired()) {
       // refresh token 만료되면 오토로그인 풀리게
-      await prefs.setBool('isChecked', isAutoLoginChecked!);
+      await prefs.setBool('isChecked', false);
     }
     autoLogin().catchError((e) {
       throw e;
@@ -42,10 +42,10 @@ class LoginController extends GetxController {
     userPwd = pwd;
   }
 
-  void checkedAutoLogin() {
+  void checkedAutoLogin() async {
     isAutoLoginChecked = !isAutoLoginChecked!;
 
-    prefs.setBool('isChecked', isAutoLoginChecked!);
+    await prefs.setBool('isChecked', isAutoLoginChecked!);
     update(["autoLogin"]);
   }
 
@@ -63,11 +63,11 @@ class LoginController extends GetxController {
   Future<bool> loginRequest() async {
     Map<String, dynamic> responseData;
     loginRequestModel = LoginRequestModel(userId, userPwd);
-
     try {
       loginResponse =
           await httpservice.httpPost('/token/', loginRequestModel.toJson());
 
+      print(loginResponse);
       //만약 ID PW가 틀리면 =>
       if (loginResponse['message'] ==
           "No active account found with the given credentials") {
