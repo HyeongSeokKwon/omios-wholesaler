@@ -4,10 +4,10 @@ import 'package:deepy_wholesaler/util/util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-dynamic showAlertDialog(BuildContext context, Exception e) {
+dynamic showAlertDialog(BuildContext context, String eString) {
   if (Platform.isIOS) {
     return CupertinoAlertDialog(
-      content: Text(e.toString()),
+      content: Text(eString),
       actions: const <Widget>[
         CupertinoDialogAction(
           isDefaultAction: true,
@@ -21,7 +21,7 @@ dynamic showAlertDialog(BuildContext context, Exception e) {
       builder: (context) {
         return AlertDialog(
           content: Text(
-            e.toString(),
+            eString,
             style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
           ),
           actions: <Widget>[

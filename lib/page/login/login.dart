@@ -39,7 +39,7 @@ class _LoginState extends State<Login> {
     try {
       await Vibrate.canVibrate;
     } on Exception catch (e) {
-      showAlertDialog(context, e);
+      showAlertDialog(context, e.toString());
     }
   }
 
@@ -354,7 +354,7 @@ class _LoginState extends State<Login> {
               );
             }
           } on Exception catch (e) {
-            showAlertDialog(context, e);
+            showAlertDialog(context, e.toString());
           }
         },
       ),
