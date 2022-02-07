@@ -78,26 +78,11 @@ class RegistController extends GetxController {
     return false;
   }
 
-  void isPricePerOptionClicked() {
-    pricePerOptionClicked = !pricePerOptionClicked;
-
-    for (var color in selectedColor) {
-      for (var size in selectedSize) {
-        pricePerOption.add({
-          "color": color['color'],
-          "size": size,
-          "price_difference": 0,
-        });
-      }
-    }
-    update();
-  }
-
   void changingPricePerOption(String type, int index) {
     if (type == "plus") {
-      pricePerOption[index]["price_difference"] += 500;
+      pricePerOption[index]['price_difference'] += 500;
     } else {
-      pricePerOption[index]["price_difference"] -= 500;
+      pricePerOption[index]['price_difference'] -= 500;
     }
     update();
   }
@@ -105,19 +90,40 @@ class RegistController extends GetxController {
   void clickColorButton(String color) {
     for (var i in selectedColor) {
       if (i['color'] == color) {
+        if (pricePerOptionClicked) {
+          pricePerOption.removeWhere((element) => element['color'] == color);
+        }
+
         selectedColor.remove(i);
+        print(selectedColor);
+        if (selectedColor.isEmpty) {
+          pricePerOption = [];
+          pricePerOptionClicked = false;
+        }
         update();
         return;
       }
     }
     selectedColor.add({'color': color, 'image': null});
-
+    if (pricePerOptionClicked) {
+      for (var size in selectedSize) {
+        pricePerOption
+            .add({'color': color, 'size': size, 'price_difference': 0});
+      }
+    }
     update();
   }
 
   void clickSizeButton(String size) {
     if (isSizedSelected(size)) {
+      if (pricePerOptionClicked) {
+        pricePerOption.removeWhere((element) => element['size'] == size);
+      }
       selectedSize.remove(size);
+      if (selectedSize.isEmpty) {
+        pricePerOption = [];
+        pricePerOptionClicked = false;
+      }
       update();
       return;
     }
@@ -185,12 +191,41 @@ class RegistController extends GetxController {
       default:
     }
     selectedSize.add(size);
+    if (pricePerOptionClicked) {
+      for (var color in selectedColor) {
+        pricePerOption.add(
+            {'color': color['color'], 'size': size, 'price_difference': 0});
+      }
+    }
     update();
     return;
   }
 
+  void clickPricePerOption() {
+    pricePerOptionClicked = !pricePerOptionClicked;
+
+    for (var color in selectedColor) {
+      for (var size in selectedSize) {
+        pricePerOption.add(
+          {'color': color['color'], 'size': size, 'price_difference': 0},
+        );
+      }
+    }
+
+    update();
+  }
+
   void removeSize(index) {
+    if (pricePerOptionClicked) {
+      pricePerOption
+          .removeWhere((element) => element['size'] == selectedSize[index]);
+    }
     selectedSize.removeAt(index);
+    if (selectedSize.isEmpty) {
+      pricePerOption = [];
+      pricePerOptionClicked = false;
+    }
+
     update();
   }
 

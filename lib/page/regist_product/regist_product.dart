@@ -1,5 +1,6 @@
 import 'package:deepy_wholesaler/page/regist_product/regist_controller.dart';
 import 'package:deepy_wholesaler/util/util.dart';
+import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -835,7 +836,22 @@ class _RegistProductState extends State<RegistProduct>
                     Checkbox(
                         value: controller.pricePerOptionClicked,
                         onChanged: (value) {
-                          controller.isPricePerOptionClicked();
+                          String missedValue = "";
+                          if (controller.selectedColor.isEmpty) {
+                            missedValue = missedValue + " [색상]";
+                          }
+                          if (controller.selectedSize.isEmpty) {
+                            missedValue = missedValue + " [사이즈]";
+                          }
+                          if (controller.priceEditController.text.isEmpty) {
+                            missedValue = missedValue + " [가격]";
+                          }
+                          if (missedValue.isEmpty) {
+                            controller.clickPricePerOption();
+                          } else {
+                            missedValue = missedValue + "의 데이터가 없습니다!";
+                            showAlertDialog(context, missedValue);
+                          }
                         }),
                     Text(
                       "옵션별로 단가를 등록하려면 체크해주세요.",
@@ -866,10 +882,24 @@ class _RegistProductState extends State<RegistProduct>
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(controller.pricePerOption[index]
-                                          ['color']),
-                                      Text(controller.pricePerOption[index]
-                                          ['size']),
+                                      Text(
+                                        controller.pricePerOption[index]
+                                            ['color'],
+                                        style: textStyle(
+                                            Colors.black,
+                                            FontWeight.w500,
+                                            "NotoSansKR",
+                                            14.0),
+                                      ),
+                                      Text(
+                                        controller.pricePerOption[index]
+                                            ['size'],
+                                        style: textStyle(
+                                            Colors.black,
+                                            FontWeight.w500,
+                                            "NotoSansKR",
+                                            14.0),
+                                      ),
                                       Row(
                                         children: [
                                           GestureDetector(
@@ -877,18 +907,38 @@ class _RegistProductState extends State<RegistProduct>
                                               controller.changingPricePerOption(
                                                   "minus", index);
                                             },
-                                            child: SvgPicture.asset(
-                                                "assets/images/svg/minus.svg"),
+                                            child: SizedBox(
+                                              width: 35 * Scale.width,
+                                              height: 35 * Scale.width,
+                                              child: SvgPicture.asset(
+                                                "assets/images/svg/minus.svg",
+                                                width: 18 * Scale.width,
+                                                fit: BoxFit.scaleDown,
+                                              ),
+                                            ),
                                           ),
                                           Text(
-                                              "${int.parse(controller.priceEditController.text) + controller.pricePerOption[index]['price_difference']}"),
+                                            "${int.parse(controller.priceEditController.text) + controller.pricePerOption[index]['price_difference']}",
+                                            style: textStyle(
+                                                Colors.black,
+                                                FontWeight.w500,
+                                                "NotoSansKR",
+                                                14.0),
+                                          ),
                                           GestureDetector(
                                             onTap: () {
                                               controller.changingPricePerOption(
                                                   "plus", index);
                                             },
-                                            child: SvgPicture.asset(
-                                                "assets/images/svg/plus.svg"),
+                                            child: SizedBox(
+                                              width: 35 * Scale.width,
+                                              height: 35 * Scale.width,
+                                              child: SvgPicture.asset(
+                                                "assets/images/svg/plus.svg",
+                                                width: 18 * Scale.width,
+                                                fit: BoxFit.scaleDown,
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
