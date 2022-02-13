@@ -1,4 +1,5 @@
 import 'package:deepy_wholesaler/page/deepy_home/home.dart';
+import 'package:deepy_wholesaler/page/signUp/sign_up.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
@@ -417,7 +418,9 @@ class _LoginState extends State<Login> {
               Size(370 * Scale.width, 56 * Scale.height),
             ),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Get.to(const SignUp());
+          },
         ),
       ),
     );
