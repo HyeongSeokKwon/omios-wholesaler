@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,7 +21,6 @@ class HttpService {
   var addressUrl = 'http://13.209.244.41';
   var addressUrlx = '13.209.244.41';
   late SharedPreferences pref;
-  Dio dio = Dio();
 
   dynamic _response(http.Response response) {
     switch (response.statusCode) {
@@ -125,16 +123,6 @@ class HttpService {
         Uri.http(addressUrlx, baseUrl, queryParams),
         headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
       );
-
-      var r = await dio.getUri(
-        Uri.http(addressUrlx, baseUrl, queryParams),
-        options: Options(
-            headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'}),
-      );
-
-      print("dio get response");
-      print(r.data);
-      print("dio get response");
 
       responseJson = _response(response);
       return responseJson;
