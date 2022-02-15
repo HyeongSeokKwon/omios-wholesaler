@@ -23,7 +23,7 @@ class SignUpThird extends StatelessWidget {
               storeNumberArea(context),
               phoneNumberArea(),
               companyRegistrationNumberArea(context),
-              pictureArea(),
+              pictureArea(context),
               termsArea(),
             ],
           ),
@@ -502,7 +502,7 @@ class SignUpThird extends StatelessWidget {
     );
   }
 
-  Widget pictureArea() {
+  Widget pictureArea(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
       child: Column(
@@ -535,7 +535,39 @@ class SignUpThird extends StatelessWidget {
           ),
           InkWell(
             onTap: () {
-              signUpController.getImageFromGallery();
+              showModalBottomSheet(
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                )),
+                context: context,
+                builder: (BuildContext bc) {
+                  return SafeArea(
+                    child: Container(
+                      child: Wrap(
+                        children: <Widget>[
+                          ListTile(
+                              leading: const Icon(Icons.photo_library),
+                              title: const Text('앨범에서 가져오기'),
+                              onTap: () {
+                                signUpController.getImageFromGallery();
+                                Navigator.of(context).pop();
+                              }),
+                          ListTile(
+                            leading: const Icon(Icons.photo_camera),
+                            title: const Text('사진 찍기'),
+                            onTap: () {
+                              signUpController.getImageFromCamera();
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              );
             },
             child: GetBuilder<SignUpController>(
               id: 'imageArea',
@@ -602,7 +634,7 @@ class SignUpThird extends StatelessWidget {
                     "NotoSansKR",
                     13.0,
                   ),
-                  text: "*")
+                  text: "*"),
             ],
           ),
         ),

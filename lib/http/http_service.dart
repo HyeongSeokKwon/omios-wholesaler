@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,6 +22,7 @@ class HttpService {
   var addressUrl = 'http://13.209.244.41';
   var addressUrlx = '13.209.244.41';
   late SharedPreferences pref;
+  Dio dio = Dio();
 
   dynamic _response(http.Response response) {
     switch (response.statusCode) {
@@ -116,11 +118,23 @@ class HttpService {
   Future<dynamic> httpGet(String baseUrl,
       [Map<String, String>? queryParams]) async {
     http.Response response;
-    var responseJson;
+    var responseJson = {};
     try {
+      updateToken();
       response = await http.get(
         Uri.http(addressUrlx, baseUrl, queryParams),
+        headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
       );
+
+      var r = await dio.getUri(
+        Uri.http(addressUrlx, baseUrl, queryParams),
+        options: Options(
+            headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'}),
+      );
+
+      print("dio get response");
+      print(r.data);
+      print("dio get response");
 
       responseJson = _response(response);
       return responseJson;
@@ -132,9 +146,8 @@ class HttpService {
   Future<dynamic> httpPublicGet(String baseUrl,
       [Map<String, String>? queryParams]) async {
     http.Response response;
-    var responseJson;
+    var responseJson = {};
     try {
-      updateToken();
       response = await http.get(Uri.http(addressUrlx, baseUrl, queryParams));
 
       responseJson = _response(response);
@@ -148,13 +161,8 @@ class HttpService {
     http.Response response;
     Map<String, dynamic> responseJson;
 
-    print(refreshToken);
-
-    if (addtionalUrl != "/token/") {
-      updateToken();
-    }
-
     try {
+      updateToken();
       response = await http.post(Uri.parse(addressUrl + addtionalUrl),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
           body: body);

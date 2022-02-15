@@ -116,4 +116,17 @@ class SignUpController extends GetxController {
     }
     update(['imageArea']);
   }
+
+  void getImageFromCamera() async {
+    pickedFile = (await _picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 50,
+    ));
+    if (pickedFile != null) {
+      businessRegistNumPhoto = Image.file(
+        File(pickedFile!.path),
+      );
+    }
+    update(['imageArea']);
+  }
 }
