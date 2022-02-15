@@ -118,11 +118,24 @@ class HttpService {
     http.Response response;
     var responseJson;
     try {
-      updateToken();
-      response = await http.get(Uri.http(addressUrlx, baseUrl, queryParams),
-          headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'});
+      response = await http.get(
+        Uri.http(addressUrlx, baseUrl, queryParams),
+      );
 
-      //responseBody = utf8.decode(response.bodyBytes);
+      responseJson = _response(response);
+      return responseJson;
+    } on SocketException {
+      throw FetchDataException("연결된 인터넷이 없습니다!!");
+    }
+  }
+
+  Future<dynamic> httpPublicGet(String baseUrl,
+      [Map<String, String>? queryParams]) async {
+    http.Response response;
+    var responseJson;
+    try {
+      updateToken();
+      response = await http.get(Uri.http(addressUrlx, baseUrl, queryParams));
 
       responseJson = _response(response);
       return responseJson;
