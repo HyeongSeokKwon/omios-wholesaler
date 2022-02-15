@@ -1,5 +1,5 @@
 import 'package:deepy_wholesaler/page/deepy_home/home.dart';
-import 'package:deepy_wholesaler/page/signUp/sign_up.dart';
+import 'package:deepy_wholesaler/page/sign_up/sign_up.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
@@ -195,7 +195,9 @@ class _LoginState extends State<Login> {
       child: Stack(
         children: [
           SizedBox(
+            
             child: TextFormField(
+              showCursor: false,
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
               ],
@@ -258,7 +260,7 @@ class _LoginState extends State<Login> {
                   borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
                 ),
               ),
-              textAlign: TextAlign.left,
+              textAlignVertical: TextAlignVertical.center,
             ),
           ),
         ],
