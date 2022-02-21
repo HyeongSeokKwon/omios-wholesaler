@@ -806,20 +806,6 @@ class _RegistProductState extends State<RegistProduct>
           color: Colors.black,
           thickness: 2 * Scale.height,
         ),
-        Row(
-          children: [
-            Checkbox(value: false, onChanged: (value) {}),
-            Text(
-              "옵션별로 단가를 등록하려면 체크해주세요.",
-              style: textStyle(
-                  Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
-            ),
-          ],
-        ),
-        Divider(
-          color: Colors.grey[200],
-          thickness: 1 * Scale.height,
-        ),
         Text(
           "재고 수량을 적어주시면 더 많은 리스트에 노출 됩니다. (미 작성시 수량은 무제한으로 간주합니다.)",
           style:

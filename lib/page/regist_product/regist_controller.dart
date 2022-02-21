@@ -5,6 +5,11 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RegistController extends GetxController {
+  static const String s = "S";
+  static const String m = "M";
+  static const String l = "L";
+  static const String xl = "XL";
+
   TextEditingController priceEditController = TextEditingController();
   late TabController colorTabController;
 
@@ -95,7 +100,6 @@ class RegistController extends GetxController {
         }
 
         selectedColor.remove(i);
-        print(selectedColor);
         if (selectedColor.isEmpty) {
           pricePerOption = [];
           pricePerOptionClicked = false;
@@ -116,92 +120,107 @@ class RegistController extends GetxController {
 
   void clickSizeButton(String size) {
     if (isSizedSelected(size)) {
+      // 사이즈 취소 이벤트시
       if (pricePerOptionClicked) {
+        // 옵션별 가격 체크 되어있으면
         pricePerOption.removeWhere((element) => element['size'] == size);
       }
       selectedSize.remove(size);
       if (selectedSize.isEmpty) {
+        //선택된 사이즈리스트 비어있으면
         pricePerOption = [];
         pricePerOptionClicked = false;
       }
       update();
       return;
     }
-    switch (size) {
-      case "S-M":
-        if (!isSizedSelected("S") || !isSizedSelected("M")) {
-          if (!isSizedSelected("S")) {
-            selectedSize.add("S");
-          }
-          if (!isSizedSelected("M")) {
-            selectedSize.add("M");
-          }
-        } else {
-          selectedSize.remove("S");
-          selectedSize.remove("M");
-        }
-        update();
-        return;
-      case "S-L":
-        if (!isSizedSelected("S") ||
-            !isSizedSelected("M") ||
-            !isSizedSelected("L")) {
-          if (!isSizedSelected("S")) {
-            selectedSize.add("S");
-          }
-          if (!isSizedSelected("M")) {
-            selectedSize.add("M");
-          }
-          if (!isSizedSelected("L")) {
-            selectedSize.add("L");
-          }
-        } else {
-          selectedSize.remove("S");
-          selectedSize.remove("M");
-          selectedSize.remove("L");
-        }
 
-        update();
-        return;
-      case "S-XL":
-        if (!isSizedSelected("S") ||
-            !isSizedSelected("M") ||
-            !isSizedSelected("L") ||
-            !isSizedSelected("XL")) {
-          if (!isSizedSelected("S")) {
-            selectedSize.add("S");
+    //사이즈 추가 이벤트시
+    switch (size) {
+
+      // 옵션별 가격 체크 상황에 무관하게 수행되어야할 로직
+      case "S-M":
+        if (!isSizedSelected(s) || !isSizedSelected(m)) {
+          if (!isSizedSelected(s)) {
+            selectedSize.add(s);
           }
-          if (!isSizedSelected("M")) {
-            selectedSize.add("M");
-          }
-          if (!isSizedSelected("L")) {
-            selectedSize.add("L");
-          }
-          if (!isSizedSelected("XL")) {
-            selectedSize.add("XL");
+          if (!isSizedSelected(m)) {
+            selectedSize.add(m);
           }
         } else {
-          selectedSize.remove("S");
-          selectedSize.remove("M");
-          selectedSize.remove("L");
-          selectedSize.remove("XL");
+          selectedSize.remove(s);
+          selectedSize.remove(m);
         }
-        update();
-        return;
+        break;
+      case "S-L":
+        if (!isSizedSelected(s) || !isSizedSelected(m) || !isSizedSelected(l)) {
+          if (!isSizedSelected(s)) {
+            selectedSize.add(s);
+          }
+          if (!isSizedSelected(m)) {
+            selectedSize.add(m);
+          }
+          if (!isSizedSelected(l)) {
+            selectedSize.add(l);
+          }
+        } else {
+          selectedSize.remove(s);
+          selectedSize.remove(m);
+          selectedSize.remove(l);
+        }
+        break;
+
+      case "S-XL":
+        if (!isSizedSelected(s) ||
+            !isSizedSelected(m) ||
+            !isSizedSelected(l) ||
+            !isSizedSelected(xl)) {
+          if (!isSizedSelected(s)) {
+            selectedSize.add(s);
+          }
+          if (!isSizedSelected(m)) {
+            selectedSize.add(m);
+          }
+          if (!isSizedSelected(l)) {
+            selectedSize.add(l);
+          }
+          if (!isSizedSelected(xl)) {
+            selectedSize.add(xl);
+          }
+        } else {
+          selectedSize.remove(s);
+          selectedSize.remove(m);
+          selectedSize.remove(l);
+          selectedSize.remove(xl);
+        }
+        break;
       default:
+        selectedSize.add(size);
     }
-    selectedSize.add(size);
+    if (selectedSize.isEmpty) {
+      //선택된 사이즈리스트 비어있으면
+      pricePerOption = [];
+      pricePerOptionClicked = false;
+      update();
+      return;
+    }
     if (pricePerOptionClicked) {
+      pricePerOption.clear();
       for (var color in selectedColor) {
-        pricePerOption.add(
-            {'color': color['color'], 'size': size, 'price_difference': 0});
+        for (var size in selectedSize) {
+          pricePerOption.add(
+            {'color': color['color'], 'size': size, 'price_difference': 0},
+          );
+        }
       }
     }
+
     update();
     return;
   }
 
   void clickPricePerOption() {
+    pricePerOption.clear();
     pricePerOptionClicked = !pricePerOptionClicked;
 
     for (var color in selectedColor) {
