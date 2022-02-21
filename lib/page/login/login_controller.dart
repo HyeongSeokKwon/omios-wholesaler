@@ -34,7 +34,7 @@ class LoginController extends GetxController {
       throw e;
     });
 
-    update(["autoLogin"]);
+    update();
   }
 
   void getLoginInfo(String id, String pwd) {
@@ -46,7 +46,7 @@ class LoginController extends GetxController {
     isAutoLoginChecked = !isAutoLoginChecked!;
 
     await prefs.setBool('isChecked', isAutoLoginChecked!);
-    update(["autoLogin"]);
+    update();
   }
 
   Future<void> autoLogin() async {

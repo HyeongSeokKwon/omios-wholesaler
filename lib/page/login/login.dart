@@ -195,7 +195,6 @@ class _LoginState extends State<Login> {
       child: Stack(
         children: [
           SizedBox(
-            
             child: TextFormField(
               showCursor: false,
               inputFormatters: [
@@ -269,57 +268,32 @@ class _LoginState extends State<Login> {
   }
 
   Widget _buildAutoLogin() {
-    return SizedBox(
-      height: 20 * Scale.height,
-      child: Padding(
-        padding: EdgeInsets.only(left: 22.0 * Scale.width),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 24 * Scale.width,
-              child: GetBuilder<LoginController>(
-                id: "autoLogin",
-                init: loginController,
-                builder: (_) => GestureDetector(
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 18 * Scale.width,
-                        height: 20 * Scale.height,
-                        child: SvgPicture.asset(
-                          loginController.isAutoLoginChecked == true
-                              ? autoLoginIcon
-                              : autoUnLoginIcon,
-                        ),
-                      ),
-                      SizedBox(width: 6 * Scale.width),
-                    ],
+    return Padding(
+      padding: EdgeInsets.only(left: 10 * Scale.width),
+      child: GetBuilder<LoginController>(
+          init: loginController,
+          builder: (controller) {
+            return SizedBox(
+              height: 20 * Scale.height,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Transform.scale(
+                    scale: 0.7,
+                    child: Switch.adaptive(
+                        value: controller.isAutoLoginChecked ??= false,
+                        onChanged: (value) => controller.checkedAutoLogin()),
                   ),
-                  onTap: () {
-                    loginController.checkedAutoLogin();
-                  },
-                ),
-              ),
-            ),
-            InkWell(
-              child: SizedBox(
-                height: 20 * Scale.height,
-                child: Center(
-                  child: Text(
+                  Text(
                     "자동로그인",
                     style: textStyle(const Color(0xff666666), FontWeight.w400,
                         "NotoSansKR", 14.0),
                   ),
-                ),
+                ],
               ),
-              onTap: () {
-                loginController.checkedAutoLogin();
-              },
-            )
-          ],
-        ),
-      ),
+            );
+          }),
     );
   }
 
