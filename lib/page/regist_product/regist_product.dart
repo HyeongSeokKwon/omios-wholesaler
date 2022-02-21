@@ -820,6 +820,9 @@ class _RegistProductState extends State<RegistProduct>
                 Row(
                   children: [
                     Checkbox(
+                        activeColor: Colors.indigo[300],
+                        side: BorderSide(
+                            color: Colors.grey[500]!, width: 1 * Scale.width),
                         value: controller.pricePerOptionClicked,
                         onChanged: (value) {
                           String missedValue = "";
@@ -1034,7 +1037,7 @@ class _RegistProductState extends State<RegistProduct>
                             Text(
                               materialList[index],
                               style: textStyle(Colors.black, FontWeight.w500,
-                                  "NotoSansKR", 11.0),
+                                  "NotoSansKR", 13.0),
                             ),
                           ],
                         ),
@@ -1382,7 +1385,7 @@ class _RegistProductState extends State<RegistProduct>
                             Text(
                               style[index],
                               style: textStyle(Colors.black, FontWeight.w500,
-                                  "NotoSansKR", 11.0),
+                                  "NotoSansKR", 13.0),
                             ),
                           ],
                         ),
