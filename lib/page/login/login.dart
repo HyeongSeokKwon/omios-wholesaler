@@ -4,7 +4,6 @@ import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
 
@@ -60,7 +59,6 @@ class _LoginState extends State<Login> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 지금 당신의 쇼핑몰을  책임지는 시간 Deepy
                 _buildMainText(),
                 Column(
                   children: [
@@ -68,11 +66,11 @@ class _LoginState extends State<Login> {
                     _buildLoginField(),
                     SizedBox(height: 16 * Scale.height),
                     _buildAutoLogin(),
-                    SizedBox(height: 26 * Scale.height),
+                    SizedBox(height: 16 * Scale.height),
                     _buildLoginButton(),
-                    SizedBox(height: 20 * Scale.height),
+                    SizedBox(height: 35 * Scale.height),
                     _buildFindArea(),
-                    SizedBox(height: 190 * Scale.height),
+                    SizedBox(height: 160 * Scale.height),
                     _buildSignInButton()
                   ],
                 ),
@@ -87,9 +85,9 @@ class _LoginState extends State<Login> {
   Widget _buildMainText() {
     return Padding(
       padding: EdgeInsets.only(top: 110 * Scale.height, left: 22 * Scale.width),
-      child: Text("지금 당신의 쇼핑몰을\n책임지는 시간\nDeepy",
+      child: Text("지금 당신의 쇼핑몰을\n책임지는 시간\nOMIOS",
           style: textStyle(
-              const Color(0xff333333), FontWeight.w700, "NotoSansKR", 28.0)),
+              const Color(0xff333333), FontWeight.w700, "NotoSansKR", 26.0)),
     );
   }
 
@@ -114,7 +112,6 @@ class _LoginState extends State<Login> {
       child: Stack(
         children: [
           SizedBox(
-            // height: 71.0 * Scale.height,
             child: TextFormField(
               inputFormatters: [
                 FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9]')),
@@ -136,9 +133,9 @@ class _LoginState extends State<Login> {
                 isDense: true,
                 contentPadding: EdgeInsets.fromLTRB(
                   10 * Scale.width,
-                  22 * Scale.height,
+                  18 * Scale.height,
                   10 * Scale.width,
-                  22 * Scale.height,
+                  18 * Scale.height,
                 ),
                 counterText: "",
                 labelText: "아이디",
@@ -163,21 +160,25 @@ class _LoginState extends State<Login> {
                 hintText: ("아이디를 입력하세요"),
                 hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
                     "NotoSansKR", 16.0),
-                border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                border: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  borderSide: BorderSide(
+                      color: Colors.grey[400]!, width: 1 * Scale.width),
                 ),
-                errorBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  borderSide: BorderSide(
+                      color: Colors.grey[400]!, width: 1 * Scale.width),
                 ),
-                focusedBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  borderSide: BorderSide(
+                      color: Colors.grey[400]!, width: 1 * Scale.width),
                 ),
-                focusedErrorBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  borderSide: BorderSide(
+                      color: Colors.grey[400]!, width: 1 * Scale.width),
                 ),
               ),
               textAlign: TextAlign.left,
@@ -218,9 +219,9 @@ class _LoginState extends State<Login> {
                 isDense: true,
                 contentPadding: EdgeInsets.fromLTRB(
                   10 * Scale.width,
-                  22 * Scale.height,
+                  18 * Scale.height,
                   10 * Scale.width,
-                  22 * Scale.height,
+                  18 * Scale.height,
                 ),
                 labelStyle: TextStyle(
                   color: const Color(0xff666666),
@@ -242,21 +243,25 @@ class _LoginState extends State<Login> {
                 hintText: ("비밀번호를 입력하세요"),
                 hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
                     "NotoSansKR", 16.0),
-                border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                border: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  borderSide: BorderSide(
+                      color: Colors.grey[400]!, width: 1 * Scale.width),
                 ),
-                errorBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  borderSide: BorderSide(
+                      color: Colors.grey[400]!, width: 1 * Scale.width),
                 ),
-                focusedBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  borderSide: BorderSide(
+                      color: Colors.grey[400]!, width: 1 * Scale.width),
                 ),
-                focusedErrorBorder: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(14)),
-                  borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                focusedErrorBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(16)),
+                  borderSide: BorderSide(
+                      color: Colors.grey[400]!, width: 1 * Scale.width),
                 ),
               ),
               textAlignVertical: TextAlignVertical.center,
