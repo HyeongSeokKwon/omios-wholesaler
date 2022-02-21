@@ -65,11 +65,11 @@ class SignUpThird extends StatelessWidget {
           Row(
             children: [
               SizedBox(
-                width: 80 * Scale.width,
+                width: 65 * Scale.width,
                 child: TextField(
                   maxLength: 3,
                   textInputAction: TextInputAction.next,
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.number, 
                   showCursor: false,
                   onChanged: (text) {
                     if (text.length == 3) {
