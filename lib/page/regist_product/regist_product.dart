@@ -1021,12 +1021,13 @@ class _RegistProductState extends State<RegistProduct>
                                 width: 25 * Scale.width,
                                 height: 25 * Scale.width,
                                 child: Checkbox(
+                                  activeColor: Colors.indigo[300],
+                                  side: BorderSide(
+                                      color: Colors.grey[500]!,
+                                      width: 1 * Scale.width),
                                   value: controller
                                       .isMaterialSelected(materialList[index]),
-                                  onChanged: (value) {
-                                    controller.clickMaterialButton(
-                                        materialList[index]);
-                                  },
+                                  onChanged: (value) {},
                                 ),
                               ),
                             ),
@@ -1094,7 +1095,9 @@ class _RegistProductState extends State<RegistProduct>
                       ],
                     ),
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    controller.clickMaterialButton(materialList[index]);
+                  },
                 );
               },
             );
@@ -1337,59 +1340,63 @@ class _RegistProductState extends State<RegistProduct>
           ),
         ),
         GridView.builder(
-            shrinkWrap: true,
-            physics: const ScrollPhysics(),
-            padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
-            itemCount: style.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 2.5,
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              return GetBuilder<RegistController>(
-                init: registController,
-                builder: (controller) {
-                  return GestureDetector(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            children: [
-                              Transform.scale(
-                                scale: 0.8,
-                                child: SizedBox(
-                                  width: 25 * Scale.width,
-                                  height: 25 * Scale.width,
-                                  child: Checkbox(
-                                    value: controller
-                                        .isMaterialSelected(style[index]),
-                                    onChanged: (value) {
-                                      controller
-                                          .clickMaterialButton(style[index]);
-                                    },
-                                  ),
+          shrinkWrap: true,
+          physics: const ScrollPhysics(),
+          padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+          itemCount: style.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 2.5,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            return GetBuilder<RegistController>(
+              init: registController,
+              builder: (controller) {
+                return GestureDetector(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Transform.scale(
+                              scale: 0.8,
+                              child: SizedBox(
+                                width: 25 * Scale.width,
+                                height: 25 * Scale.width,
+                                child: Checkbox(
+                                  activeColor: Colors.indigo[300],
+                                  side: BorderSide(
+                                      color: Colors.grey[500]!,
+                                      width: 1 * Scale.width),
+                                  value: controller
+                                      .isMaterialSelected(style[index]),
+                                  onChanged: (value) {},
                                 ),
                               ),
-                              Text(
-                                style[index],
-                                style: textStyle(Colors.black, FontWeight.w500,
-                                    "NotoSansKR", 11.0),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                            Text(
+                              style[index],
+                              style: textStyle(Colors.black, FontWeight.w500,
+                                  "NotoSansKR", 11.0),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    onTap: () {},
-                  );
-                },
-              );
-            })
+                  ),
+                  onTap: () {
+                    controller.clickMaterialButton(style[index]);
+                  },
+                );
+              },
+            );
+          },
+        ),
       ],
     );
   }
