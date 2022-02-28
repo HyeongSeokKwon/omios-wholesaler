@@ -59,13 +59,13 @@ class HttpService {
     accessToken = pref.getString('accessToken');
   }
 
-  void setRefreshToken(var changedRefreshToken) async {
+  Future<void> setRefreshToken(var changedRefreshToken) async {
     pref = await SharedPreferences.getInstance();
     pref.setString('refreshToken', changedRefreshToken);
     refreshToken = changedRefreshToken;
   }
 
-  void setAccessToken(var changedAccessToken) async {
+  Future<void> setAccessToken(var changedAccessToken) async {
     pref = await SharedPreferences.getInstance();
     pref.setString('accessToken', changedAccessToken);
     accessToken = changedAccessToken;
@@ -87,9 +87,10 @@ class HttpService {
     }
   }
 
-  void updateToken() async {
+  Future<void> updateToken() async {
     // refresh token으로 accessToken 갱신시키는 함수
     Map<String, dynamic> responseJson;
+    getToken();
     if (isAccessExpired()) {
       //access token 만료 되었으면
       if (!isRefreshExpired()) {
@@ -117,12 +118,14 @@ class HttpService {
       [Map<String, String>? queryParams]) async {
     http.Response response;
     var responseJson = {};
+
     try {
-      updateToken();
-      response = await http.get(
-        Uri.http(addressUrlx, baseUrl, queryParams),
-        headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
-      );
+      response = await updateToken().then(((value) async {
+        return await http.get(
+          Uri.http(addressUrlx, baseUrl, queryParams),
+          headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
+        );
+      }));
 
       responseJson = _response(response);
       return responseJson;
@@ -150,7 +153,7 @@ class HttpService {
     Map<String, dynamic> responseJson;
 
     try {
-      updateToken();
+      //updateToken();
       response = await http.post(Uri.parse(addressUrl + addtionalUrl),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
           body: body);
@@ -166,3 +169,39 @@ class HttpService {
 
   Future<dynamic> httpDelete(String addtionalUrl) async {}
 }
+
+
+//const GET = 0;
+//const POST = 1;
+
+// Future<dynamic> request(int method, String additionalUrl, var body)
+// {
+  
+//   if (additionalUrl == '/token/' || additionalUrl == '/token/refresh/')
+//     post_login();
+//     return;
+
+//   switch(method)
+//   {
+//     case GET:
+//       http.get(additionalUrl, body, is_requried);
+//       break;
+//     case POST:
+//       http.post(additionalUrl, body);
+//   }
+// }
+
+
+// bool is_required_authentication_url(String additionalUrl)
+// {
+//   switch(additionalUrl)
+//   {
+//     case '/token/':
+//     case '/token/refresh/':
+//       return False;
+
+//     case ''
+//       return True
+
+//   }
+// }
