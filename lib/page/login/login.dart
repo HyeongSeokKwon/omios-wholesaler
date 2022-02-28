@@ -45,36 +45,32 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    Scale.setScale(context);
     return BlocProvider(
-      create: (context) => AuthenticationBloc(authRepository: authRepository),
+      create: (context) => AuthenticationBloc(
+          authRepository: AuthRepository(), initAutoLogin: false),
       child: GestureDetector(
         onTap: () {
           FocusScope.of(context).requestFocus(FocusNode());
         },
         child: BlocConsumer<AuthenticationBloc, AuthenticationState>(
+          listenWhen: ((previous, current) =>
+              previous.authStatus != current.authStatus),
           listener: (context, state) {
             switch (state.authStatus) {
-              case AuthStatus.success:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Home()),
-                );
-                break;
-              case AuthStatus.failure:
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    const SnackBar(
-                      content: Text('아이디 / 패스워드를 확인해주세요'),
+              case AuthStatus.loginSuccess:
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute<dynamic>(
+                      builder: (BuildContext context) => const Home(),
                     ),
-                  );
+                    (route) => false);
                 break;
-              case AuthStatus.loading:
-
-              case AuthStatus.init:
-
+              case AuthStatus.loginFailure:
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('로그인 에러가 발생했습니다.')));
+                break;
               default:
+                break;
             }
           },
           builder: (context, state) {
@@ -133,9 +129,14 @@ class MainText extends StatelessWidget {
   }
 }
 
-class _LoginField extends StatelessWidget {
+class _LoginField extends StatefulWidget {
   const _LoginField({Key? key}) : super(key: key);
 
+  @override
+  State<_LoginField> createState() => _LoginFieldState();
+}
+
+class _LoginFieldState extends State<_LoginField> {
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -153,7 +154,6 @@ class _LoginField extends StatelessWidget {
 
 class _IdTextField extends StatelessWidget {
   final TextEditingController idTextController = TextEditingController();
-  _IdTextField({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -248,7 +248,6 @@ class _IdTextField extends StatelessWidget {
 
 class _PasswordTextField extends StatelessWidget {
   final TextEditingController pwdTextController = TextEditingController();
-  _PasswordTextField({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -350,12 +349,11 @@ class _AutuLoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 10 * Scale.width),
-      child: GetBuilder<LoginController>(
-          init: loginController,
-          builder: (controller) {
-            return SizedBox(
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, state) {
+        return Padding(
+            padding: EdgeInsets.only(left: 10 * Scale.width),
+            child: SizedBox(
               height: 20 * Scale.height,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -364,8 +362,13 @@ class _AutuLoginButton extends StatelessWidget {
                   Transform.scale(
                     scale: 0.7,
                     child: Switch.adaptive(
-                        value: controller.isAutoLoginChecked ??= false,
-                        onChanged: (value) => controller.checkedAutoLogin()),
+                        value:
+                            context.read<AuthenticationBloc>().state.autoLogin,
+                        onChanged: ((newValue) {
+                          context
+                              .read<AuthenticationBloc>()
+                              .add(ClickAutoLoginButtonEvent());
+                        })),
                   ),
                   Text(
                     "자동로그인",
@@ -374,8 +377,8 @@ class _AutuLoginButton extends StatelessWidget {
                   ),
                 ],
               ),
-            );
-          }),
+            ));
+      },
     );
   }
 }
