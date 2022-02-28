@@ -30,3 +30,7 @@ class ClickLoginButtonEvent extends AuthenticationEvent {
     required this.password,
   });
 }
+
+class ClickAutoLoginButtonEvent extends AuthenticationEvent {}
+
+class AutoLoginEvent extends AuthenticationEvent {}
