@@ -1030,7 +1030,10 @@ class _RegistProductState extends State<RegistProduct>
                                       width: 1 * Scale.width),
                                   value: controller
                                       .isMaterialSelected(materialList[index]),
-                                  onChanged: (value) {},
+                                  onChanged: (value) {
+                                    controller.clickMaterialButton(
+                                        materialList[index]);
+                                  },
                                 ),
                               ),
                             ),
@@ -1339,7 +1342,7 @@ class _RegistProductState extends State<RegistProduct>
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Text(
             "스타일을 선택하면 더 많은 리스트에서 노출됩니다.",
-            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 12.0),
+            style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
           ),
         ),
         GridView.builder(
@@ -1378,7 +1381,10 @@ class _RegistProductState extends State<RegistProduct>
                                       width: 1 * Scale.width),
                                   value: controller
                                       .isMaterialSelected(style[index]),
-                                  onChanged: (value) {},
+                                  onChanged: (value) {
+                                    controller
+                                        .clickMaterialButton(style[index]);
+                                  },
                                 ),
                               ),
                             ),

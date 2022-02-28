@@ -1,5 +1,6 @@
 import 'package:deepy_wholesaler/model/product_model.dart';
 import 'package:deepy_wholesaler/page/deepy_home/home_controller.dart';
+import 'package:deepy_wholesaler/page/login/login.dart';
 import 'package:deepy_wholesaler/page/regist_product/regist_product.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/product_card.dart';
@@ -26,7 +27,6 @@ class _HomeState extends State<Home> {
     return SingleChildScrollView(
       physics: const ScrollPhysics(),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           wholeSalerInfoArea(),
           wholeSalerProduct(),
@@ -41,10 +41,17 @@ class _HomeState extends State<Home> {
       children: [
         Column(
           children: [
-            Container(
-              color: Colors.grey,
-              width: 414 * Scale.width,
-              height: 250 * Scale.height,
+            GestureDetector(
+              onTap: (() {
+                Navigator.pop(context);
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => Login()));
+              }),
+              child: Container(
+                color: Colors.grey,
+                width: 414 * Scale.width,
+                height: 280 * Scale.height,
+              ),
             ),
             Container(
               height: 180 * Scale.height,
@@ -67,7 +74,7 @@ class _HomeState extends State<Home> {
                   Text("도매상호 명",
                       style: textStyle(
                           Colors.black, FontWeight.w700, "NotoSansKR", 18.0)),
-                  const SizedBox(height: 15),
+                  SizedBox(height: 35 * Scale.height),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -123,7 +130,7 @@ class _HomeState extends State<Home> {
                     children: [
                       TextButton(
                         child: Text("+  상품 등록",
-                            style: textStyle(Colors.white, FontWeight.w700,
+                            style: textStyle(Colors.white, FontWeight.w500,
                                 "NotoSansKR", 14.0)),
                         style: ButtonStyle(
                           shape:
@@ -146,7 +153,7 @@ class _HomeState extends State<Home> {
                       ),
                       TextButton(
                         child: Text("상품 관리",
-                            style: textStyle(Colors.black, FontWeight.w700,
+                            style: textStyle(Colors.black, FontWeight.w500,
                                 "NotoSansKR", 14.0)),
                         style: ButtonStyle(
                           shape:
@@ -168,7 +175,7 @@ class _HomeState extends State<Home> {
                       ),
                       TextButton(
                         child: Text("배송 관리",
-                            style: textStyle(Colors.black, FontWeight.w700,
+                            style: textStyle(Colors.black, FontWeight.w500,
                                 "NotoSansKR", 14.0)),
                         style: ButtonStyle(
                           shape:
@@ -206,6 +213,7 @@ class _HomeState extends State<Home> {
               init: homeController,
               builder: (controller) {
                 return GridView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 0),
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
                   itemCount: controller.productData.length,
