@@ -1,11 +1,9 @@
 import 'package:deepy_wholesaler/repository/http_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository extends HttpRepository {
-  Future<dynamic> basicLogin(String id, String password) async {
-    Map response;
-    pref = await SharedPreferences.getInstance();
+  late Map response;
 
+  Future<dynamic> basicLogin(String id, String password) async {
     Map<String, String> body = {
       'username': id,
       'password': password,
@@ -13,6 +11,19 @@ class AuthRepository extends HttpRepository {
 
     try {
       response = await super.httpPost('/token/', body);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<dynamic> autoLogin(String refreshToken) async {
+    Map<String, String> body = {
+      'refresh': refreshToken,
+    };
+
+    try {
+      response = await super.httpPost('/token/refresh/', body);
       return response;
     } catch (e) {
       rethrow;

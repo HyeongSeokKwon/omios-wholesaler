@@ -80,6 +80,7 @@ class HttpRepository {
   Future<void> updateToken() async {
     // refresh token으로 accessToken 갱신시키는 함수
     Map<String, dynamic> responseJson;
+    getToken();
     if (isAccessExpired()) {
       //access token 만료 되었으면
       if (!isRefreshExpired()) {
@@ -107,6 +108,7 @@ class HttpRepository {
       [Map<String, String>? queryParams]) async {
     http.Response response;
     var responseJson = {};
+    print(queryParams);
     try {
       response = await updateToken().then(((value) async {
         return await http.get(
