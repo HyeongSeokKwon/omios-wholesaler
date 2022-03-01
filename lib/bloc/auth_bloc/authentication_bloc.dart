@@ -1,9 +1,8 @@
 import 'dart:async';
-
-import 'package:deepy_wholesaler/repository/auth_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:deepy_wholesaler/repository/auth_repository.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -13,6 +12,7 @@ class AuthenticationBloc
   final AuthRepository authRepository;
   late SharedPreferences prefs;
   bool initAutoLogin;
+
   AuthenticationBloc(
       {required this.authRepository, required this.initAutoLogin})
       : super(AuthenticationState.initial(initAutoLogin)) {
