@@ -1,7 +1,6 @@
-import 'package:deepy_wholesaler/bloc/auth_bloc/authentication_bloc.dart';
+import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AutoLoginButton extends StatelessWidget {
   const AutoLoginButton({Key? key}) : super(key: key);
