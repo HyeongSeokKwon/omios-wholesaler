@@ -9,9 +9,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:get/get.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import 'login_controller.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -22,16 +19,11 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   String autoLoginIcon = "assets/images/svg/login.svg";
   String autoUnLoginIcon = "assets/images/svg/unlogin.svg";
-  LoginController loginController = LoginController();
   AuthRepository authRepository = AuthRepository();
 
   @override
   void initState() {
     super.initState();
-    loginController.initLoginController(context).catchError((e) {
-      showAlertDialog(context, e);
-      setState(() {});
-    });
 
     getVibratePermission();
   }
@@ -92,8 +84,7 @@ class _LoginState extends State<Login> {
                               SizedBox(height: 50 * Scale.height),
                               const _LoginField(),
                               SizedBox(height: 16 * Scale.height),
-                              _AutuLoginButton(
-                                  loginController: loginController),
+                              const _AutoLoginButton(),
                               SizedBox(height: 16 * Scale.height),
                               const _LoginButton(),
                               SizedBox(height: 35 * Scale.height),
@@ -130,14 +121,8 @@ class MainText extends StatelessWidget {
   }
 }
 
-class _LoginField extends StatefulWidget {
+class _LoginField extends StatelessWidget {
   const _LoginField({Key? key}) : super(key: key);
-
-  @override
-  State<_LoginField> createState() => _LoginFieldState();
-}
-
-class _LoginFieldState extends State<_LoginField> {
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -343,10 +328,8 @@ class _PasswordTextField extends StatelessWidget {
   }
 }
 
-class _AutuLoginButton extends StatelessWidget {
-  final LoginController loginController;
-  const _AutuLoginButton({Key? key, required this.loginController})
-      : super(key: key);
+class _AutoLoginButton extends StatelessWidget {
+  const _AutoLoginButton({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
