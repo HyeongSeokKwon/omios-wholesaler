@@ -1,10 +1,14 @@
+import 'package:deepy_wholesaler/bloc/myproducts/myproducts_bloc.dart';
 import 'package:deepy_wholesaler/model/product_model.dart';
 import 'package:deepy_wholesaler/page/deepy_home/home_controller.dart';
 import 'package:deepy_wholesaler/page/login/login.dart';
 import 'package:deepy_wholesaler/page/regist_product/regist_product.dart';
+import 'package:deepy_wholesaler/repository/products_repository.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/product_card.dart';
+import 'package:deepy_wholesaler/widget/progress_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 
 class Home extends StatefulWidget {
@@ -18,8 +22,12 @@ class _HomeState extends State<Home> {
   HomeController homeController = HomeController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: scrollArea(),
+    return BlocProvider(
+      create: (context) =>
+          MyproductsBloc(productsRepository: ProductsRepository()),
+      child: Scaffold(
+        body: scrollArea(),
+      ),
     );
   }
 
@@ -44,8 +52,8 @@ class _HomeState extends State<Home> {
             GestureDetector(
               onTap: (() {
                 Navigator.pop(context);
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => Login()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Login()));
               }),
               child: Container(
                 color: Colors.grey,
@@ -204,80 +212,116 @@ class _HomeState extends State<Home> {
   }
 
   Widget wholeSalerProduct() {
-    return FutureBuilder(
-      future: homeController.initWholeSalerProducts(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData) {
-            return GetBuilder<HomeController>(
-              init: homeController,
-              builder: (controller) {
-                return GridView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 0),
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
-                  itemCount: controller.productData.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 0.6,
-                  ),
-                  itemBuilder: (context, int index) {
-                    return ProductCard(
-                        product:
-                            Product.fromJson(controller.productData[index]),
-                        imageWidth: 110 * Scale.width);
-                  },
-                );
-              },
-            );
-          } else {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "네트워크에 연결하지 못했어요",
-                    style: textStyle(
-                        Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
-                  ),
-                  Text(
-                    "네트워크 연결상태를 확인하고",
-                    style: textStyle(
-                        Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
-                  ),
-                  Text(
-                    "다시 시도해 주세요",
-                    style: textStyle(
-                        Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
-                  ),
-                  SizedBox(height: 15 * Scale.height),
-                  GestureDetector(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: const BorderRadiusDirectional.all(
-                              Radius.circular(19))),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 17 * Scale.width,
-                            vertical: 14 * Scale.height),
-                        child: Text("다시 시도하기",
-                            style: textStyle(Colors.black, FontWeight.w700,
-                                'NotoSansKR', 15.0)),
-                      ),
-                    ),
-                    onTap: () {
-                      setState(() {});
-                    },
-                  ),
-                ],
-              ),
-            );
-          }
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
-    );
+    return BlocConsumer<MyproductsBloc, MyproductsState>(
+        listener: ((context, state) {
+      switch (state.fetchStatus) {
+        case FetchStatus.unfetched:
+          BlocProvider.of<MyproductsBloc>(context).add(LoadMyproductsEvent());
+          //context.read<MyproductsBloc>().add(LoadMyproductsEvent());
+          break;
+        default:
+          break;
+      }
+    }), builder: (context, state) {
+      if (state.fetchStatus == FetchStatus.fetched) {
+        return GridView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 0),
+          shrinkWrap: true,
+          physics: const ScrollPhysics(),
+          itemCount: context.read<MyproductsBloc>().state.productsData.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 0.6,
+          ),
+          itemBuilder: (context, int index) {
+            return ProductCard(
+                product: Product.fromJson(
+                    context.read<MyproductsBloc>().state.productsData[index]),
+                imageWidth: 110 * Scale.width);
+          },
+        );
+      } else {
+        context.read<MyproductsBloc>().add(LoadMyproductsEvent());
+        return progressBar();
+      }
+    });
   }
+
+  // Widget wholeSalerProduct() {
+  //   return FutureBuilder(
+  //     future: homeController.initWholeSalerProducts(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.done) {
+  //         if (snapshot.hasData) {
+  //           return GetBuilder<HomeController>(
+  //             init: homeController,
+  //             builder: (controller) {
+  //               return GridView.builder(
+  //                 padding: const EdgeInsets.symmetric(vertical: 0),
+  //                 shrinkWrap: true,
+  //                 physics: const ScrollPhysics(),
+  //                 itemCount: controller.productData.length,
+  //                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+  //                   crossAxisCount: 3,
+  //                   childAspectRatio: 0.6,
+  //                 ),
+  //                 itemBuilder: (context, int index) {
+  //                   return ProductCard(
+  //                       product:
+  //                           Product.fromJson(controller.productData[index]),
+  //                       imageWidth: 110 * Scale.width);
+  //                 },
+  //               );
+  //             },
+  //           );
+  //         } else {
+  //           return Center(
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 Text(
+  //                   "네트워크에 연결하지 못했어요",
+  //                   style: textStyle(
+  //                       Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+  //                 ),
+  //                 Text(
+  //                   "네트워크 연결상태를 확인하고",
+  //                   style: textStyle(
+  //                       Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+  //                 ),
+  //                 Text(
+  //                   "다시 시도해 주세요",
+  //                   style: textStyle(
+  //                       Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+  //                 ),
+  //                 SizedBox(height: 15 * Scale.height),
+  //                 GestureDetector(
+  //                   child: Container(
+  //                     decoration: BoxDecoration(
+  //                         color: Colors.grey[200],
+  //                         borderRadius: const BorderRadiusDirectional.all(
+  //                             Radius.circular(19))),
+  //                     child: Padding(
+  //                       padding: EdgeInsets.symmetric(
+  //                           horizontal: 17 * Scale.width,
+  //                           vertical: 14 * Scale.height),
+  //                       child: Text("다시 시도하기",
+  //                           style: textStyle(Colors.black, FontWeight.w700,
+  //                               'NotoSansKR', 15.0)),
+  //                     ),
+  //                   ),
+  //                   onTap: () {
+  //                     setState(() {});
+  //                   },
+  //                 ),
+  //               ],
+  //             ),
+  //           );
+  //         }
+  //       } else {
+  //         return const CircularProgressIndicator();
+  //       }
+  //     },
+  //   );
+  // }
 }
