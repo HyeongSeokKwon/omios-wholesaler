@@ -1,4 +1,4 @@
-import 'package:deepy_wholesaler/bloc/myproducts/myproducts_bloc.dart';
+import 'package:deepy_wholesaler/bloc/myproducts_bloc/myproducts_bloc.dart';
 import 'package:deepy_wholesaler/model/product_model.dart';
 import 'package:deepy_wholesaler/widget/progress_bar.dart';
 import 'package:flutter/material.dart';
