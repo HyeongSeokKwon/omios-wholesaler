@@ -1,8 +1,10 @@
+import 'package:deepy_wholesaler/bloc/regist_product_bloc/price/price_bloc.dart';
 import 'package:deepy_wholesaler/page/regist_product/regist_controller.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -18,33 +20,40 @@ class _RegistProductState extends State<RegistProduct>
   RegistController registController = RegistController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xffffffff),
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        leadingWidth: 120 * Scale.width,
-        leading: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(width: 15 * Scale.width),
-            GestureDetector(
-              child: SvgPicture.asset(
-                "assets/images/svg/moveToBack.svg",
-                height: 17 * Scale.height,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            SizedBox(width: 10 * Scale.width),
-            Text("상품 등록",
-                style: textStyle(const Color(0xff333333), FontWeight.w700,
-                    "NotoSansKR", 20.0)),
-          ],
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<PriceBloc>(
+          create: (BuildContext context) => PriceBloc(),
         ),
+      ],
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xffffffff),
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          leadingWidth: 120 * Scale.width,
+          leading: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(width: 15 * Scale.width),
+              GestureDetector(
+                child: SvgPicture.asset(
+                  "assets/images/svg/moveToBack.svg",
+                  height: 17 * Scale.height,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              SizedBox(width: 10 * Scale.width),
+              Text("상품 등록",
+                  style: textStyle(const Color(0xff333333), FontWeight.w700,
+                      "NotoSansKR", 20.0)),
+            ],
+          ),
+        ),
+        body: scrollArea(),
       ),
-      body: scrollArea(),
     );
   }
 
@@ -152,114 +161,127 @@ class _RegistProductState extends State<RegistProduct>
     );
   }
 
-  Widget addPriceButton(String addPrice) {
-    return TextButton(
-      child: Text("+ $addPrice",
-          style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 14.0)),
-      style: ButtonStyle(
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            side: BorderSide(color: Colors.grey[300]!),
-            borderRadius: BorderRadius.circular(10),
+  Widget addPriceButton(
+      int addPrice, String unit, TextEditingController priceEditController) {
+    return BlocBuilder<PriceBloc, PriceState>(
+      builder: (context, state) {
+        return TextButton(
+          child: Text("$addPrice" + unit,
+              style:
+                  textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 14.0)),
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                side: BorderSide(color: Colors.grey[300]!),
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            fixedSize: MaterialStateProperty.all<Size>(
+                Size(70 * Scale.width, 40 * Scale.height)),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
           ),
-        ),
-        fixedSize: MaterialStateProperty.all<Size>(
-            Size(70 * Scale.width, 40 * Scale.height)),
-        backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-      ),
-      onPressed: () {
-        switch (addPrice) {
-          case "1천원":
-            registController.addPrice(1000);
-            break;
-          case "3천원":
-            registController.addPrice(3000);
-            break;
-          case "5천원":
-            registController.addPrice(5000);
-            break;
-          case "1만원":
-            registController.addPrice(10000);
-            break;
-          case "2만원":
-            registController.addPrice(20000);
-            break;
-          default:
-        }
+          onPressed: () {
+            switch (unit) {
+              case "천원":
+                context.read<PriceBloc>().add(ClickAddButtonEvent(
+                    addPrice: addPrice * 1000,
+                    priceEditController: priceEditController));
+                break;
+              case "만원":
+                context.read<PriceBloc>().add(ClickAddButtonEvent(
+                    addPrice: addPrice * 10000,
+                    priceEditController: priceEditController));
+                break;
+            }
+          },
+        );
       },
     );
   }
 
   Widget writePriceArea() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
-          child: Text(
-            "단가(필수)",
-            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 15.0),
-          ),
-        ),
-        GetBuilder<RegistController>(
-            init: registController,
-            builder: (controller) {
-              return TextField(
-                controller: controller.priceEditController,
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  isDense: true,
-                  counterText: "",
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  labelStyle: TextStyle(
-                    color: const Color(0xff666666),
-                    height: 0.6,
-                    fontWeight: FontWeight.w400,
-                    fontFamily: "NotoSansKR",
-                    fontStyle: FontStyle.normal,
-                    fontSize: 14 * Scale.height,
-                  ),
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(7)),
-                    borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: const BorderRadius.all(Radius.circular(7)),
-                    borderSide:
-                        BorderSide(color: Colors.indigo[400]!, width: 1),
-                  ),
-                  hintText: ("상품명을 입력하세요"),
-                  hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                      "NotoSansKR", 14.0),
-                ),
-                textAlign: TextAlign.left,
-              );
-            }),
-        SizedBox(height: 5 * Scale.height),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    TextEditingController priceEditController = TextEditingController();
+    return BlocBuilder<PriceBloc, PriceState>(
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            addPriceButton("1천원"),
-            SizedBox(
-              width: 5 * Scale.width,
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
+              child: Text(
+                "단가(필수)",
+                style: textStyle(
+                    Colors.black, FontWeight.w700, "NotoSansKR", 15.0),
+              ),
             ),
-            addPriceButton("3천원"),
-            SizedBox(
-              width: 5 * Scale.width,
-            ),
-            addPriceButton("5천원"),
-            SizedBox(
-              width: 5 * Scale.width,
-            ),
-            addPriceButton("1만원"),
-            SizedBox(
-              width: 5 * Scale.width,
-            ),
-            addPriceButton("2만원"),
+            GetBuilder<RegistController>(
+                init: registController,
+                builder: (controller) {
+                  return TextField(
+                    controller: priceEditController,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      context
+                          .read<PriceBloc>()
+                          .add(ChangePriceEvent(changePrice: value));
+                    },
+                    decoration: InputDecoration(
+                      isDense: true,
+                      counterText: "",
+                      floatingLabelBehavior: FloatingLabelBehavior.auto,
+                      labelStyle: TextStyle(
+                        color: const Color(0xff666666),
+                        height: 0.6,
+                        fontWeight: FontWeight.w400,
+                        fontFamily: "NotoSansKR",
+                        fontStyle: FontStyle.normal,
+                        fontSize: 14 * Scale.height,
+                      ),
+                      border: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(7)),
+                        borderSide:
+                            BorderSide(color: Color(0xffcccccc), width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(7)),
+                        borderSide:
+                            BorderSide(color: Colors.indigo[400]!, width: 1),
+                      ),
+                      hintText: ("상품명을 입력하세요"),
+                      hintStyle: textStyle(const Color(0xffcccccc),
+                          FontWeight.w400, "NotoSansKR", 14.0),
+                    ),
+                    textAlign: TextAlign.left,
+                  );
+                }),
+            SizedBox(height: 5 * Scale.height),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                addPriceButton(1, "천원", priceEditController),
+                SizedBox(
+                  width: 5 * Scale.width,
+                ),
+                addPriceButton(3, "천원", priceEditController),
+                SizedBox(
+                  width: 5 * Scale.width,
+                ),
+                addPriceButton(5, "천원", priceEditController),
+                SizedBox(
+                  width: 5 * Scale.width,
+                ),
+                addPriceButton(1, "만원", priceEditController),
+                SizedBox(
+                  width: 5 * Scale.width,
+                ),
+                addPriceButton(2, "만원", priceEditController),
+              ],
+            )
           ],
-        )
-      ],
+        );
+      },
     );
   }
 
