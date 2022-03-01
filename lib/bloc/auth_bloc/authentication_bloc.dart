@@ -79,7 +79,7 @@ class AuthenticationBloc
 
     if (isAutoLoginClicked == true && refreshToken != null) {
       response = await authRepository.autoLogin(refreshToken);
-      print(response);
+
       switch (response['code']) {
         case 201:
           authRepository.setAccessToken(response['data']['access']);
@@ -87,6 +87,8 @@ class AuthenticationBloc
 
           emit(state.copyWith(authStatus: AuthStatus.authenticated));
           break;
+        case 401:
+          emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
       }
     } else {
       emit(state.copyWith(authStatus: AuthStatus.unauthenticated));

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:deepy_wholesaler/http/http_exception.dart';
+import 'package:get/state_manager.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +10,7 @@ class HttpRepository {
   String? refreshToken;
   String? accessToken;
 
-  var addressUrl = 'http://13.209.244.41';
+  String addressUrl = '13.209.244.41';
   late SharedPreferences pref;
 
   dynamic _response(http.Response response) {
@@ -87,7 +88,7 @@ class HttpRepository {
         // refresh token 만료 되지 않았으면
         try {
           var response = await http.post(
-            Uri.parse(addressUrl + '/token/refresh/'), // refresh token 으로 재발급
+            Uri.http(addressUrl, '/token/refresh/'), // refresh token 으로 재발급
             headers: {"Content-Type": "application/json; charset=UTF-8"},
             body: json.encode(
               {"refresh": refreshToken},
@@ -108,7 +109,6 @@ class HttpRepository {
       [Map<String, String>? queryParams]) async {
     http.Response response;
     var responseJson = {};
-    print(queryParams);
     try {
       response = await updateToken().then(((value) async {
         return await http.get(
@@ -143,10 +143,15 @@ class HttpRepository {
     Map<String, dynamic> responseJson;
 
     try {
-      //updateToken();
-      response = await http.post(Uri.parse(addressUrl + addtionalUrl),
-          headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
-          body: body);
+      response = await updateToken().then(((value) async {
+        return await http.post(
+            Uri.http(
+              addressUrl,
+              addtionalUrl,
+            ),
+            headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
+            body: body);
+      }));
 
       responseJson = _response(response);
       return responseJson;
