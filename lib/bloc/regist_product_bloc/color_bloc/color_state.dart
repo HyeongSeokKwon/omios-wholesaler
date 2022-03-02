@@ -1,23 +1,27 @@
 part of 'color_bloc.dart';
 
 class ColorState extends Equatable {
-  List<String> selectedColors;
+  List<Map> selectedColorMap;
+  List<String> selectedColorList;
   ColorState({
-    required this.selectedColors,
+    required this.selectedColorMap,
+    required this.selectedColorList,
   });
 
   factory ColorState.initial() {
-    return ColorState(selectedColors: []);
+    return ColorState(selectedColorMap: [], selectedColorList: []);
   }
 
   @override
-  List<Object> get props => [selectedColors];
+  List<Object> get props => [selectedColorMap, selectedColorList];
 
   ColorState copyWith({
-    List<String>? selectedColors,
+    List<Map>? selectedColorMap,
+    List<String>? selectedColorList,
   }) {
     return ColorState(
-      selectedColors: selectedColors ?? this.selectedColors,
+      selectedColorMap: selectedColorMap ?? this.selectedColorMap,
+      selectedColorList: selectedColorList ?? this.selectedColorList,
     );
   }
 }

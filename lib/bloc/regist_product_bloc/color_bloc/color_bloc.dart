@@ -10,13 +10,22 @@ class ColorBloc extends Bloc<ColorEvent, ColorState> {
   }
 
   void clickColorButton(ClickColorButtonEvent event, Emitter<ColorState> emit) {
-    List<String> colorList = [...state.selectedColors];
-    if (colorList.contains(event.color)) {
-      colorList.remove(event.color);
-      emit(state.copyWith(selectedColors: colorList));
-    } else {
-      colorList.add(event.color);
-      emit(state.copyWith(selectedColors: colorList));
+    List<Map> colorMap = [...state.selectedColorMap];
+    List<String> colorList = [...state.selectedColorList];
+
+    for (var color in colorMap) {
+      if (color['color'] == event.color) {
+        colorMap.remove(color);
+        colorList.remove(color['color']);
+        emit(state.copyWith(
+            selectedColorMap: colorMap, selectedColorList: colorList));
+        return;
+      }
     }
+    colorMap.add({'color': event.color, 'images': null});
+    colorList.add(event.color);
+    emit(state.copyWith(
+        selectedColorMap: colorMap, selectedColorList: colorList));
+    return;
   }
 }
