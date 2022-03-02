@@ -1,10 +1,9 @@
-import 'package:deepy_wholesaler/bloc/regist_product_bloc/price/price_bloc.dart';
+import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/page/regist_product/regist_controller.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -25,6 +24,9 @@ class _RegistProductState extends State<RegistProduct>
         BlocProvider<PriceBloc>(
           create: (BuildContext context) => PriceBloc(),
         ),
+        BlocProvider<ColorBloc>(
+          create: (BuildContext context) => ColorBloc(),
+        )
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -214,48 +216,41 @@ class _RegistProductState extends State<RegistProduct>
                     Colors.black, FontWeight.w700, "NotoSansKR", 15.0),
               ),
             ),
-            GetBuilder<RegistController>(
-                init: registController,
-                builder: (controller) {
-                  return TextField(
-                    controller: priceEditController,
-                    textInputAction: TextInputAction.next,
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      context
-                          .read<PriceBloc>()
-                          .add(ChangePriceEvent(changePrice: value));
-                    },
-                    decoration: InputDecoration(
-                      isDense: true,
-                      counterText: "",
-                      floatingLabelBehavior: FloatingLabelBehavior.auto,
-                      labelStyle: TextStyle(
-                        color: const Color(0xff666666),
-                        height: 0.6,
-                        fontWeight: FontWeight.w400,
-                        fontFamily: "NotoSansKR",
-                        fontStyle: FontStyle.normal,
-                        fontSize: 14 * Scale.height,
-                      ),
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(7)),
-                        borderSide:
-                            BorderSide(color: Color(0xffcccccc), width: 1),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(7)),
-                        borderSide:
-                            BorderSide(color: Colors.indigo[400]!, width: 1),
-                      ),
-                      hintText: ("상품명을 입력하세요"),
-                      hintStyle: textStyle(const Color(0xffcccccc),
-                          FontWeight.w400, "NotoSansKR", 14.0),
-                    ),
-                    textAlign: TextAlign.left,
-                  );
-                }),
+            TextField(
+              controller: priceEditController,
+              textInputAction: TextInputAction.next,
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                context
+                    .read<PriceBloc>()
+                    .add(ChangePriceEvent(changePrice: value));
+              },
+              decoration: InputDecoration(
+                isDense: true,
+                counterText: "",
+                floatingLabelBehavior: FloatingLabelBehavior.auto,
+                labelStyle: TextStyle(
+                  color: const Color(0xff666666),
+                  height: 0.6,
+                  fontWeight: FontWeight.w400,
+                  fontFamily: "NotoSansKR",
+                  fontStyle: FontStyle.normal,
+                  fontSize: 14 * Scale.height,
+                ),
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(7)),
+                  borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: const BorderRadius.all(Radius.circular(7)),
+                  borderSide: BorderSide(color: Colors.indigo[400]!, width: 1),
+                ),
+                hintText: ("상품명을 입력하세요"),
+                hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
+                    "NotoSansKR", 14.0),
+              ),
+              textAlign: TextAlign.left,
+            ),
             SizedBox(height: 5 * Scale.height),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -300,17 +295,17 @@ class _RegistProductState extends State<RegistProduct>
       "카키",
       "핑크",
     ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "색상 선택 및 입력(필수)",
-          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
-        ),
-        GetBuilder<RegistController>(
-          init: registController,
-          builder: (controller) {
-            return GridView.builder(
+    return BlocBuilder<ColorBloc, ColorState>(
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "색상 선택 및 입력(필수)",
+              style:
+                  textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+            ),
+            GridView.builder(
               shrinkWrap: true,
               physics: const ScrollPhysics(),
               padding: EdgeInsets.symmetric(
@@ -330,7 +325,11 @@ class _RegistProductState extends State<RegistProduct>
                         Radius.circular(8),
                       ),
                       border: Border.all(
-                          color: controller.isColorSelected(colorList[index])
+                          color: context
+                                  .read<ColorBloc>()
+                                  .state
+                                  .selectedColors
+                                  .contains(colorList[index])
                               ? Colors.indigo[400]!
                               : Colors.grey[300]!),
                     ),
@@ -338,7 +337,11 @@ class _RegistProductState extends State<RegistProduct>
                       child: Text(
                         colorList[index],
                         style: textStyle(
-                            controller.isColorSelected(colorList[index])
+                            context
+                                    .read<ColorBloc>()
+                                    .state
+                                    .selectedColors
+                                    .contains(colorList[index])
                                 ? Colors.black
                                 : Colors.grey[400]!,
                             FontWeight.w500,
@@ -348,14 +351,16 @@ class _RegistProductState extends State<RegistProduct>
                     ),
                   ),
                   onTap: () {
-                    controller.clickColorButton(colorList[index]);
+                    context
+                        .read<ColorBloc>()
+                        .add(ClickColorButtonEvent(color: colorList[index]));
                   },
                 );
               },
-            );
-          },
-        ),
-      ],
+            ),
+          ],
+        );
+      },
     );
   }
 
