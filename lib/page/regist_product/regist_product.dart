@@ -30,6 +30,7 @@ class _RegistProductState extends State<RegistProduct>
         ),
         BlocProvider<PhotoBloc>(
             create: (BuildContext context) => PhotoBloc(colorBloc)),
+        BlocProvider<SizeBloc>(create: (BuildContext context) => SizeBloc()),
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -682,21 +683,21 @@ class _RegistProductState extends State<RegistProduct>
           style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
         ),
         SizedBox(height: 10 * Scale.height),
-        GetBuilder<RegistController>(
-          init: registController,
-          builder: (controller) {
-            return Column(
-              children: [
-                Container(
-                  width: double.maxFinite,
-                  height: 50 * Scale.height,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.all(Radius.circular(8)),
-                    border: Border.all(color: Colors.grey[300]!),
-                  ),
-                  child: ListView.builder(
+        Column(
+          children: [
+            Container(
+              width: double.maxFinite,
+              height: 50 * Scale.height,
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                border: Border.all(color: Colors.grey[300]!),
+              ),
+              child: BlocBuilder<SizeBloc, SizeState>(
+                builder: (context, state) {
+                  return ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: controller.selectedSize.length,
+                      itemCount:
+                          context.read<SizeBloc>().state.selectedSize.length,
                       itemBuilder: (context, index) {
                         return Padding(
                           padding: EdgeInsets.all(5 * Scale.width),
@@ -709,11 +710,14 @@ class _RegistProductState extends State<RegistProduct>
                             child: Padding(
                               padding: EdgeInsets.all(8 * Scale.width),
                               child: Center(
-                                child: GestureDetector(
+                                child: InkWell(
                                   child: Row(
                                     children: [
                                       Text(
-                                        controller.selectedSize[index],
+                                        context
+                                            .read<SizeBloc>()
+                                            .state
+                                            .selectedSize[index],
                                         style: textStyle(
                                             Colors.black,
                                             FontWeight.w500,
@@ -728,16 +732,25 @@ class _RegistProductState extends State<RegistProduct>
                                     ],
                                   ),
                                   onTap: () {
-                                    controller.removeSize(index);
+                                    context.read<SizeBloc>().add(
+                                        ClickRemoveSizeButton(
+                                            size: context
+                                                .read<SizeBloc>()
+                                                .state
+                                                .selectedSize[index]));
                                   },
                                 ),
                               ),
                             ),
                           ),
                         );
-                      }),
-                ),
-                GridView.builder(
+                      });
+                },
+              ),
+            ),
+            BlocBuilder<SizeBloc, SizeState>(
+              builder: (context, state) {
+                return GridView.builder(
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
                   padding: EdgeInsets.symmetric(
@@ -758,7 +771,11 @@ class _RegistProductState extends State<RegistProduct>
                             Radius.circular(8),
                           ),
                           border: Border.all(
-                              color: controller.isSizedSelected(sizeList[index])
+                              color: context
+                                      .read<SizeBloc>()
+                                      .state
+                                      .selectedSize
+                                      .contains(sizeList[index])
                                   ? Colors.indigo[400]!
                                   : Colors.grey[300]!),
                         ),
@@ -766,7 +783,11 @@ class _RegistProductState extends State<RegistProduct>
                           child: Text(
                             sizeList[index],
                             style: textStyle(
-                                controller.isSizedSelected(sizeList[index])
+                                context
+                                        .read<SizeBloc>()
+                                        .state
+                                        .selectedSize
+                                        .contains(sizeList[index])
                                     ? Colors.black
                                     : Colors.grey[400]!,
                                 FontWeight.w500,
@@ -776,14 +797,25 @@ class _RegistProductState extends State<RegistProduct>
                         ),
                       ),
                       onTap: () {
-                        controller.clickSizeButton(sizeList[index]);
+                        if (context
+                            .read<SizeBloc>()
+                            .state
+                            .selectedSize
+                            .contains(sizeList[index])) {
+                          context.read<SizeBloc>().add(
+                              ClickRemoveSizeButton(size: sizeList[index]));
+                        } else {
+                          context
+                              .read<SizeBloc>()
+                              .add(ClickSizeButton(size: sizeList[index]));
+                        }
                       },
                     );
                   },
-                ),
-              ],
-            );
-          },
+                );
+              },
+            ),
+          ],
         ),
         Table(
           border: TableBorder.all(color: Colors.grey[200]!),
