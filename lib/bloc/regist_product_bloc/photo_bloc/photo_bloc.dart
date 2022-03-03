@@ -42,10 +42,10 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
     List<dynamic> imageList = [...state.basicPhoto];
     Image? photoByColor = state.photoByColor;
 
-    XFile? pickedFile = (await _picker.pickImage(
+    XFile? pickedFile = await _picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 50,
-    ));
+    );
 
     if (pickedFile != null) {
       if (photoType == 'basic') {
