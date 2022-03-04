@@ -9,7 +9,9 @@ abstract class ColorEvent extends Equatable {
 
 class ClickColorButtonEvent extends ColorEvent {
   final String color;
+  final int colorId;
   const ClickColorButtonEvent({
     required this.color,
+    required this.colorId,
   });
 }
