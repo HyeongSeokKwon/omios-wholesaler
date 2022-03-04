@@ -9,14 +9,12 @@ abstract class SizeEvent extends Equatable {
 
 class ClickSizeButton extends SizeEvent {
   final String size;
-  const ClickSizeButton({
-    required this.size,
-  });
+  final int sizeId;
+  const ClickSizeButton({required this.size, required this.sizeId});
 }
 
 class ClickRemoveSizeButton extends SizeEvent {
   final String size;
-  const ClickRemoveSizeButton({
-    required this.size,
-  });
+  int? sizeId;
+  ClickRemoveSizeButton({required this.size, this.sizeId});
 }
