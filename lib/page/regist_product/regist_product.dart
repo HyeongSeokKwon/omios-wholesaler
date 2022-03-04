@@ -1,4 +1,5 @@
 import 'package:deepy_wholesaler/bloc/bloc.dart';
+import 'package:deepy_wholesaler/bloc/regist_product_bloc/price_per_option_bloc/price_per_option_bloc.dart';
 import 'package:deepy_wholesaler/page/regist_product/regist_controller.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
@@ -17,20 +18,30 @@ class RegistProduct extends StatefulWidget {
 class _RegistProductState extends State<RegistProduct>
     with TickerProviderStateMixin {
   RegistController registController = RegistController();
+  PriceBloc priceBloc = PriceBloc();
   ColorBloc colorBloc = ColorBloc();
+  SizeBloc sizeBloc = SizeBloc();
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider<PriceBloc>(
-          create: (BuildContext context) => PriceBloc(),
+          create: (BuildContext context) => priceBloc,
         ),
         BlocProvider<ColorBloc>(
           create: (BuildContext context) => colorBloc,
         ),
         BlocProvider<PhotoBloc>(
-            create: (BuildContext context) => PhotoBloc(colorBloc)),
-        BlocProvider<SizeBloc>(create: (BuildContext context) => SizeBloc()),
+          create: (BuildContext context) => PhotoBloc(colorBloc),
+        ),
+        BlocProvider<SizeBloc>(
+          create: (BuildContext context) => sizeBloc,
+        ),
+        BlocProvider<PricePerOptionBloc>(
+          create: (BuildContext context) =>
+              PricePerOptionBloc(colorBloc, priceBloc, sizeBloc),
+        ),
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -355,9 +366,8 @@ class _RegistProductState extends State<RegistProduct>
                     ),
                   ),
                   onTap: () {
-                    context
-                        .read<ColorBloc>()
-                        .add(ClickColorButtonEvent(color: colorList[index]));
+                    context.read<ColorBloc>().add(ClickColorButtonEvent(
+                        color: colorList[index], colorId: index));
                   },
                 );
               },
@@ -802,12 +812,11 @@ class _RegistProductState extends State<RegistProduct>
                             .state
                             .selectedSize
                             .contains(sizeList[index])) {
-                          context.read<SizeBloc>().add(
-                              ClickRemoveSizeButton(size: sizeList[index]));
+                          context.read<SizeBloc>().add(ClickRemoveSizeButton(
+                              size: sizeList[index], sizeId: index));
                         } else {
-                          context
-                              .read<SizeBloc>()
-                              .add(ClickSizeButton(size: sizeList[index]));
+                          context.read<SizeBloc>().add(ClickSizeButton(
+                              size: sizeList[index], sizeId: index));
                         }
                       },
                     );
@@ -822,66 +831,52 @@ class _RegistProductState extends State<RegistProduct>
           children: <TableRow>[
             TableRow(children: [
               TableCell(
-                child: Container(
-                  child: Center(
-                    child: Text("사이즈",
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                  ),
+                child: Center(
+                  child: Text("사이즈",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
                 ),
               ),
               TableCell(
-                child: Container(
-                  child: Center(
-                    child: Text("허리둘레",
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                  ),
+                child: Center(
+                  child: Text("허리둘레",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
                 ),
               ),
               TableCell(
-                child: Container(
-                  child: Center(
-                    child: Text("힙둘레",
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                  ),
+                child: Center(
+                  child: Text("힙둘레",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
                 ),
               ),
               TableCell(
-                child: Container(
-                  child: Center(
-                    child: Text("밑위길이",
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                  ),
+                child: Center(
+                  child: Text("밑위길이",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
                 ),
               ),
               TableCell(
-                child: Container(
-                  child: Center(
-                    child: Text("허벅지둘레",
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                  ),
+                child: Center(
+                  child: Text("허벅지둘레",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
                 ),
               ),
               TableCell(
-                child: Container(
-                  child: Center(
-                    child: Text("밑단둘레",
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                  ),
+                child: Center(
+                  child: Text("밑단둘레",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
                 ),
               ),
               TableCell(
-                child: Container(
-                  child: Center(
-                    child: Text("총길이",
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                  ),
+                child: Center(
+                  child: Text("총길이",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
                 ),
               ),
             ])
@@ -908,9 +903,8 @@ class _RegistProductState extends State<RegistProduct>
           style:
               textStyle(Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
         ),
-        GetBuilder<RegistController>(
-          init: registController,
-          builder: (controller) {
+        BlocBuilder<PricePerOptionBloc, PricePerOptionState>(
+          builder: (context, state) {
             return Column(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -920,20 +914,32 @@ class _RegistProductState extends State<RegistProduct>
                         activeColor: Colors.indigo[300],
                         side: BorderSide(
                             color: Colors.grey[500]!, width: 1 * Scale.width),
-                        value: controller.pricePerOptionClicked,
+                        value:
+                            context.read<PricePerOptionBloc>().state.isClicked,
                         onChanged: (value) {
                           String missedValue = "";
-                          if (controller.selectedColor.isEmpty) {
+                          if (BlocProvider.of<ColorBloc>(context)
+                              .state
+                              .selectedColorList
+                              .isEmpty) {
                             missedValue = missedValue + " [색상]";
                           }
-                          if (controller.selectedSize.isEmpty) {
+                          if (BlocProvider.of<SizeBloc>(context)
+                              .state
+                              .selectedSize
+                              .isEmpty) {
                             missedValue = missedValue + " [사이즈]";
                           }
-                          if (controller.priceEditController.text.isEmpty) {
+                          if (BlocProvider.of<PriceBloc>(context)
+                              .state
+                              .price
+                              .isEmpty) {
                             missedValue = missedValue + " [가격]";
                           }
                           if (missedValue.isEmpty) {
-                            controller.clickPricePerOption();
+                            context.read<PricePerOptionBloc>().add(
+                                ClickedShowPricePerOptionEvent(
+                                    isClicked: value!));
                           } else {
                             missedValue = missedValue + "의 데이터가 없습니다!";
                             showAlertDialog(context, missedValue);
@@ -946,11 +952,15 @@ class _RegistProductState extends State<RegistProduct>
                     ),
                   ],
                 ),
-                controller.pricePerOptionClicked == true
+                context.read<PricePerOptionBloc>().state.isClicked
                     ? ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: controller.pricePerOption.length,
+                        itemCount: context
+                            .read<PricePerOptionBloc>()
+                            .state
+                            .pricePerOptionList
+                            .length,
                         itemBuilder: (context, index) {
                           return Column(
                             children: [
@@ -969,8 +979,10 @@ class _RegistProductState extends State<RegistProduct>
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        controller.pricePerOption[index]
-                                            ['color'],
+                                        context
+                                            .read<PricePerOptionBloc>()
+                                            .state
+                                            .pricePerOptionList[index]['color'],
                                         style: textStyle(
                                             Colors.black,
                                             FontWeight.w500,
@@ -978,8 +990,10 @@ class _RegistProductState extends State<RegistProduct>
                                             14.0),
                                       ),
                                       Text(
-                                        controller.pricePerOption[index]
-                                            ['size'],
+                                        context
+                                            .read<PricePerOptionBloc>()
+                                            .state
+                                            .pricePerOptionList[index]['size'],
                                         style: textStyle(
                                             Colors.black,
                                             FontWeight.w500,
@@ -990,8 +1004,11 @@ class _RegistProductState extends State<RegistProduct>
                                         children: [
                                           GestureDetector(
                                             onTap: () {
-                                              controller.changingPricePerOption(
-                                                  "minus", index);
+                                              context
+                                                  .read<PricePerOptionBloc>()
+                                                  .add(
+                                                      ClickMinusPriceButtonEvent(
+                                                          index: index));
                                             },
                                             child: SizedBox(
                                               width: 35 * Scale.width,
@@ -1003,18 +1020,28 @@ class _RegistProductState extends State<RegistProduct>
                                               ),
                                             ),
                                           ),
-                                          Text(
-                                            "${int.parse(controller.priceEditController.text) + controller.pricePerOption[index]['price_difference']}",
-                                            style: textStyle(
-                                                Colors.black,
-                                                FontWeight.w500,
-                                                "NotoSansKR",
-                                                14.0),
+                                          BlocBuilder<PricePerOptionBloc,
+                                              PricePerOptionState>(
+                                            builder: (context, state) {
+                                              return Text(
+                                                "${int.parse(BlocProvider.of<PriceBloc>(context).state.price) + context.read<PricePerOptionBloc>().state.pricePerOptionList[index]['price_difference']}",
+                                                style: textStyle(
+                                                    Colors.black,
+                                                    FontWeight.w500,
+                                                    "NotoSansKR",
+                                                    14.0),
+                                              );
+                                            },
                                           ),
                                           GestureDetector(
                                             onTap: () {
-                                              controller.changingPricePerOption(
-                                                  "plus", index);
+                                              context
+                                                  .read<PricePerOptionBloc>()
+                                                  .add(
+                                                      ClickPlusPriceButtonEvent(
+                                                          index: index));
+                                              print(
+                                                  "${int.parse(BlocProvider.of<PriceBloc>(context).state.price) + context.read<PricePerOptionBloc>().state.pricePerOptionList[index]['price_difference']}");
                                             },
                                             child: SizedBox(
                                               width: 35 * Scale.width,
