@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 part of 'color_bloc.dart';
 
 class ColorState extends Equatable {
@@ -9,7 +11,7 @@ class ColorState extends Equatable {
   });
 
   factory ColorState.initial() {
-    return ColorState(selectedColorMap: [], selectedColorList: []);
+    return ColorState(selectedColorMap: const [], selectedColorList: const []);
   }
 
   @override

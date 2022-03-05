@@ -22,9 +22,11 @@ class ColorBloc extends Bloc<ColorEvent, ColorState> {
         return;
       }
     }
+
     colorMap
         .add({'color': event.color, 'colorId': event.colorId, 'images': null});
     colorList.add(event.color);
+
     emit(state.copyWith(
         selectedColorMap: colorMap, selectedColorList: colorList));
     return;
