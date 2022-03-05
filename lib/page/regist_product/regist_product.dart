@@ -1,5 +1,4 @@
 import 'package:deepy_wholesaler/bloc/bloc.dart';
-import 'package:deepy_wholesaler/bloc/regist_product_bloc/price_per_option_bloc/price_per_option_bloc.dart';
 import 'package:deepy_wholesaler/page/regist_product/regist_controller.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
@@ -22,6 +21,8 @@ class _RegistProductState extends State<RegistProduct>
   ColorBloc colorBloc = ColorBloc();
   SizeBloc sizeBloc = SizeBloc();
 
+  FabricBloc fabricBloc = FabricBloc();
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -41,6 +42,9 @@ class _RegistProductState extends State<RegistProduct>
         BlocProvider<PricePerOptionBloc>(
           create: (BuildContext context) =>
               PricePerOptionBloc(colorBloc, priceBloc, sizeBloc),
+        ),
+        BlocProvider<FabricBloc>(
+          create: (BuildContext context) => fabricBloc,
         ),
       ],
       child: Scaffold(
@@ -1040,8 +1044,6 @@ class _RegistProductState extends State<RegistProduct>
                                                   .add(
                                                       ClickPlusPriceButtonEvent(
                                                           index: index));
-                                              print(
-                                                  "${int.parse(BlocProvider.of<PriceBloc>(context).state.price) + context.read<PricePerOptionBloc>().state.pricePerOptionList[index]['price_difference']}");
                                             },
                                             child: SizedBox(
                                               width: 35 * Scale.width,
@@ -1074,20 +1076,6 @@ class _RegistProductState extends State<RegistProduct>
   }
 
   Widget materialArea() {
-    List<String> materialList = [
-      "면",
-      "폴리에스테르",
-      "나일론",
-      "레이온",
-      "울",
-      "아크릴",
-      "린넨",
-      "스판",
-      "폴리우레탄",
-      "가죽",
-      "캐시미어",
-      "모달"
-    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1114,23 +1102,20 @@ class _RegistProductState extends State<RegistProduct>
             ),
           ),
         ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const ScrollPhysics(),
-          padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
-          itemCount: materialList.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 2.5,
-          ),
-          itemBuilder: (BuildContext context, int index) {
-            TextEditingController textEditingController =
-                TextEditingController();
-            FocusNode myFocusNode = FocusNode();
-            myFocusNode.addListener(() {});
-            return GetBuilder<RegistController>(
-              init: registController,
-              builder: (controller) {
+        BlocBuilder<FabricBloc, FabricState>(
+          builder: (context, state) {
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+              itemCount: context.read<FabricBloc>().state.fabricList!.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 2.5,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                TextEditingController textEditingController =
+                    TextEditingController();
                 return GestureDetector(
                   child: Container(
                     decoration: BoxDecoration(
@@ -1152,17 +1137,28 @@ class _RegistProductState extends State<RegistProduct>
                                   side: BorderSide(
                                       color: Colors.grey[500]!,
                                       width: 1 * Scale.width),
-                                  value: controller
-                                      .isMaterialSelected(materialList[index]),
+                                  value: context
+                                      .read<FabricBloc>()
+                                      .state
+                                      .isClicked[index],
                                   onChanged: (value) {
-                                    controller.clickMaterialButton(
-                                        materialList[index]);
+                                    context.read<FabricBloc>().add(
+                                        ClickFabricButtonEvent(
+                                            isChecked: value!,
+                                            fabric: context
+                                                .read<FabricBloc>()
+                                                .state
+                                                .fabricList![index],
+                                            fabricIndex: index));
                                   },
                                 ),
                               ),
                             ),
                             Text(
-                              materialList[index],
+                              context
+                                  .read<FabricBloc>()
+                                  .state
+                                  .fabricList![index],
                               style: textStyle(Colors.black, FontWeight.w500,
                                   "NotoSansKR", 13.0),
                             ),
@@ -1176,13 +1172,15 @@ class _RegistProductState extends State<RegistProduct>
                               SizedBox(
                                 width: 90 * Scale.width,
                                 height: 40 * Scale.height,
-                                child: TextFormField(
-                                  controller: textEditingController,
+                                child: TextField(
+                                  controller: state.textController?[index],
                                   keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp('[0-9]')),
-                                  ],
+                                  onChanged: (value) {
+                                    context.read<FabricBloc>().add(
+                                        InputFabricPercentEvent(
+                                            fabricPercent: value,
+                                            fabricIndex: index));
+                                  },
                                   style: const TextStyle(
                                     color: Color(0xff666666),
                                     fontWeight: FontWeight.w500,
@@ -1190,8 +1188,10 @@ class _RegistProductState extends State<RegistProduct>
                                     fontSize: 13.0,
                                   ),
                                   maxLength: 3,
-                                  enabled: controller.isMaterialSelected(
-                                          materialList[index])
+                                  enabled: context
+                                          .read<FabricBloc>()
+                                          .state
+                                          .isClicked[index]
                                       ? true
                                       : false,
                                   decoration: InputDecoration(
@@ -1226,7 +1226,7 @@ class _RegistProductState extends State<RegistProduct>
                     ),
                   ),
                   onTap: () {
-                    controller.clickMaterialButton(materialList[index]);
+                    // context.read<FabricBloc>().add(ClickFabricButtonEvent(isChecked: , fabric: materialList[index], fabricId: index));
                   },
                 );
               },
