@@ -46,6 +46,9 @@ class _RegistProductState extends State<RegistProduct>
         BlocProvider<FabricBloc>(
           create: (BuildContext context) => fabricBloc,
         ),
+        BlocProvider<LaundryBloc>(
+          create: (BuildContext context) => LaundryBloc(),
+        ),
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -1282,16 +1285,7 @@ class _RegistProductState extends State<RegistProduct>
     List<String> seeThrough = ["높음", "중간", "없음"];
     List<String> elasticity = ["높음", "중간", "없음", "벤딩"];
     List<String> lining = ["있음", "없음"];
-    List<String> washingInfo = [
-      "손세탁",
-      "드라이클리닝",
-      "물세탁",
-      "단독세탁",
-      "울세탁",
-      "표백제 사용금지",
-      "다림질 금지",
-      "세탁기 금지"
-    ];
+
     List<String> style = [
       "로맨틱",
       "시크",
@@ -1406,54 +1400,70 @@ class _RegistProductState extends State<RegistProduct>
           "세탁정보 선택",
           style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 14.0),
         ),
-        GetBuilder<RegistController>(
-            init: registController,
-            builder: (controller) {
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const ScrollPhysics(),
-                padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
-                itemCount: washingInfo.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 30 * Scale.height,
-                  crossAxisSpacing: 10 * Scale.width,
-                  childAspectRatio: 1.4,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return GestureDetector(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(8),
-                        ),
-                        border: Border.all(
-                            color: controller
-                                    .isWashingInfoSelected(washingInfo[index])
-                                ? Colors.indigo[400]!
-                                : Colors.grey[300]!),
+        BlocBuilder<LaundryBloc, LaundryState>(
+          builder: (context, state) {
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+              itemCount: context.read<LaundryBloc>().state.washingList.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 30 * Scale.height,
+                crossAxisSpacing: 10 * Scale.width,
+                childAspectRatio: 1.4,
+              ),
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(8),
                       ),
-                      child: Center(
-                        child: Text(
-                          washingInfo[index],
-                          style: textStyle(
-                              controller
-                                      .isWashingInfoSelected(washingInfo[index])
-                                  ? Colors.black
-                                  : Colors.grey[400]!,
-                              FontWeight.w500,
-                              "NotoSansKR",
-                              13.0),
-                        ),
+                      border: Border.all(
+                          color: context
+                                  .read<LaundryBloc>()
+                                  .state
+                                  .selectedLaundry
+                                  .contains(context
+                                      .read<LaundryBloc>()
+                                      .state
+                                      .washingList[index])
+                              ? Colors.indigo[400]!
+                              : Colors.grey[300]!),
+                    ),
+                    child: Center(
+                      child: Text(
+                        context.read<LaundryBloc>().state.washingList[index],
+                        style: textStyle(
+                            context
+                                    .read<LaundryBloc>()
+                                    .state
+                                    .selectedLaundry
+                                    .contains(context
+                                        .read<LaundryBloc>()
+                                        .state
+                                        .washingList[index])
+                                ? Colors.black
+                                : Colors.grey[400]!,
+                            FontWeight.w500,
+                            "NotoSansKR",
+                            13.0),
                       ),
                     ),
-                    onTap: () {
-                      controller.clickWashingInfo(washingInfo[index]);
-                    },
-                  );
-                },
-              );
-            }),
+                  ),
+                  onTap: () {
+                    context.read<LaundryBloc>().add(ClickLaudnryButtonEvent(
+                        laundryType: context
+                            .read<LaundryBloc>()
+                            .state
+                            .washingList[index]));
+                  },
+                );
+              },
+            );
+          },
+        ),
         Text(
           "스타일",
           style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
