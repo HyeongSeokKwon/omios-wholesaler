@@ -3,7 +3,6 @@ import 'package:deepy_wholesaler/page/regist_product/regist_controller.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
@@ -51,6 +50,9 @@ class _RegistProductState extends State<RegistProduct>
         ),
         BlocProvider<StyleBloc>(
           create: (BuildContext context) => StyleBloc(),
+        ),
+        BlocProvider<AdditionalInfoBloc>(
+          create: (BuildContext context) => AdditionalInfoBloc(),
         )
       ],
       child: Scaffold(
@@ -1243,14 +1245,33 @@ class _RegistProductState extends State<RegistProduct>
     );
   }
 
-  Widget addtionalInfoButtonList(String type, List<String> buttonType) {
-    return GetBuilder<RegistController>(
-      init: registController,
-      builder: (controller) {
+  Widget addtionalInfoButtonList(
+    String type,
+  ) {
+    List<String>? selectList;
+    return BlocBuilder<AdditionalInfoBloc, AdditionalInfoState>(
+      builder: (context, state) {
+        switch (type) {
+          case "두께감":
+            selectList = context.read<AdditionalInfoBloc>().state.thicknessList;
+            break;
+          case "비침":
+            selectList =
+                context.read<AdditionalInfoBloc>().state.seeThroughList;
+            break;
+          case "신축성":
+            selectList =
+                context.read<AdditionalInfoBloc>().state.elasticityList;
+            break;
+          case "안감":
+            selectList = context.read<AdditionalInfoBloc>().state.liningList;
+            break;
+          default:
+        }
         return ListView.builder(
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
-          itemCount: buttonType.length,
+          itemCount: selectList!.length,
           itemBuilder: (context, index) {
             return Row(
               children: [
@@ -1259,7 +1280,7 @@ class _RegistProductState extends State<RegistProduct>
                     horizontal: 10 * Scale.width,
                   ),
                   child: Text(
-                    buttonType[index],
+                    selectList![index],
                     style: textStyle(
                         Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
                   ),
@@ -1267,11 +1288,16 @@ class _RegistProductState extends State<RegistProduct>
                 SizedBox(
                   width: 15 * Scale.width,
                   child: Radio(
-                    value: buttonType[index],
+                    value: selectList![index],
                     activeColor: Colors.grey[500],
-                    groupValue: controller.selectedPropertyInfo[type],
+                    groupValue: context
+                        .read<AdditionalInfoBloc>()
+                        .state
+                        .selectedAdditionalInfo[type],
                     onChanged: (value) {
-                      controller.clickPropertyInfo(type, buttonType[index]);
+                      print(value);
+                      context.read<AdditionalInfoBloc>().add(
+                          ClickAdditionalInfoEvent(index: index, type: type));
                     },
                   ),
                 ),
@@ -1284,11 +1310,6 @@ class _RegistProductState extends State<RegistProduct>
   }
 
   Widget additionalInfo() {
-    List<String> thickness = ["두꺼움", "중간", "없음"];
-    List<String> seeThrough = ["높음", "중간", "없음"];
-    List<String> elasticity = ["높음", "중간", "없음", "벤딩"];
-    List<String> lining = ["있음", "없음"];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1316,7 +1337,7 @@ class _RegistProductState extends State<RegistProduct>
                   ),
                   SizedBox(width: 40 * Scale.width),
                   Expanded(
-                    child: addtionalInfoButtonList("두께감", thickness),
+                    child: addtionalInfoButtonList("두께감"),
                   ),
                 ],
               ),
@@ -1336,7 +1357,7 @@ class _RegistProductState extends State<RegistProduct>
                   ),
                   SizedBox(width: 40 * Scale.width),
                   Expanded(
-                    child: addtionalInfoButtonList("비침", seeThrough),
+                    child: addtionalInfoButtonList("비침"),
                   ),
                 ],
               ),
@@ -1356,7 +1377,7 @@ class _RegistProductState extends State<RegistProduct>
                   ),
                   SizedBox(width: 40 * Scale.width),
                   Expanded(
-                    child: addtionalInfoButtonList("신축성", elasticity),
+                    child: addtionalInfoButtonList("신축성"),
                   ),
                 ],
               ),
@@ -1376,7 +1397,7 @@ class _RegistProductState extends State<RegistProduct>
                   ),
                   SizedBox(width: 40 * Scale.width),
                   Expanded(
-                    child: addtionalInfoButtonList("안감", lining),
+                    child: addtionalInfoButtonList("안감"),
                   ),
                 ],
               ),
