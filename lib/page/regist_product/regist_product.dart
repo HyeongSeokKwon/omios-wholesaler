@@ -1,10 +1,8 @@
 import 'package:deepy_wholesaler/bloc/bloc.dart';
-import 'package:deepy_wholesaler/page/regist_product/regist_controller.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:get/get.dart';
 
 class RegistProduct extends StatefulWidget {
   const RegistProduct({Key? key}) : super(key: key);
@@ -15,7 +13,6 @@ class RegistProduct extends StatefulWidget {
 
 class _RegistProductState extends State<RegistProduct>
     with TickerProviderStateMixin {
-  RegistController registController = RegistController();
   PriceBloc priceBloc = PriceBloc();
   ColorBloc colorBloc = ColorBloc();
   SizeBloc sizeBloc = SizeBloc();
@@ -1295,7 +1292,6 @@ class _RegistProductState extends State<RegistProduct>
                         .state
                         .selectedAdditionalInfo[type],
                     onChanged: (value) {
-                      print(value);
                       context.read<AdditionalInfoBloc>().add(
                           ClickAdditionalInfoEvent(index: index, type: type));
                     },
