@@ -9,3 +9,4 @@ export 'regist_product_bloc/regist_product_bloc.dart';
 export 'regist_product_bloc/size_bloc/size_bloc.dart';
 export 'regist_product_bloc/fabric_bloc/fabric_bloc.dart';
 export 'regist_product_bloc/laundry_bloc/laundry_bloc.dart';
+export 'regist_product_bloc/style_bloc/style_bloc.dart';

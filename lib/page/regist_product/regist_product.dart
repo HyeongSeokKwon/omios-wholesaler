@@ -49,6 +49,9 @@ class _RegistProductState extends State<RegistProduct>
         BlocProvider<LaundryBloc>(
           create: (BuildContext context) => LaundryBloc(),
         ),
+        BlocProvider<StyleBloc>(
+          create: (BuildContext context) => StyleBloc(),
+        )
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -1286,21 +1289,6 @@ class _RegistProductState extends State<RegistProduct>
     List<String> elasticity = ["높음", "중간", "없음", "벤딩"];
     List<String> lining = ["있음", "없음"];
 
-    List<String> style = [
-      "로맨틱",
-      "시크",
-      "럭셔리",
-      "미시",
-      "마담",
-      "오피스",
-      "캐쥬얼",
-      "섹시",
-      "모던",
-      "유니크",
-      "명품 스타일",
-      "연예인",
-      "심플/베이직"
-    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1479,19 +1467,18 @@ class _RegistProductState extends State<RegistProduct>
             style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
           ),
         ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const ScrollPhysics(),
-          padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
-          itemCount: style.length,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            childAspectRatio: 2.5,
-          ),
-          itemBuilder: (BuildContext context, int index) {
-            return GetBuilder<RegistController>(
-              init: registController,
-              builder: (controller) {
+        BlocBuilder<StyleBloc, StyleState>(
+          builder: (context, state) {
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+              itemCount: context.read<StyleBloc>().state.styleList.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                childAspectRatio: 2.5,
+              ),
+              itemBuilder: (BuildContext context, int index) {
                 return GestureDetector(
                   child: Container(
                     decoration: BoxDecoration(
@@ -1513,17 +1500,20 @@ class _RegistProductState extends State<RegistProduct>
                                   side: BorderSide(
                                       color: Colors.grey[500]!,
                                       width: 1 * Scale.width),
-                                  value: controller
-                                      .isMaterialSelected(style[index]),
+                                  value: context
+                                      .read<StyleBloc>()
+                                      .state
+                                      .isClicked[index],
                                   onChanged: (value) {
-                                    controller
-                                        .clickMaterialButton(style[index]);
+                                    context.read<StyleBloc>().add(
+                                        ClickStyleButtonEvent(
+                                            styleIndex: index));
                                   },
                                 ),
                               ),
                             ),
                             Text(
-                              style[index],
+                              context.read<StyleBloc>().state.styleList[index],
                               style: textStyle(Colors.black, FontWeight.w500,
                                   "NotoSansKR", 13.0),
                             ),
@@ -1533,7 +1523,9 @@ class _RegistProductState extends State<RegistProduct>
                     ),
                   ),
                   onTap: () {
-                    controller.clickMaterialButton(style[index]);
+                    context
+                        .read<StyleBloc>()
+                        .add(ClickStyleButtonEvent(styleIndex: index));
                   },
                 );
               },
