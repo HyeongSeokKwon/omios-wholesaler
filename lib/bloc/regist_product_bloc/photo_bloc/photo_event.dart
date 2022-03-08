@@ -23,3 +23,26 @@ class ClickMoveButton extends PhotoEvent {
     required this.colorTabIndex,
   });
 }
+
+class ReorderPhotoEvent extends PhotoEvent {
+  final int oldIndex;
+  final int newIndex;
+  const ReorderPhotoEvent({
+    required this.oldIndex,
+    required this.newIndex,
+  });
+}
+
+class ClickBasicPhotoRemoveEvent extends PhotoEvent {
+  final int photoIndex;
+  const ClickBasicPhotoRemoveEvent({
+    required this.photoIndex,
+  });
+}
+
+class ClickColorPhotoRemoveEvent extends PhotoEvent {
+  final int photoIndex;
+  const ClickColorPhotoRemoveEvent({
+    required this.photoIndex,
+  });
+}
