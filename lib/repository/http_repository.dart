@@ -94,7 +94,6 @@ class HttpRepository {
               {"refresh": refreshToken},
             ),
           );
-
           responseJson = _response(response);
           setAccessToken(responseJson['data']['access']);
           setRefreshToken(responseJson['data']['refresh']);
@@ -121,6 +120,8 @@ class HttpRepository {
       return responseJson;
     } on SocketException {
       throw FetchDataException("연결된 인터넷이 없습니다!!");
+    } on FetchDataException {
+      throw Exception("서버 오류가 발생했습니다!!");
     }
   }
 
@@ -152,11 +153,12 @@ class HttpRepository {
             headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
             body: body);
       }));
-
       responseJson = _response(response);
       return responseJson;
     } on SocketException {
       throw FetchDataException('연결된 인터넷이 없습니다.');
+    } on FetchDataException {
+      throw Exception("서버 오류가 발생했습니다.");
     }
   }
 

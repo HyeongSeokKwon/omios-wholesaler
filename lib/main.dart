@@ -33,6 +33,11 @@ class _MyAppState extends State<MyApp> {
         '/login': (context) => const Login(),
         '/home': (context) => const Home(),
       },
+      builder: (context, child) {
+        return MediaQuery(
+            data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+            child: child!);
+      },
     );
   }
 }

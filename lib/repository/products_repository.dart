@@ -9,7 +9,6 @@ class ProductsRepository extends HttpRepository {
     queryParams['main_category'] = '1';
 
     response = await super.httpGet("product", queryParams);
-
     return response['data']['results'];
   }
 }

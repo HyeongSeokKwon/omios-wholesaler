@@ -12,23 +12,49 @@ part 'photo_event.dart';
 part 'photo_state.dart';
 
 class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
-  final ImagePicker _picker = ImagePicker();
+  ImagePicker picker = ImagePicker();
   final ColorBloc colorBloc;
 
   PhotoBloc(this.colorBloc) : super(PhotoState.initial()) {
     on<ClickGetBasicPhotoEvent>(getBasicPhoto);
     on<ClickGetColorByPhotoEvent>(getPhotoByImage);
     on<ClickMoveButton>(moveTabEvent);
+    on<ReorderPhotoEvent>(reorderPhoto);
+    on<ClickBasicPhotoRemoveEvent>(removeBasicImage);
+    on<ClickColorPhotoRemoveEvent>(removeColorImage);
   }
 
-  void getBasicPhoto(
+  Future<void> getBasicPhoto(
       ClickGetBasicPhotoEvent event, Emitter<PhotoState> emit) async {
-    emit(state.copyWith(basicPhoto: await getPhotoFromGallery('basic')));
+    List copy = [...state.basicPhoto];
+    if (copy.length < 10) {
+      List<XFile>? pickedFile = await picker.pickMultiImage();
+
+      if (pickedFile != null) {
+        for (var file in pickedFile) {
+          if (copy.length < 10) {
+            copy.add(Image.file(
+              File(file.path),
+            ));
+          }
+          ;
+        }
+      }
+      emit(state.copyWith(basicPhoto: copy));
+    }
+    return;
   }
 
-  void getPhotoByImage(
+  Future<void> getPhotoByImage(
       ClickGetColorByPhotoEvent event, Emitter<PhotoState> emit) async {
-    dynamic photoByColor = await getPhotoFromGallery('color');
+    Image? photoByColor = state.photoByColor;
+
+    XFile? colorPhoto = await picker.pickImage(source: ImageSource.gallery);
+    if (colorPhoto != null) {
+      photoByColor = Image.file(
+        File(colorPhoto.path),
+      );
+    }
 
     for (var i in colorBloc.state.selectedColorMap) {
       if (i['color'] == event.color) {
@@ -42,29 +68,53 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
     List<dynamic> imageList = [...state.basicPhoto];
     Image? photoByColor = state.photoByColor;
 
-    XFile? pickedFile = await _picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 50,
-    );
+    List<XFile>? pickedFile = await picker.pickMultiImage();
+    late XFile? colorPhoto;
 
     if (pickedFile != null) {
       if (photoType == 'basic') {
-        imageList.add(Image.file(
-          File(pickedFile.path),
-        ));
-        return imageList;
-      } else {
-        photoByColor = Image.file(
-          File(pickedFile.path),
-        );
-        return photoByColor;
+        for (var file in pickedFile) {
+          imageList.add(Image.file(
+            File(file.path),
+          ));
+        }
       }
+      return imageList;
+    } else {
+      colorPhoto = await picker.pickImage(source: ImageSource.gallery);
+      if (colorPhoto != null) {
+        photoByColor = Image.file(
+          File(colorPhoto.path),
+        );
+      }
+      return photoByColor;
     }
   }
 
-  void getPhotoFromCamera() async {}
+  void reorderPhoto(ReorderPhotoEvent event, Emitter<PhotoState> emit) {
+    List copy = [...state.basicPhoto];
+
+    final tmp = copy.removeAt(event.oldIndex);
+    copy.insert(event.newIndex, tmp);
+
+    emit(state.copyWith(basicPhoto: copy));
+  }
 
   void moveTabEvent(ClickMoveButton event, Emitter<PhotoState> emit) {
     emit(state.copyWith(colorTabIndex: event.colorTabIndex));
+  }
+
+  void removeBasicImage(
+      ClickBasicPhotoRemoveEvent event, Emitter<PhotoState> emit) {
+    List basicImageList = [...state.basicPhoto];
+    basicImageList.removeAt(event.photoIndex);
+    emit(state.copyWith(basicPhoto: basicImageList));
+  }
+
+  void removeColorImage(
+      ClickColorPhotoRemoveEvent event, Emitter<PhotoState> emit) {
+    List selectedColorMap = [...colorBloc.state.selectedColorMap];
+    selectedColorMap[event.photoIndex]['images'] = null;
+    emit(state.copyWith(photoByColor: null));
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get/instance_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:deepy_wholesaler/repository/auth_repository.dart';
 
@@ -79,7 +80,6 @@ class AuthenticationBloc
 
     if (isAutoLoginClicked == true && refreshToken != null) {
       response = await authRepository.autoLogin(refreshToken);
-
       switch (response['code']) {
         case 201:
           authRepository.setAccessToken(response['data']['access']);
@@ -89,6 +89,9 @@ class AuthenticationBloc
           break;
         case 401:
           emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
+          break;
+        default:
+          emit(state.copyWith(authStatus: AuthStatus.loginFailure));
       }
     } else {
       emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
