@@ -39,6 +39,8 @@ class WholeSalerProductArea extends StatelessWidget {
                 imageWidth: 110 * Scale.width);
           },
         );
+      } else if (state.fetchStatus == FetchStatus.error) {
+        return progressBar();
       } else {
         context.read<MyproductsBloc>().add(LoadMyproductsEvent());
         return progressBar();

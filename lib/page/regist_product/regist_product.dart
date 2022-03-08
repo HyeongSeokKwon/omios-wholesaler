@@ -2,6 +2,7 @@ import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 class RegistProduct extends StatefulWidget {
@@ -19,8 +20,12 @@ class _RegistProductState extends State<RegistProduct>
 
   FabricBloc fabricBloc = FabricBloc();
 
+  TextEditingController priceEditController = TextEditingController();
+
+  late FocusScopeNode currentFocus;
   @override
   Widget build(BuildContext context) {
+    currentFocus = FocusScope.of(context);
     return MultiBlocProvider(
       providers: [
         BlocProvider<PriceBloc>(
@@ -84,36 +89,43 @@ class _RegistProductState extends State<RegistProduct>
   }
 
   Widget scrollArea() {
-    return SingleChildScrollView(
-        child: Container(
-      color: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-        child: Column(
-          children: [
-            precautionsArea(),
-            SizedBox(height: 8 * Scale.height),
-            //selectCategoryArea(),
-            SizedBox(height: 8 * Scale.height),
-            writeProductName(),
-            SizedBox(height: 8 * Scale.height),
-            writePriceArea(),
-            SizedBox(height: 40 * Scale.height),
-            selectColorArea(),
-            SizedBox(height: 30 * Scale.height),
-            registPhotoArea(),
-            SizedBox(height: 30 * Scale.height),
-            selectSizeArea(),
-            SizedBox(height: 30 * Scale.height),
-            registPriceByOptionArea(),
-            SizedBox(height: 30 * Scale.height),
-            materialArea(),
-            SizedBox(height: 30 * Scale.height),
-            additionalInfo(),
-          ],
+    return GestureDetector(
+      onTap: () {
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.requestFocus(FocusNode());
+        }
+      },
+      child: SingleChildScrollView(
+          child: Container(
+        color: Colors.white,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+          child: Column(
+            children: [
+              precautionsArea(),
+              SizedBox(height: 8 * Scale.height),
+              //selectCategoryArea(),
+              SizedBox(height: 8 * Scale.height),
+              writeProductName(),
+              SizedBox(height: 8 * Scale.height),
+              writePriceArea(),
+              SizedBox(height: 40 * Scale.height),
+              selectColorArea(),
+              SizedBox(height: 30 * Scale.height),
+              registPhotoArea(),
+              SizedBox(height: 30 * Scale.height),
+              selectSizeArea(),
+              SizedBox(height: 30 * Scale.height),
+              registPriceByOptionArea(),
+              SizedBox(height: 30 * Scale.height),
+              materialArea(),
+              SizedBox(height: 30 * Scale.height),
+              additionalInfo(),
+            ],
+          ),
         ),
-      ),
-    ));
+      )),
+    );
   }
 
   Widget precautionsArea() {
@@ -155,8 +167,11 @@ class _RegistProductState extends State<RegistProduct>
             style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 15.0),
           ),
         ),
-        TextField(
+        TextFormField(
           textInputAction: TextInputAction.next,
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9' ']")),
+          ],
           decoration: InputDecoration(
             isDense: true,
             counterText: "",
@@ -226,7 +241,6 @@ class _RegistProductState extends State<RegistProduct>
   }
 
   Widget writePriceArea() {
-    TextEditingController priceEditController = TextEditingController();
     return BlocBuilder<PriceBloc, PriceState>(
       builder: (context, state) {
         return Column(
@@ -240,40 +254,70 @@ class _RegistProductState extends State<RegistProduct>
                     Colors.black, FontWeight.w700, "NotoSansKR", 15.0),
               ),
             ),
-            TextField(
-              controller: priceEditController,
-              textInputAction: TextInputAction.next,
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                context
-                    .read<PriceBloc>()
-                    .add(ChangePriceEvent(changePrice: value));
-              },
-              decoration: InputDecoration(
-                isDense: true,
-                counterText: "",
-                floatingLabelBehavior: FloatingLabelBehavior.auto,
-                labelStyle: TextStyle(
-                  color: const Color(0xff666666),
-                  height: 0.6,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: "NotoSansKR",
-                  fontStyle: FontStyle.normal,
-                  fontSize: 14 * Scale.height,
+            Form(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: TextFormField(
+                controller: priceEditController,
+                keyboardType: const TextInputType.numberWithOptions(
+                    signed: true, decimal: true),
+                onChanged: (value) {
+                  context
+                      .read<PriceBloc>()
+                      .add(ChangePriceEvent(changePrice: value));
+                },
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+                ],
+                validator: (text) {
+                  if (text!.trim().isNotEmpty &&
+                      int.parse(text.trim()) < 1000) {
+                    return '단가의 최솟값은 1000원입니다.';
+                  } else {
+                    return null;
+                  }
+                },
+                onFieldSubmitted: (value) {
+                  currentFocus.unfocus();
+                },
+                autofocus: false,
+                decoration: InputDecoration(
+                  isDense: true,
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  counterText: "",
+                  labelStyle: TextStyle(
+                    color: const Color(0xff666666),
+                    height: 0.6,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: "NotoSansKR",
+                    fontStyle: FontStyle.normal,
+                    fontSize: 14 * Scale.height,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    borderSide: BorderSide(
+                        color: const Color(0xffcccccc), width: 1 * Scale.width),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    borderSide: BorderSide(
+                        color: Colors.indigo[400]!, width: 1 * Scale.width),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    borderSide: BorderSide(
+                        color: Colors.grey[400]!, width: 1 * Scale.width),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    borderSide: BorderSide(
+                        color: Colors.grey[400]!, width: 1 * Scale.width),
+                  ),
+                  hintText: ("상품명을 입력하세요"),
+                  hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
+                      "NotoSansKR", 14.0),
                 ),
-                border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(7)),
-                  borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: const BorderRadius.all(Radius.circular(7)),
-                  borderSide: BorderSide(color: Colors.indigo[400]!, width: 1),
-                ),
-                hintText: ("상품명을 입력하세요"),
-                hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                    "NotoSansKR", 14.0),
+                textAlign: TextAlign.left,
               ),
-              textAlign: TextAlign.left,
             ),
             SizedBox(height: 5 * Scale.height),
             Row(
@@ -388,7 +432,7 @@ class _RegistProductState extends State<RegistProduct>
   }
 
   Widget registPhotoArea() {
-    TabController photoTabController = TabController(length: 3, vsync: this);
+    TabController photoTabController = TabController(length: 2, vsync: this);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -409,10 +453,6 @@ class _RegistProductState extends State<RegistProduct>
                 child: Text("색상별 이미지",
                     style: textStyle(
                         Colors.black, FontWeight.w700, "NotoSansKR", 12.0))),
-            Tab(
-                child: Text("디테일 컷",
-                    style: textStyle(
-                        Colors.black, FontWeight.w700, "NotoSansKR", 12.0)))
           ],
         ),
         Container(
@@ -426,11 +466,14 @@ class _RegistProductState extends State<RegistProduct>
             physics: const NeverScrollableScrollPhysics(),
             children: [
               BlocBuilder<PhotoBloc, PhotoState>(
+                buildWhen: ((previous, current) {
+                  return previous.basicPhoto != current.basicPhoto;
+                }),
                 builder: (context, state) {
                   return Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.all(20.0 * Scale.width),
+                        padding: EdgeInsets.all(15.0 * Scale.width),
                         child: Container(
                           width: double.infinity,
                           height: 300,
@@ -448,37 +491,134 @@ class _RegistProductState extends State<RegistProduct>
                                     .add(ClickGetBasicPhotoEvent());
                               },
                               child: Container(
-                                decoration: const BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(8),
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(8),
+                                    ),
                                   ),
-                                ),
-                                child: context
-                                        .read<PhotoBloc>()
-                                        .state
-                                        .basicPhoto
-                                        .isEmpty
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SvgPicture.asset(
-                                              "assets/images/svg/searchImage.svg"),
-                                          Text(
-                                            "  상품사진 선택하기",
-                                            style: textStyle(
-                                                Colors.black,
-                                                FontWeight.w500,
-                                                "NotoSansKR",
-                                                12.0),
-                                          ),
-                                        ],
-                                      )
-                                    : context
-                                        .read<PhotoBloc>()
-                                        .state
-                                        .basicPhoto[0],
-                              ),
+                                  child: context
+                                          .read<PhotoBloc>()
+                                          .state
+                                          .basicPhoto
+                                          .isEmpty
+                                      ? Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            SvgPicture.asset(
+                                                "assets/images/svg/searchImage.svg"),
+                                            Text(
+                                              "  상품사진 선택하기",
+                                              style: textStyle(
+                                                  Colors.black,
+                                                  FontWeight.w500,
+                                                  "NotoSansKR",
+                                                  12.0),
+                                            ),
+                                          ],
+                                        )
+                                      : ReorderableListView.builder(
+                                          itemBuilder: (context, index) {
+                                            return Container(
+                                              color: Colors.indigo[50]!,
+                                              key: Key(index.toString()),
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 5 * Scale.height),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    SizedBox(
+                                                        width: 50 * Scale.width,
+                                                        height:
+                                                            50 * Scale.width,
+                                                        child: context
+                                                            .read<PhotoBloc>()
+                                                            .state
+                                                            .basicPhoto[index]),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          right:
+                                                              20 * Scale.width),
+                                                      child: Container(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        height:
+                                                            70 * Scale.height,
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text("이미지 $index",
+                                                                style: textStyle(
+                                                                    Colors.grey[
+                                                                        500]!,
+                                                                    FontWeight
+                                                                        .w500,
+                                                                    'NotoSansKR',
+                                                                    16 *
+                                                                        Scale
+                                                                            .width)),
+                                                            SizedBox(
+                                                                width: 5 *
+                                                                    Scale
+                                                                        .width),
+                                                            Align(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              child:
+                                                                  GestureDetector(
+                                                                onTap: () {
+                                                                  context
+                                                                      .read<
+                                                                          PhotoBloc>()
+                                                                      .add(ClickBasicPhotoRemoveEvent(
+                                                                          photoIndex:
+                                                                              index));
+                                                                },
+                                                                child: Icon(
+                                                                  Icons.clear,
+                                                                  size: 20 *
+                                                                      Scale
+                                                                          .width,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          itemCount: context
+                                              .read<PhotoBloc>()
+                                              .state
+                                              .basicPhoto
+                                              .length,
+                                          onReorder:
+                                              (int oldIndex, int newIndex) {
+                                            context.read<PhotoBloc>().add(
+                                                ReorderPhotoEvent(
+                                                    oldIndex: oldIndex,
+                                                    newIndex: newIndex));
+                                          })
+                                  // : context
+                                  //     .read<PhotoBloc>()
+                                  //     .state
+                                  //     .basicPhoto[0],
+                                  ),
                             ),
                           ),
                         ),
@@ -669,7 +809,6 @@ class _RegistProductState extends State<RegistProduct>
                   );
                 },
               ),
-              Container(),
             ],
           ),
         ),
@@ -1119,8 +1258,6 @@ class _RegistProductState extends State<RegistProduct>
                 childAspectRatio: 2.5,
               ),
               itemBuilder: (BuildContext context, int index) {
-                TextEditingController textEditingController =
-                    TextEditingController();
                 return GestureDetector(
                   child: Container(
                     decoration: BoxDecoration(
@@ -1177,14 +1314,23 @@ class _RegistProductState extends State<RegistProduct>
                               SizedBox(
                                 width: 90 * Scale.width,
                                 height: 40 * Scale.height,
-                                child: TextField(
+                                child: TextFormField(
                                   controller: state.textController?[index],
-                                  keyboardType: TextInputType.number,
+                                  keyboardType:
+                                      const TextInputType.numberWithOptions(
+                                          signed: true),
                                   onChanged: (value) {
                                     context.read<FabricBloc>().add(
                                         InputFabricPercentEvent(
                                             fabricPercent: value,
                                             fabricIndex: index));
+                                  },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp('[0-9]')),
+                                  ],
+                                  onFieldSubmitted: (value) {
+                                    currentFocus.unfocus();
                                   },
                                   style: const TextStyle(
                                     color: Color(0xff666666),
