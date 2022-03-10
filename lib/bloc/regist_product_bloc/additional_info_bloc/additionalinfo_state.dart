@@ -1,13 +1,13 @@
 part of 'additionalinfo_bloc.dart';
 
 class AdditionalInfoState extends Equatable {
-  final Map<String, String> selectedAdditionalInfo;
+  Map<String, Map> selectedAdditionalInfo;
 
-  final List<String> thicknessList;
-  final List<String> seeThroughList;
-  final List<String> elasticityList;
-  final List<String> liningList;
-  const AdditionalInfoState({
+  List<dynamic>? thicknessList;
+  List<dynamic>? seeThroughList;
+  List<dynamic>? elasticityList;
+  List<dynamic>? liningList;
+  AdditionalInfoState({
     required this.selectedAdditionalInfo,
     required this.thicknessList,
     required this.seeThroughList,
@@ -16,22 +16,17 @@ class AdditionalInfoState extends Equatable {
   });
 
   factory AdditionalInfoState.initial() {
-    List<String> thickness = ["두꺼움", "중간", "없음"];
-    List<String> seeThrough = ["높음", "중간", "없음"];
-    List<String> elasticity = ["높음", "중간", "없음"];
-    List<String> lining = ["있음", "없음"];
-
     return AdditionalInfoState(
       selectedAdditionalInfo: const {},
-      thicknessList: thickness,
-      seeThroughList: seeThrough,
-      elasticityList: elasticity,
-      liningList: lining,
+      thicknessList: const [],
+      seeThroughList: const [],
+      elasticityList: const [],
+      liningList: const [],
     );
   }
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       selectedAdditionalInfo,
       thicknessList,
@@ -42,11 +37,11 @@ class AdditionalInfoState extends Equatable {
   }
 
   AdditionalInfoState copyWith({
-    Map<String, String>? selectedAdditionalInfo,
-    List<String>? thicknessList,
-    List<String>? seeThroughList,
-    List<String>? elasticityList,
-    List<String>? liningList,
+    Map<String, Map>? selectedAdditionalInfo,
+    List<dynamic>? thicknessList,
+    List<dynamic>? seeThroughList,
+    List<dynamic>? elasticityList,
+    List<dynamic>? liningList,
   }) {
     return AdditionalInfoState(
       selectedAdditionalInfo:

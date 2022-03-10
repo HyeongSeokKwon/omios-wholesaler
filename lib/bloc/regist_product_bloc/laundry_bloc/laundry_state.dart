@@ -1,8 +1,8 @@
 part of 'laundry_bloc.dart';
 
 class LaundryState extends Equatable {
-  final List<String> selectedLaundry;
-  List<String> washingList;
+  final List<Map> selectedLaundry;
+  List<dynamic> washingList;
 
   LaundryState({
     required this.selectedLaundry,
@@ -10,28 +10,19 @@ class LaundryState extends Equatable {
   });
 
   factory LaundryState.initial() {
-    List<String> getWashingList = [
-      "손세탁",
-      "드라이클리닝",
-      "물세탁",
-      "단독세탁",
-      "울세탁",
-      "표백제 사용금지",
-      "다림질 금지",
-      "세탁기 금지"
-    ];
-    return LaundryState(selectedLaundry: [], washingList: getWashingList);
+    return LaundryState(selectedLaundry: const [], washingList: const []);
   }
 
   @override
-  List<Object> get props => [selectedLaundry];
+  List<Object> get props => [selectedLaundry, washingList];
 
   LaundryState copyWith({
-    List<String>? selectedLaundry,
+    List<Map>? selectedLaundry,
+    List<dynamic>? washingList,
   }) {
     return LaundryState(
       selectedLaundry: selectedLaundry ?? this.selectedLaundry,
-      washingList: washingList,
+      washingList: washingList ?? this.washingList,
     );
   }
 }

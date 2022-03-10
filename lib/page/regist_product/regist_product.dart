@@ -1,6 +1,7 @@
 import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
+import 'package:deepy_wholesaler/widget/progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,22 +13,34 @@ class RegistProduct extends StatefulWidget {
   _RegistProductState createState() => _RegistProductState();
 }
 
-class _RegistProductState extends State<RegistProduct>
-    with TickerProviderStateMixin {
+class _RegistProductState extends State<RegistProduct> {
   PriceBloc priceBloc = PriceBloc();
   ColorBloc colorBloc = ColorBloc();
   SizeBloc sizeBloc = SizeBloc();
-
   FabricBloc fabricBloc = FabricBloc();
+  StyleBloc styleBloc = StyleBloc();
+  LaundryBloc laundryBloc = LaundryBloc();
+  CategoryBloc categoryBloc = CategoryBloc();
+  AdditionalInfoBloc additionalInfoBloc = AdditionalInfoBloc();
 
-  TextEditingController priceEditController = TextEditingController();
-
-  late FocusScopeNode currentFocus;
   @override
   Widget build(BuildContext context) {
-    currentFocus = FocusScope.of(context);
     return MultiBlocProvider(
       providers: [
+        BlocProvider<InititemBloc>(
+          create: (BuildContext context) => InititemBloc(
+            categoryBloc: categoryBloc,
+            colorBloc: colorBloc,
+            fabricBloc: fabricBloc,
+            styleBloc: styleBloc,
+            sizeBloc: sizeBloc,
+            laundryBloc: laundryBloc,
+            additionalInfoBloc: additionalInfoBloc,
+          ),
+        ),
+        BlocProvider<CategoryBloc>(
+          create: (BuildContext context) => categoryBloc,
+        ),
         BlocProvider<PriceBloc>(
           create: (BuildContext context) => priceBloc,
         ),
@@ -48,13 +61,13 @@ class _RegistProductState extends State<RegistProduct>
           create: (BuildContext context) => fabricBloc,
         ),
         BlocProvider<LaundryBloc>(
-          create: (BuildContext context) => LaundryBloc(),
+          create: (BuildContext context) => laundryBloc,
         ),
         BlocProvider<StyleBloc>(
-          create: (BuildContext context) => StyleBloc(),
+          create: (BuildContext context) => styleBloc,
         ),
         BlocProvider<AdditionalInfoBloc>(
-          create: (BuildContext context) => AdditionalInfoBloc(),
+          create: (BuildContext context) => additionalInfoBloc,
         )
       ],
       child: Scaffold(
@@ -83,48 +96,81 @@ class _RegistProductState extends State<RegistProduct>
             ],
           ),
         ),
-        body: scrollArea(),
+        body: const ScrollArea(),
       ),
     );
   }
+}
+
+class ScrollArea extends StatefulWidget {
+  const ScrollArea({Key? key}) : super(key: key);
+
+  @override
+  State<ScrollArea> createState() => _ScrollAreaState();
+}
+
+class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
+  TextEditingController priceEditController = TextEditingController();
+  late FocusScopeNode currentFocus;
+  @override
+  Widget build(BuildContext context) {
+    return scrollArea();
+  }
 
   Widget scrollArea() {
+    currentFocus = FocusScope.of(context);
     return GestureDetector(
       onTap: () {
         if (!currentFocus.hasPrimaryFocus) {
           currentFocus.requestFocus(FocusNode());
         }
       },
-      child: SingleChildScrollView(
-          child: Container(
-        color: Colors.white,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-          child: Column(
-            children: [
-              precautionsArea(),
-              SizedBox(height: 8 * Scale.height),
-              //selectCategoryArea(),
-              SizedBox(height: 8 * Scale.height),
-              writeProductName(),
-              SizedBox(height: 8 * Scale.height),
-              writePriceArea(),
-              SizedBox(height: 40 * Scale.height),
-              selectColorArea(),
-              SizedBox(height: 30 * Scale.height),
-              registPhotoArea(),
-              SizedBox(height: 30 * Scale.height),
-              selectSizeArea(),
-              SizedBox(height: 30 * Scale.height),
-              registPriceByOptionArea(),
-              SizedBox(height: 30 * Scale.height),
-              materialArea(),
-              SizedBox(height: 30 * Scale.height),
-              additionalInfo(),
-            ],
-          ),
-        ),
-      )),
+      child: BlocBuilder<InititemBloc, InititemState>(
+        builder: (context, state) {
+          if (context.read<InititemBloc>().state.fetchState ==
+              FetchState.initial) {
+            context.read<InititemBloc>().add(FetchInitCommonInfoEvent());
+          }
+          if (context.read<InititemBloc>().state.fetchState ==
+              FetchState.success) {
+            return SingleChildScrollView(
+              child: Container(
+                color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                  child: Column(
+                    children: [
+                      precautionsArea(),
+                      SizedBox(height: 8 * Scale.height),
+                      selectCategoryArea(), //common
+                      SizedBox(height: 8 * Scale.height),
+                      writeProductName(), //common
+                      SizedBox(height: 8 * Scale.height),
+                      writePriceArea(), //common
+                      SizedBox(height: 40 * Scale.height),
+                      selectColorArea(), //common
+                      SizedBox(height: 30 * Scale.height),
+                      registPhotoArea(), //common
+                      SizedBox(height: 30 * Scale.height),
+                      selectSizeArea(), //dynamic
+                      SizedBox(height: 30 * Scale.height),
+                      registPriceByOptionArea(), //common
+                      SizedBox(height: 30 * Scale.height),
+                      materialArea(), //common
+                      SizedBox(height: 30 * Scale.height),
+                      additionalInfo(), //dynamic
+                      laundryInfoArea(),
+                      styleInfoArea(),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return progressBar();
+          }
+        },
+      ),
     );
   }
 
@@ -146,13 +192,333 @@ class _RegistProductState extends State<RegistProduct>
   }
 
   Widget selectCategoryArea() {
-    return Column(
-      children: [
-        Text(
-          "카테고리 선택(필수)",
-          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 14),
-        ),
-      ],
+    return BlocBuilder<CategoryBloc, CategoryState>(
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "카테고리 선택(필수)",
+              style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 14),
+            ),
+            InkWell(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
+                child: Container(
+                  height: 40 * Scale.height,
+                  decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey[400]!,
+                      ),
+                      borderRadius: const BorderRadius.all(Radius.circular(7))),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(left: 6 * Scale.width),
+                        child: Text(
+                            context
+                                    .read<CategoryBloc>()
+                                    .state
+                                    .selectedMainCategory
+                                    .isEmpty
+                                ? "대분류"
+                                : "${state.selectedMainCategory['name']}",
+                            style: textStyle(Colors.grey[600]!, FontWeight.w500,
+                                'NotoSansKR', 13.0)),
+                      ),
+                      Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 25,
+                        color: Colors.grey[600],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              onTap: () {
+                final categoryBloc = BlocProvider.of<CategoryBloc>(context);
+                showModalBottomSheet<void>(
+                  isDismissible: false,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  context: context,
+                  builder: (context) => BlocProvider.value(
+                    value: categoryBloc,
+                    child: Stack(
+                      children: [
+                        BlocBuilder<CategoryBloc, CategoryState>(
+                          builder: (context, state) {
+                            return GestureDetector(
+                              child: Container(
+                                  width: 414 * Scale.width,
+                                  height: 896 * Scale.height,
+                                  color: Colors.transparent),
+                              onTap: Navigator.of(context).pop,
+                            );
+                          },
+                        ),
+                        Positioned(
+                          child: DraggableScrollableSheet(
+                            initialChildSize: 0.6,
+                            maxChildSize: 1.0,
+                            builder: (_, controller) {
+                              return Stack(children: [
+                                Container(
+                                  width: 414 * Scale.width,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(25.0),
+                                      topRight: Radius.circular(25.0),
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 22 * Scale.width),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              top: 25 * Scale.height,
+                                              bottom: 30 * Scale.height),
+                                          child: Text("대분류 선택",
+                                              style: textStyle(
+                                                  const Color(0xff333333),
+                                                  FontWeight.w700,
+                                                  "NotoSansKR",
+                                                  21.0)),
+                                        ),
+                                        Expanded(
+                                          child: Center(
+                                            child: ListView.separated(
+                                              itemCount:
+                                                  state.categoryInfo!.length,
+                                              separatorBuilder:
+                                                  (context, index) {
+                                                return const Divider();
+                                              },
+                                              itemBuilder: ((context, index) {
+                                                return InkWell(
+                                                  onTap: () {
+                                                    context
+                                                        .read<CategoryBloc>()
+                                                        .add(ClickMainCategoryEvent(
+                                                            mainCategoryIndex:
+                                                                index));
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: SizedBox(
+                                                    height: 70 * Scale.height,
+                                                    width: double.infinity,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          context
+                                                                  .read<
+                                                                      CategoryBloc>()
+                                                                  .state
+                                                                  .categoryInfo![
+                                                              index]['name'],
+                                                          style: textStyle(
+                                                              Colors.black,
+                                                              FontWeight.w300,
+                                                              "NotoSansKR",
+                                                              19.0),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              }),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ]);
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            InkWell(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
+                child: Container(
+                    height: 40 * Scale.height,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey[400]!,
+                        ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(7))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 6 * Scale.width),
+                          child: Text(
+                              context
+                                      .read<CategoryBloc>()
+                                      .state
+                                      .selectedSubCategory
+                                      .isEmpty
+                                  ? "소분류"
+                                  : "${state.selectedSubCategory['name']}",
+                              style: textStyle(Colors.grey[600]!,
+                                  FontWeight.w500, 'NotoSansKR', 13.0)),
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                          size: 25,
+                          color: Colors.grey[600],
+                        )
+                      ],
+                    )),
+              ),
+              onTap: () {
+                final categoryBloc = BlocProvider.of<CategoryBloc>(context);
+                if (context
+                    .read<CategoryBloc>()
+                    .state
+                    .selectedMainCategory
+                    .isNotEmpty) {
+                  showModalBottomSheet<void>(
+                    isDismissible: false,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    context: context,
+                    builder: (context) => BlocProvider.value(
+                      value: categoryBloc,
+                      child: Stack(
+                        children: [
+                          BlocBuilder<CategoryBloc, CategoryState>(
+                            builder: (context, state) {
+                              return GestureDetector(
+                                child: Container(
+                                    width: 414 * Scale.width,
+                                    height: 896 * Scale.height,
+                                    color: Colors.transparent),
+                                onTap: Navigator.of(context).pop,
+                              );
+                            },
+                          ),
+                          Positioned(
+                            child: DraggableScrollableSheet(
+                              initialChildSize: 0.6,
+                              maxChildSize: 1.0,
+                              builder: (_, controller) {
+                                return Stack(children: [
+                                  Container(
+                                    width: 414 * Scale.width,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(25.0),
+                                        topRight: Radius.circular(25.0),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 22 * Scale.width),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                top: 25 * Scale.height,
+                                                bottom: 30 * Scale.height),
+                                            child: Text("소분류 선택",
+                                                style: textStyle(
+                                                    const Color(0xff333333),
+                                                    FontWeight.w700,
+                                                    "NotoSansKR",
+                                                    21.0)),
+                                          ),
+                                          Expanded(
+                                            child: Center(
+                                              child: ListView.separated(
+                                                itemCount: state
+                                                    .subCategoryInfo.length,
+                                                separatorBuilder:
+                                                    (context, index) {
+                                                  return const Divider();
+                                                },
+                                                itemBuilder: ((context, index) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      context
+                                                          .read<CategoryBloc>()
+                                                          .add(ClickSubCategoryEvent(
+                                                              subCategoryIndex:
+                                                                  index));
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: SizedBox(
+                                                      height: 70 * Scale.height,
+                                                      width: double.infinity,
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            context
+                                                                    .read<
+                                                                        CategoryBloc>()
+                                                                    .state
+                                                                    .subCategoryInfo[
+                                                                index]['name'],
+                                                            style: textStyle(
+                                                                Colors.black,
+                                                                FontWeight.w300,
+                                                                "NotoSansKR",
+                                                                19.0),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                }),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ]);
+                              },
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -349,20 +715,6 @@ class _RegistProductState extends State<RegistProduct>
   }
 
   Widget selectColorArea() {
-    List<String> colorList = [
-      "블랙",
-      "화이트",
-      "브라운",
-      "베이지",
-      "남색",
-      "네이비",
-      "옐로우",
-      "레드",
-      "초록",
-      "블루",
-      "카키",
-      "핑크",
-    ];
     return BlocBuilder<ColorBloc, ColorState>(
       builder: (context, state) {
         return Column(
@@ -378,7 +730,7 @@ class _RegistProductState extends State<RegistProduct>
               physics: const ScrollPhysics(),
               padding: EdgeInsets.symmetric(
                   horizontal: 17 * Scale.width, vertical: 15 * Scale.height),
-              itemCount: colorList.length,
+              itemCount: state.colorList.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 4,
                 mainAxisSpacing: 30 * Scale.height,
@@ -397,19 +749,19 @@ class _RegistProductState extends State<RegistProduct>
                                   .read<ColorBloc>()
                                   .state
                                   .selectedColorList
-                                  .contains(colorList[index])
+                                  .contains(state.colorList[index]['name'])
                               ? Colors.indigo[400]!
                               : Colors.grey[300]!),
                     ),
                     child: Center(
                       child: Text(
-                        colorList[index],
+                        state.colorList[index]['name'],
                         style: textStyle(
                             context
                                     .read<ColorBloc>()
                                     .state
                                     .selectedColorList
-                                    .contains(colorList[index])
+                                    .contains(state.colorList[index]['name'])
                                 ? Colors.black
                                 : Colors.grey[400]!,
                             FontWeight.w500,
@@ -420,7 +772,8 @@ class _RegistProductState extends State<RegistProduct>
                   ),
                   onTap: () {
                     context.read<ColorBloc>().add(ClickColorButtonEvent(
-                        color: colorList[index], colorId: index));
+                        color: state.colorList[index]['name'],
+                        colorId: state.colorList[index]['id']));
                   },
                 );
               },
@@ -782,10 +1135,6 @@ class _RegistProductState extends State<RegistProduct>
                                                 0) {
                                           return Container();
                                         } else {
-                                          print(context
-                                              .read<PhotoBloc>()
-                                              .state
-                                              .colorTabIndex);
                                           return InkWell(
                                             child: const Icon(
                                                 Icons.keyboard_arrow_left, //<-
@@ -817,220 +1166,221 @@ class _RegistProductState extends State<RegistProduct>
   }
 
   Widget selectSizeArea() {
-    List<String> sizeList = [
-      "S-M",
-      "S-L",
-      "S-XL",
-      "Free",
-      "S",
-      "M",
-      "L",
-      "XL",
-      "2XL",
-      "3XL",
-      "55",
-      "66",
-      "77",
-      "88",
-    ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "사이즈 선택(필수)",
-          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
-        ),
-        SizedBox(height: 10 * Scale.height),
-        Column(
-          children: [
-            Container(
-              width: double.maxFinite,
-              height: 50 * Scale.height,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(8)),
-                border: Border.all(color: Colors.grey[300]!),
+    return BlocBuilder<CategoryBloc, CategoryState>(
+      builder: (context, state) {
+        if (context.read<CategoryBloc>().state.selectedSubCategory.isNotEmpty) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "사이즈 선택(필수)",
+                style: textStyle(
+                    Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
               ),
-              child: BlocBuilder<SizeBloc, SizeState>(
-                builder: (context, state) {
-                  return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount:
-                          context.read<SizeBloc>().state.selectedSize.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: EdgeInsets.all(5 * Scale.width),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(8)),
-                              color: Colors.grey[200],
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.all(8 * Scale.width),
-                              child: Center(
-                                child: InkWell(
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        context
+              SizedBox(height: 10 * Scale.height),
+              Column(
+                children: [
+                  Container(
+                    width: double.maxFinite,
+                    height: 50 * Scale.height,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: BlocBuilder<SizeBloc, SizeState>(
+                      builder: (context, state) {
+                        return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: context
+                                .read<SizeBloc>()
+                                .state
+                                .selectedSize
+                                .length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.all(5 * Scale.width),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(8)),
+                                    color: Colors.grey[200],
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8 * Scale.width),
+                                    child: Center(
+                                      child: InkWell(
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              context
+                                                  .read<SizeBloc>()
+                                                  .state
+                                                  .selectedSize[index],
+                                              style: textStyle(
+                                                  Colors.black,
+                                                  FontWeight.w500,
+                                                  "NotoSansKR",
+                                                  12.0),
+                                            ),
+                                            SizedBox(width: 4 * Scale.width),
+                                            const Icon(
+                                              Icons.clear,
+                                              size: 15,
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          context.read<SizeBloc>().add(
+                                              ClickRemoveSizeButton(
+                                                  size: context
+                                                      .read<SizeBloc>()
+                                                      .state
+                                                      .selectedSize[index]));
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            });
+                      },
+                    ),
+                  ),
+                  BlocBuilder<SizeBloc, SizeState>(
+                    builder: (context, state) {
+                      return GridView.builder(
+                        shrinkWrap: true,
+                        physics: const ScrollPhysics(),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 17 * Scale.width,
+                            vertical: 15 * Scale.height),
+                        itemCount:
+                            context.read<SizeBloc>().state.sizeList.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 4,
+                          mainAxisSpacing: 30 * Scale.height,
+                          crossAxisSpacing: 10 * Scale.width,
+                          childAspectRatio: 1.4,
+                        ),
+                        itemBuilder: (BuildContext context, int index) {
+                          return GestureDetector(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.all(
+                                  Radius.circular(8),
+                                ),
+                                border: Border.all(
+                                    color: context
                                             .read<SizeBloc>()
                                             .state
-                                            .selectedSize[index],
-                                        style: textStyle(
-                                            Colors.black,
-                                            FontWeight.w500,
-                                            "NotoSansKR",
-                                            12.0),
-                                      ),
-                                      SizedBox(width: 4 * Scale.width),
-                                      const Icon(
-                                        Icons.clear,
-                                        size: 15,
-                                      ),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    context.read<SizeBloc>().add(
-                                        ClickRemoveSizeButton(
-                                            size: context
-                                                .read<SizeBloc>()
-                                                .state
-                                                .selectedSize[index]));
-                                  },
+                                            .selectedSize
+                                            .contains(state.sizeList[index])
+                                        ? Colors.indigo[400]!
+                                        : Colors.grey[300]!),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  state.sizeList[index]['name'],
+                                  style: textStyle(
+                                      context
+                                              .read<SizeBloc>()
+                                              .state
+                                              .selectedSize
+                                              .contains(
+                                                  state.sizeList[index]['name'])
+                                          ? Colors.black
+                                          : Colors.grey[400]!,
+                                      FontWeight.w500,
+                                      "NotoSansKR",
+                                      13.0),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      });
-                },
-              ),
-            ),
-            BlocBuilder<SizeBloc, SizeState>(
-              builder: (context, state) {
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const ScrollPhysics(),
-                  padding: EdgeInsets.symmetric(
-                      horizontal: 17 * Scale.width,
-                      vertical: 15 * Scale.height),
-                  itemCount: 14,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    mainAxisSpacing: 30 * Scale.height,
-                    crossAxisSpacing: 10 * Scale.width,
-                    childAspectRatio: 1.4,
+                            onTap: () {
+                              if (context
+                                  .read<SizeBloc>()
+                                  .state
+                                  .selectedSize
+                                  .contains(state.sizeList[index]['name'])) {
+                                context.read<SizeBloc>().add(
+                                    ClickRemoveSizeButton(
+                                        size: state.sizeList[index]['name'],
+                                        sizeId: state.sizeList[index]['id']));
+                              } else {
+                                context.read<SizeBloc>().add(ClickSizeButton(
+                                    size: state.sizeList[index]['name'],
+                                    sizeId: state.sizeList[index]['id']));
+                              }
+                            },
+                          );
+                        },
+                      );
+                    },
                   ),
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(8),
-                          ),
-                          border: Border.all(
-                              color: context
-                                      .read<SizeBloc>()
-                                      .state
-                                      .selectedSize
-                                      .contains(sizeList[index])
-                                  ? Colors.indigo[400]!
-                                  : Colors.grey[300]!),
-                        ),
-                        child: Center(
-                          child: Text(
-                            sizeList[index],
-                            style: textStyle(
-                                context
-                                        .read<SizeBloc>()
-                                        .state
-                                        .selectedSize
-                                        .contains(sizeList[index])
-                                    ? Colors.black
-                                    : Colors.grey[400]!,
-                                FontWeight.w500,
-                                "NotoSansKR",
-                                13.0),
-                          ),
-                        ),
+                ],
+              ),
+              Table(
+                border: TableBorder.all(color: Colors.grey[200]!),
+                children: <TableRow>[
+                  TableRow(children: [
+                    TableCell(
+                      child: Center(
+                        child: Text("사이즈",
+                            style: textStyle(Colors.black, FontWeight.w500,
+                                "NotoSansKR", 10.0)),
                       ),
-                      onTap: () {
-                        if (context
-                            .read<SizeBloc>()
-                            .state
-                            .selectedSize
-                            .contains(sizeList[index])) {
-                          context.read<SizeBloc>().add(ClickRemoveSizeButton(
-                              size: sizeList[index], sizeId: index));
-                        } else {
-                          context.read<SizeBloc>().add(ClickSizeButton(
-                              size: sizeList[index], sizeId: index));
-                        }
-                      },
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-        Table(
-          border: TableBorder.all(color: Colors.grey[200]!),
-          children: <TableRow>[
-            TableRow(children: [
-              TableCell(
-                child: Center(
-                  child: Text("사이즈",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                ),
-              ),
-              TableCell(
-                child: Center(
-                  child: Text("허리둘레",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                ),
-              ),
-              TableCell(
-                child: Center(
-                  child: Text("힙둘레",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                ),
-              ),
-              TableCell(
-                child: Center(
-                  child: Text("밑위길이",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                ),
-              ),
-              TableCell(
-                child: Center(
-                  child: Text("허벅지둘레",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                ),
-              ),
-              TableCell(
-                child: Center(
-                  child: Text("밑단둘레",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                ),
-              ),
-              TableCell(
-                child: Center(
-                  child: Text("총길이",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 10.0)),
-                ),
-              ),
-            ])
-          ],
-        )
-      ],
+                    ),
+                    TableCell(
+                      child: Center(
+                        child: Text("허리둘레",
+                            style: textStyle(Colors.black, FontWeight.w500,
+                                "NotoSansKR", 10.0)),
+                      ),
+                    ),
+                    TableCell(
+                      child: Center(
+                        child: Text("힙둘레",
+                            style: textStyle(Colors.black, FontWeight.w500,
+                                "NotoSansKR", 10.0)),
+                      ),
+                    ),
+                    TableCell(
+                      child: Center(
+                        child: Text("밑위길이",
+                            style: textStyle(Colors.black, FontWeight.w500,
+                                "NotoSansKR", 10.0)),
+                      ),
+                    ),
+                    TableCell(
+                      child: Center(
+                        child: Text("허벅지둘레",
+                            style: textStyle(Colors.black, FontWeight.w500,
+                                "NotoSansKR", 10.0)),
+                      ),
+                    ),
+                    TableCell(
+                      child: Center(
+                        child: Text("밑단둘레",
+                            style: textStyle(Colors.black, FontWeight.w500,
+                                "NotoSansKR", 10.0)),
+                      ),
+                    ),
+                    TableCell(
+                      child: Center(
+                        child: Text("총길이",
+                            style: textStyle(Colors.black, FontWeight.w500,
+                                "NotoSansKR", 10.0)),
+                      ),
+                    ),
+                  ])
+                ],
+              )
+            ],
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 
@@ -1290,7 +1640,7 @@ class _RegistProductState extends State<RegistProduct>
                                             fabric: context
                                                 .read<FabricBloc>()
                                                 .state
-                                                .fabricList![index],
+                                                .fabricList![index]['name'],
                                             fabricIndex: index));
                                   },
                                 ),
@@ -1300,7 +1650,7 @@ class _RegistProductState extends State<RegistProduct>
                               context
                                   .read<FabricBloc>()
                                   .state
-                                  .fabricList![index],
+                                  .fabricList![index]['name'],
                               style: textStyle(Colors.black, FontWeight.w500,
                                   "NotoSansKR", 13.0),
                             ),
@@ -1391,30 +1741,31 @@ class _RegistProductState extends State<RegistProduct>
   Widget addtionalInfoButtonList(
     String type,
   ) {
-    List<String>? selectList;
+    List<dynamic>? selectList = [];
     return BlocBuilder<AdditionalInfoBloc, AdditionalInfoState>(
       builder: (context, state) {
         switch (type) {
-          case "두께감":
+          case "thickness":
             selectList = context.read<AdditionalInfoBloc>().state.thicknessList;
             break;
-          case "비침":
+          case "see_through":
             selectList =
                 context.read<AdditionalInfoBloc>().state.seeThroughList;
             break;
-          case "신축성":
+          case "flexibility":
             selectList =
                 context.read<AdditionalInfoBloc>().state.elasticityList;
             break;
-          case "안감":
+          case "lining":
             selectList = context.read<AdditionalInfoBloc>().state.liningList;
             break;
           default:
         }
+
         return ListView.builder(
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
-          itemCount: selectList!.length,
+          itemCount: selectList?.length,
           itemBuilder: (context, index) {
             return Row(
               children: [
@@ -1423,22 +1774,22 @@ class _RegistProductState extends State<RegistProduct>
                     horizontal: 10 * Scale.width,
                   ),
                   child: Text(
-                    selectList![index],
+                    selectList?[index]['name'],
                     style: textStyle(
                         Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
                   ),
                 ),
                 SizedBox(
                   width: 15 * Scale.width,
-                  child: Radio(
-                    value: selectList![index],
+                  child: Radio<dynamic>(
+                    value: selectList?[index],
                     activeColor: Colors.grey[500],
                     groupValue: context
                         .read<AdditionalInfoBloc>()
                         .state
                         .selectedAdditionalInfo[type],
                     onChanged: (value) {
-                      context.read<AdditionalInfoBloc>().add(
+                      BlocProvider.of<AdditionalInfoBloc>(context).add(
                           ClickAdditionalInfoEvent(index: index, type: type));
                     },
                   ),
@@ -1452,250 +1803,347 @@ class _RegistProductState extends State<RegistProduct>
   }
 
   Widget additionalInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "추가정보",
-          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
-        ),
-        Divider(
-          color: Colors.black,
-          thickness: 2 * Scale.height,
-        ),
-        Column(
-          children: [
-            SizedBox(
-              height: 35 * Scale.height,
-              child: Row(
+    return BlocBuilder<CategoryBloc, CategoryState>(
+      builder: (context, state) {
+        if (context.read<CategoryBloc>().state.selectedSubCategory.isNotEmpty) {
+          return BlocBuilder<AdditionalInfoBloc, AdditionalInfoState>(
+            builder: (context, state) {
+              if (context
+                      .read<AdditionalInfoBloc>()
+                      .state
+                      .elasticityList!
+                      .isEmpty &&
+                  context
+                      .read<AdditionalInfoBloc>()
+                      .state
+                      .thicknessList!
+                      .isEmpty &&
+                  context
+                      .read<AdditionalInfoBloc>()
+                      .state
+                      .thicknessList!
+                      .isEmpty &&
+                  context
+                      .read<AdditionalInfoBloc>()
+                      .state
+                      .liningList!
+                      .isEmpty) {
+                return Container();
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    width: 50 * Scale.width,
-                    child: Text(
-                      "두께감",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 14.0),
-                    ),
+                  Text(
+                    "추가정보",
+                    style: textStyle(
+                        Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
                   ),
-                  SizedBox(width: 40 * Scale.width),
-                  Expanded(
-                    child: addtionalInfoButtonList("두께감"),
+                  Divider(
+                    color: Colors.black,
+                    thickness: 2 * Scale.height,
                   ),
-                ],
-              ),
-            ),
-            const Divider(),
-            SizedBox(
-              height: 35 * Scale.height,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 50 * Scale.width,
-                    child: Text(
-                      "비침",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 14.0),
-                    ),
-                  ),
-                  SizedBox(width: 40 * Scale.width),
-                  Expanded(
-                    child: addtionalInfoButtonList("비침"),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(),
-            SizedBox(
-              height: 35 * Scale.height,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 50 * Scale.width,
-                    child: Text(
-                      "신축성",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 14.0),
-                    ),
-                  ),
-                  SizedBox(width: 40 * Scale.width),
-                  Expanded(
-                    child: addtionalInfoButtonList("신축성"),
-                  ),
-                ],
-              ),
-            ),
-            const Divider(),
-            SizedBox(
-              height: 35 * Scale.height,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 50 * Scale.width,
-                    child: Text(
-                      "안감",
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, "NotoSansKR", 14.0),
-                    ),
-                  ),
-                  SizedBox(width: 40 * Scale.width),
-                  Expanded(
-                    child: addtionalInfoButtonList("안감"),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 20 * Scale.height),
-        Text(
-          "세탁정보 선택",
-          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 14.0),
-        ),
-        BlocBuilder<LaundryBloc, LaundryState>(
-          builder: (context, state) {
-            return GridView.builder(
-              shrinkWrap: true,
-              physics: const ScrollPhysics(),
-              padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
-              itemCount: context.read<LaundryBloc>().state.washingList.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 30 * Scale.height,
-                crossAxisSpacing: 10 * Scale.width,
-                childAspectRatio: 1.4,
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(8),
-                      ),
-                      border: Border.all(
-                          color: context
-                                  .read<LaundryBloc>()
-                                  .state
-                                  .selectedLaundry
-                                  .contains(context
-                                      .read<LaundryBloc>()
-                                      .state
-                                      .washingList[index])
-                              ? Colors.indigo[400]!
-                              : Colors.grey[300]!),
-                    ),
-                    child: Center(
-                      child: Text(
-                        context.read<LaundryBloc>().state.washingList[index],
-                        style: textStyle(
-                            context
-                                    .read<LaundryBloc>()
-                                    .state
-                                    .selectedLaundry
-                                    .contains(context
-                                        .read<LaundryBloc>()
-                                        .state
-                                        .washingList[index])
-                                ? Colors.black
-                                : Colors.grey[400]!,
-                            FontWeight.w500,
-                            "NotoSansKR",
-                            13.0),
-                      ),
-                    ),
-                  ),
-                  onTap: () {
-                    context.read<LaundryBloc>().add(ClickLaudnryButtonEvent(
-                        laundryType: context
-                            .read<LaundryBloc>()
-                            .state
-                            .washingList[index]));
-                  },
-                );
-              },
-            );
-          },
-        ),
-        Text(
-          "스타일",
-          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
-        ),
-        Divider(
-          color: Colors.black,
-          thickness: 2 * Scale.height,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Text(
-            "스타일을 선택하면 더 많은 리스트에서 노출됩니다.",
-            style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
-          ),
-        ),
-        BlocBuilder<StyleBloc, StyleState>(
-          builder: (context, state) {
-            return GridView.builder(
-              shrinkWrap: true,
-              physics: const ScrollPhysics(),
-              padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
-              itemCount: context.read<StyleBloc>().state.styleList.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                childAspectRatio: 2.5,
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          children: [
-                            Transform.scale(
-                              scale: 0.8,
-                              child: SizedBox(
-                                width: 25 * Scale.width,
-                                height: 25 * Scale.width,
-                                child: Checkbox(
-                                  activeColor: Colors.indigo[300],
-                                  side: BorderSide(
-                                      color: Colors.grey[500]!,
-                                      width: 1 * Scale.width),
-                                  value: context
-                                      .read<StyleBloc>()
-                                      .state
-                                      .isClicked[index],
-                                  onChanged: (value) {
-                                    context.read<StyleBloc>().add(
-                                        ClickStyleButtonEvent(
-                                            styleIndex: index));
-                                  },
-                                ),
+                  Column(
+                    children: [
+                      context
+                              .read<AdditionalInfoBloc>()
+                              .state
+                              .thicknessList!
+                              .isEmpty
+                          ? Container()
+                          : SizedBox(
+                              height: 35 * Scale.height,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 50 * Scale.width,
+                                    child: Text(
+                                      "두께감",
+                                      style: textStyle(Colors.black,
+                                          FontWeight.w500, "NotoSansKR", 14.0),
+                                    ),
+                                  ),
+                                  SizedBox(width: 40 * Scale.width),
+                                  Expanded(
+                                    child: addtionalInfoButtonList("thickness"),
+                                  ),
+                                ],
                               ),
                             ),
-                            Text(
-                              context.read<StyleBloc>().state.styleList[index],
-                              style: textStyle(Colors.black, FontWeight.w500,
-                                  "NotoSansKR", 13.0),
+                      const Divider(),
+                      context
+                              .read<AdditionalInfoBloc>()
+                              .state
+                              .seeThroughList!
+                              .isEmpty
+                          ? Container()
+                          : SizedBox(
+                              height: 35 * Scale.height,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 50 * Scale.width,
+                                    child: Text(
+                                      "비침",
+                                      style: textStyle(Colors.black,
+                                          FontWeight.w500, "NotoSansKR", 14.0),
+                                    ),
+                                  ),
+                                  SizedBox(width: 40 * Scale.width),
+                                  Expanded(
+                                    child:
+                                        addtionalInfoButtonList("see_through"),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                      const Divider(),
+                      context
+                              .read<AdditionalInfoBloc>()
+                              .state
+                              .elasticityList!
+                              .isEmpty
+                          ? Container()
+                          : SizedBox(
+                              height: 35 * Scale.height,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 50 * Scale.width,
+                                    child: Text(
+                                      "신축성",
+                                      style: textStyle(Colors.black,
+                                          FontWeight.w500, "NotoSansKR", 14.0),
+                                    ),
+                                  ),
+                                  SizedBox(width: 40 * Scale.width),
+                                  Expanded(
+                                    child:
+                                        addtionalInfoButtonList("flexibility"),
+                                  ),
+                                ],
+                              ),
+                            ),
+                      const Divider(),
+                      context
+                              .read<AdditionalInfoBloc>()
+                              .state
+                              .liningList!
+                              .isEmpty
+                          ? Container()
+                          : SizedBox(
+                              height: 35 * Scale.height,
+                              child: Row(
+                                children: [
+                                  SizedBox(
+                                    width: 50 * Scale.width,
+                                    child: Text(
+                                      "안감",
+                                      style: textStyle(Colors.black,
+                                          FontWeight.w500, "NotoSansKR", 14.0),
+                                    ),
+                                  ),
+                                  SizedBox(width: 40 * Scale.width),
+                                  Expanded(
+                                    child: addtionalInfoButtonList("lining"),
+                                  ),
+                                ],
+                              ),
+                            ),
+                    ],
                   ),
-                  onTap: () {
-                    context
-                        .read<StyleBloc>()
-                        .add(ClickStyleButtonEvent(styleIndex: index));
-                  },
-                );
-              },
-            );
-          },
-        ),
-      ],
+                  SizedBox(height: 20 * Scale.height),
+                ],
+              );
+            },
+          );
+        } else {
+          return Container();
+        }
+      },
     );
+  }
+
+  Widget laundryInfoArea() {
+    return BlocBuilder<LaundryBloc, LaundryState>(
+      builder: (context, state) {
+        if (context.read<InititemBloc>().state.fetchState ==
+                FetchState.success &&
+            context.read<CategoryBloc>().state.selectedSubCategory.isNotEmpty) {
+          return BlocBuilder<InititemBloc, InititemState>(
+            builder: (context, state) {
+              return Column(
+                children: [
+                  Text(
+                    "세탁정보 선택",
+                    style: textStyle(
+                        Colors.black, FontWeight.w700, "NotoSansKR", 14.0),
+                  ),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const ScrollPhysics(),
+                    padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+                    itemCount:
+                        context.read<LaundryBloc>().state.washingList.length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 30 * Scale.height,
+                      crossAxisSpacing: 10 * Scale.width,
+                      childAspectRatio: 1.4,
+                    ),
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                            border: Border.all(
+                                color: context
+                                        .read<LaundryBloc>()
+                                        .state
+                                        .selectedLaundry
+                                        .contains(context
+                                            .read<LaundryBloc>()
+                                            .state
+                                            .washingList[index])
+                                    ? Colors.indigo[400]!
+                                    : Colors.grey[300]!),
+                          ),
+                          child: Center(
+                            child: Text(
+                              context
+                                  .read<LaundryBloc>()
+                                  .state
+                                  .washingList[index]['name'],
+                              style: textStyle(
+                                  context
+                                          .read<LaundryBloc>()
+                                          .state
+                                          .selectedLaundry
+                                          .contains(context
+                                              .read<LaundryBloc>()
+                                              .state
+                                              .washingList[index])
+                                      ? Colors.black
+                                      : Colors.grey[400]!,
+                                  FontWeight.w500,
+                                  "NotoSansKR",
+                                  13.0),
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          context.read<LaundryBloc>().add(
+                              ClickLaudnryButtonEvent(laundryIndex: index));
+                        },
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+
+  Widget styleInfoArea() {
+    return BlocBuilder<StyleBloc, StyleState>(builder: ((context, state) {
+      return Column(
+        children: [
+          Text(
+            "스타일",
+            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+          ),
+          Divider(
+            color: Colors.black,
+            thickness: 2 * Scale.height,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              "스타일을 선택하면 더 많은 리스트에서 노출됩니다.",
+              style:
+                  textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+            ),
+          ),
+          BlocBuilder<StyleBloc, StyleState>(
+            builder: (context, state) {
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const ScrollPhysics(),
+                padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+                itemCount: context.read<StyleBloc>().state.styleList.length,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 2.5,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return GestureDetector(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey[300]!),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Transform.scale(
+                                scale: 0.8,
+                                child: SizedBox(
+                                  width: 25 * Scale.width,
+                                  height: 25 * Scale.width,
+                                  child: Checkbox(
+                                    activeColor: Colors.indigo[300],
+                                    side: BorderSide(
+                                        color: Colors.grey[500]!,
+                                        width: 1 * Scale.width),
+                                    value: context
+                                                .read<StyleBloc>()
+                                                .state
+                                                .selectedStyle ==
+                                            context
+                                                .read<StyleBloc>()
+                                                .state
+                                                .styleList[index]['name']
+                                        ? true
+                                        : false,
+                                    onChanged: (value) {
+                                      context.read<StyleBloc>().add(
+                                          ClickStyleButtonEvent(
+                                              styleIndex: index));
+                                    },
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                context.read<StyleBloc>().state.styleList[index]
+                                    ['name'],
+                                style: textStyle(Colors.black, FontWeight.w500,
+                                    "NotoSansKR", 13.0),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    onTap: () {
+                      context
+                          .read<StyleBloc>()
+                          .add(ClickStyleButtonEvent(styleIndex: index));
+                    },
+                  );
+                },
+              );
+            },
+          ),
+        ],
+      );
+    }));
   }
 }

@@ -105,9 +105,13 @@ class HttpRepository {
   }
 
   Future<dynamic> httpGet(String baseUrl,
-      [Map<String, String>? queryParams]) async {
+      [Map<String, dynamic>? queryParams]) async {
     http.Response response;
     var responseJson = {};
+
+    print(
+      Uri.http(addressUrl, baseUrl, queryParams),
+    );
     try {
       response = await updateToken().then(((value) async {
         return await http.get(
@@ -115,7 +119,7 @@ class HttpRepository {
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
         );
       }));
-
+      print(response.statusCode);
       responseJson = _response(response);
       return responseJson;
     } on SocketException {

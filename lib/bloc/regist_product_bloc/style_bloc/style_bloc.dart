@@ -10,18 +10,8 @@ class StyleBloc extends Bloc<StyleEvent, StyleState> {
   }
 
   void clickStyleButton(ClickStyleButtonEvent event, Emitter<StyleState> emit) {
-    List<String> copy = [...state.selectedStyle];
-    List<bool> isClicked = [...state.isClicked];
-    String selectedStyle = state.styleList[event.styleIndex];
-
-    if (copy.contains(selectedStyle)) {
-      copy.remove(selectedStyle);
-    } else {
-      copy.add(selectedStyle);
-    }
-
-    isClicked[event.styleIndex] = !isClicked[event.styleIndex];
-
-    emit(state.copyWith(selectedStyle: copy, isClicked: isClicked));
+    emit(state.copyWith(
+      selectedStyle: state.styleList[event.styleIndex]['name'],
+    ));
   }
 }

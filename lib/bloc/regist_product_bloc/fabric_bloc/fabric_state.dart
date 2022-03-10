@@ -2,7 +2,7 @@ part of 'fabric_bloc.dart';
 
 class FabricState extends Equatable {
   List<Map> selectedFabric;
-  List? fabricList;
+  List<dynamic>? fabricList;
   List<bool> isClicked;
   List<TextEditingController>? textController;
   FabricState({

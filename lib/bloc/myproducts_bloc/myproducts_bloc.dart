@@ -18,6 +18,8 @@ class MyproductsBloc extends Bloc<MyproductsEvent, MyproductsState> {
         await productsRepository.getMyproducts().catchError((e) {
       emit(state.copyWith(fetchStatus: FetchStatus.error));
     });
+    print(myproductsData);
+
     emit(state.copyWith(
         productsData: myproductsData, fetchStatus: FetchStatus.fetched));
   }

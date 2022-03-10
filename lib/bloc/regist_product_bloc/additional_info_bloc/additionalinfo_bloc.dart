@@ -12,24 +12,28 @@ class AdditionalInfoBloc
 
   void clickAdditionalInfo(
       ClickAdditionalInfoEvent event, Emitter<AdditionalInfoState> emit) {
-    Map<String, String> copy = {...state.selectedAdditionalInfo};
+    Map<String, Map> copy = {};
+
+    copy.addAll(state.selectedAdditionalInfo);
     switch (event.type) {
-      case "두께감":
-        copy['두께감'] = state.thicknessList[event.index];
+      case "thickness":
+        copy['thickness'] = state.thicknessList![event.index];
         break;
-      case "비침":
-        copy['비침'] = state.seeThroughList[event.index];
+      case "see_through":
+        copy['see_through'] = state.seeThroughList![event.index];
         break;
-      case "신축성":
-        copy['신축성'] = state.elasticityList[event.index];
+      case "flexibility":
+        copy['flexibility'] = state.elasticityList![event.index];
         break;
-      case "안감":
-        copy['안감'] = state.liningList[event.index];
+      case "lining":
+        copy['lining'] = state.liningList![event.index];
 
         break;
       default:
+        break;
     }
-    print(copy);
-    emit(state.copyWith(selectedAdditionalInfo: copy));
+    emit(state.copyWith(
+      selectedAdditionalInfo: copy,
+    ));
   }
 }

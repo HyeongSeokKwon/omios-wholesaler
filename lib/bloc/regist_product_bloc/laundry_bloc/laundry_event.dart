@@ -8,9 +8,11 @@ abstract class LaundryEvent extends Equatable {
 }
 
 class ClickLaudnryButtonEvent extends LaundryEvent {
-  final String laundryType;
+  final int laundryIndex;
 
   const ClickLaudnryButtonEvent({
-    required this.laundryType,
+    required this.laundryIndex,
   });
 }
+
+class InitWashingListEvent extends LaundryEvent {}

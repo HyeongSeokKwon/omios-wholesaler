@@ -8,9 +8,9 @@ abstract class AdditionalInfoEvent extends Equatable {
 }
 
 class ClickAdditionalInfoEvent extends AdditionalInfoEvent {
-  final int index;
-  final String type;
-  const ClickAdditionalInfoEvent({
+  int index;
+  String type;
+  ClickAdditionalInfoEvent({
     required this.index,
     required this.type,
   });
