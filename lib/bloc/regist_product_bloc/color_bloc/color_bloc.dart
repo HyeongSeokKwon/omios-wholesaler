@@ -1,16 +1,37 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 part 'color_event.dart';
 part 'color_state.dart';
 
 class ColorBloc extends Bloc<ColorEvent, ColorState> {
   ColorBloc() : super(ColorState.initial()) {
-    on<ClickColorButtonEvent>(clickColorButton);
+    on<ClickColorAddButtonEvent>(addColor);
+    on<ClickColorRemoveButtonEvent>(removeColor);
+    on<ChangeColorCustomedNameEvent>(changeColorCustomedName);
   }
 
-  void clickColorButton(ClickColorButtonEvent event, Emitter<ColorState> emit) {
-    List<Map> colorMap = [...state.selectedColorMap];
+  void addColor(ClickColorAddButtonEvent event, Emitter<ColorState> emit) {
+    List<Map<String, dynamic>> colorMap = [...state.selectedColorMap];
+    List<String> colorList = [...state.selectedColorList];
+    if (colorMap.length < 10) {
+      colorMap.add({
+        'color': event.color,
+        'colorId': event.colorId,
+        'customedName': event.customedName,
+        'images': null
+      });
+      colorList.add(event.color);
+      colorMap.sort((a, b) => (a['colorId']).compareTo(b['colorId']));
+      emit(state.copyWith(
+          selectedColorMap: colorMap, selectedColorList: colorList));
+    }
+  }
+
+  void removeColor(
+      ClickColorRemoveButtonEvent event, Emitter<ColorState> emit) {
+    List<Map<String, dynamic>> colorMap = [...state.selectedColorMap];
     List<String> colorList = [...state.selectedColorList];
 
     for (var color in colorMap) {
@@ -22,13 +43,21 @@ class ColorBloc extends Bloc<ColorEvent, ColorState> {
         return;
       }
     }
+  }
 
-    colorMap
-        .add({'color': event.color, 'colorId': event.colorId, 'images': null});
-    colorList.add(event.color);
+  void changeColorCustomedName(
+      ChangeColorCustomedNameEvent event, Emitter<ColorState> emit) {
+    List<Map<String, dynamic>> colorMap = [];
+    for (var map in state.selectedColorMap) {
+      colorMap.add(Map.from(map));
+    }
 
-    emit(state.copyWith(
-        selectedColorMap: colorMap, selectedColorList: colorList));
-    return;
+    for (var color in colorMap) {
+      if (mapEquals(color, state.selectedColorMap[event.selectedColorIndex])) {
+        colorMap[event.selectedColorIndex]['customedName'] = event.customedName;
+        emit(state.copyWith(selectedColorMap: colorMap));
+        return;
+      }
+    }
   }
 }
