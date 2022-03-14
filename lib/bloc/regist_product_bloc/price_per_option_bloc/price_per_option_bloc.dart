@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:deepy_wholesaler/bloc/bloc.dart';
+import 'package:flutter/material.dart';
 part 'price_per_option_event.dart';
 part 'price_per_option_state.dart';
 
@@ -14,40 +14,32 @@ class PricePerOptionBloc
 
   late final StreamSubscription colorSubScription;
   late final StreamSubscription sizeSubScription;
-
+  late final StreamSubscription priceSubScription;
   PricePerOptionBloc(this.colorBloc, this.priceBloc, this.sizeBloc)
       : super(PricePerOptionState.initial()) {
+    priceSubScription = priceBloc.stream.listen((PriceState priceState) {
+      add(ClickedShowPricePerOptionEvent());
+    });
+
     colorSubScription = colorBloc.stream.listen((ColorState colorState) {
-      if (state.isClicked) {
-        add(ClickedShowPricePerOptionEvent(isClicked: state.isClicked));
-      }
-      if (colorState.selectedColorList.isEmpty) {
-        add(const ClickedShowPricePerOptionEvent(isClicked: false));
-      }
+      add(ClickedShowPricePerOptionEvent());
     });
 
     sizeSubScription = sizeBloc.stream.listen((SizeState sizeState) {
-      if (state.isClicked) {
-        add(ClickedShowPricePerOptionEvent(isClicked: state.isClicked));
-      }
-      if (sizeState.selectedSize.isEmpty) {
-        add(const ClickedShowPricePerOptionEvent(isClicked: false));
-      }
+      add(ClickedShowPricePerOptionEvent());
     });
 
     on<ClickedShowPricePerOptionEvent>(createPricePerOptionList);
-    on<ClickPlusPriceButtonEvent>(addPrice);
-    on<ClickMinusPriceButtonEvent>(substractPrice);
+    on<ChangePricePerOptionEvent>(changePrice);
+    on<ClickedRemovePricePerOptionEvent>(removePricePerOption);
+    on<InputInventoryEvent>(changeInventory);
   }
 
   void createPricePerOptionList(
       ClickedShowPricePerOptionEvent event, Emitter<PricePerOptionState> emit) {
     List<Map<String, dynamic>> pricePerOptionList = [];
-    if (!event.isClicked) {
-      emit(state.copyWith(isClicked: event.isClicked));
-      return;
-    }
-
+    List<TextEditingController> priceControllerList;
+    List<TextEditingController> inventoryControllerList;
     colorBloc.state.selectedColorMap
         .sort((a, b) => (a['colorId']).compareTo(b['colorId']));
     sizeBloc.state.selectedSizeMap!
@@ -57,46 +49,76 @@ class PricePerOptionBloc
       for (var size in sizeBloc.state.selectedSizeMap!) {
         pricePerOptionList.add(
           {
-            'color': color['color'],
-            'size': size['size'],
-            'price_difference': 0
+            'color': color,
+            'size': size,
+            'price': priceBloc.state.price,
+            'inventory': 0
           },
         );
       }
     }
 
-    for (var value in state.pricePerOptionList) {
-      for (var value2 in pricePerOptionList) {
-        if (value['color'] == value2['color'] &&
-            value['size'] == value2['size']) {
-          value2['price_difference'] = value['price_difference'];
-        }
-      }
+    priceControllerList = List.generate(
+        pricePerOptionList.length, (index) => TextEditingController());
+
+    inventoryControllerList = List.generate(
+        pricePerOptionList.length, (index) => TextEditingController());
+
+    for (int index = 0; index < priceControllerList.length; index++) {
+      priceControllerList[index].text =
+          pricePerOptionList[index]['price'].toString();
+      inventoryControllerList[index].text =
+          pricePerOptionList[index]['inventory'].toString();
     }
 
+    print(pricePerOptionList);
     emit(state.copyWith(
-        pricePerOptionList: pricePerOptionList, isClicked: event.isClicked));
+      pricePerOptionList: pricePerOptionList,
+      priceControllerList: priceControllerList,
+      inventoryControllerList: inventoryControllerList,
+    ));
   }
 
-  void addPrice(
-      ClickPlusPriceButtonEvent event, Emitter<PricePerOptionState> emit) {
+  void removePricePerOption(ClickedRemovePricePerOptionEvent event,
+      Emitter<PricePerOptionState> emit) {
     List<Map<String, dynamic>> copy = [];
-
     for (var value in state.pricePerOptionList) {
       copy.add(Map.from(value));
     }
+    copy.removeAt(event.index);
 
-    copy[event.index]['price_difference'] += 500;
+    state.priceControllerList.removeAt(event.index);
+    state.inventoryControllerList.removeAt(event.index);
+
     emit(state.copyWith(pricePerOptionList: copy));
   }
 
-  void substractPrice(
-      ClickMinusPriceButtonEvent event, Emitter<PricePerOptionState> emit) {
+  void changePrice(
+      ChangePricePerOptionEvent event, Emitter<PricePerOptionState> emit) {
+    List<Map<String, dynamic>> copy = [];
+    int standardPrice = int.parse(priceBloc.state.price);
+    int minPrice = standardPrice * 0.8.toInt();
+    int maxPrice = standardPrice * 1.2.toInt();
+
+    for (var value in state.pricePerOptionList) {
+      copy.add(Map.from(value));
+    }
+    if (int.parse(event.changePrice) >= minPrice &&
+        int.parse(event.changePrice) <= maxPrice) {
+      copy[event.index]['price'] = int.parse(event.changePrice);
+    }
+    emit(state.copyWith(pricePerOptionList: copy));
+  }
+
+  void changeInventory(
+      InputInventoryEvent event, Emitter<PricePerOptionState> emit) {
     List<Map<String, dynamic>> copy = [];
     for (var value in state.pricePerOptionList) {
       copy.add(Map.from(value));
     }
-    copy[event.index]['price_difference'] -= 500;
+
+    copy[event.index]['inventory'] = event.inventory;
+
     emit(state.copyWith(pricePerOptionList: copy));
   }
 
