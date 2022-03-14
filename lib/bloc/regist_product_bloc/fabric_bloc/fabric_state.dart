@@ -5,11 +5,13 @@ class FabricState extends Equatable {
   List<dynamic>? fabricList;
   List<bool> isClicked;
   List<TextEditingController>? textController;
+  int? sum;
   FabricState({
     required this.selectedFabric,
     this.fabricList,
     required this.isClicked,
     this.textController,
+    this.sum,
   });
 
   factory FabricState.initial() {
@@ -32,7 +34,11 @@ class FabricState extends Equatable {
       selectedFabric: [],
       fabricList: fabricsList,
       isClicked: List.filled(fabricsList.length, false, growable: true),
-      textController: List.filled(fabricsList.length, TextEditingController()),
+      textController: List.filled(
+        fabricsList.length,
+        TextEditingController(),
+      ),
+      sum: 0,
     );
   }
 
@@ -43,11 +49,13 @@ class FabricState extends Equatable {
     List<Map>? selectedFabric,
     List? fabricList,
     List<bool>? isClicked,
+    int? sum,
   }) {
     return FabricState(
       selectedFabric: selectedFabric ?? this.selectedFabric,
       fabricList: fabricList ?? this.fabricList,
       isClicked: isClicked ?? this.isClicked,
+      sum: sum ?? this.sum,
     );
   }
 }

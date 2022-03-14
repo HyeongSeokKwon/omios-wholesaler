@@ -27,3 +27,5 @@ class InputFabricPercentEvent extends FabricEvent {
     required this.fabricIndex,
   });
 }
+
+class CheckFabricsSumEvent extends FabricEvent {}

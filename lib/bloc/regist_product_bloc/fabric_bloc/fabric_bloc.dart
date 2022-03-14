@@ -39,6 +39,7 @@ class FabricBloc extends Bloc<FabricEvent, FabricState> {
   void inputFabricPercent(
       InputFabricPercentEvent event, Emitter<FabricState> emit) {
     List<Map<String, dynamic>> copy = [];
+    int sum = 0;
     for (var value in state.selectedFabric) {
       copy.add(Map.from(value));
     }
@@ -46,9 +47,12 @@ class FabricBloc extends Bloc<FabricEvent, FabricState> {
     for (var value in copy) {
       if (value['fabricId'] == event.fabricIndex) {
         value['fabricPercent'] = int.parse(event.fabricPercent);
+        sum += int.parse(event.fabricPercent);
         break;
       }
     }
-    emit(state.copyWith(selectedFabric: copy));
+    emit(state.copyWith(selectedFabric: copy, sum: sum));
   }
+
+  void checkFabricSum(CheckFabricsSumEvent event, Emitter<FabricState> emit) {}
 }
