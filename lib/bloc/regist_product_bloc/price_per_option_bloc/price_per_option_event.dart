@@ -7,23 +7,28 @@ abstract class PricePerOptionEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ClickedShowPricePerOptionEvent extends PricePerOptionEvent {
-  final bool isClicked;
-  const ClickedShowPricePerOptionEvent({
-    required this.isClicked,
+class ClickedShowPricePerOptionEvent extends PricePerOptionEvent {}
+
+class ClickedRemovePricePerOptionEvent extends PricePerOptionEvent {
+  final int index;
+
+  const ClickedRemovePricePerOptionEvent(this.index);
+}
+
+class ChangePricePerOptionEvent extends PricePerOptionEvent {
+  final int index;
+  final String changePrice;
+  const ChangePricePerOptionEvent({
+    required this.index,
+    required this.changePrice,
   });
 }
 
-class ClickPlusPriceButtonEvent extends PricePerOptionEvent {
+class InputInventoryEvent extends PricePerOptionEvent {
   final int index;
-  const ClickPlusPriceButtonEvent({
+  final int inventory;
+  const InputInventoryEvent({
     required this.index,
-  });
-}
-
-class ClickMinusPriceButtonEvent extends PricePerOptionEvent {
-  final int index;
-  const ClickMinusPriceButtonEvent({
-    required this.index,
+    required this.inventory,
   });
 }
