@@ -18,6 +18,7 @@ class PriceBloc extends Bloc<PriceEvent, PriceState> {
   }
 
   void changePrice(ChangePriceEvent event, Emitter<PriceState> emit) {
+    print(event.changePrice);
     emit(state.copyWith(price: event.changePrice));
   }
 }

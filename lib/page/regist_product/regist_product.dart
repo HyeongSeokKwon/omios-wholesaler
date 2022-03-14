@@ -149,18 +149,22 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                       writePriceArea(), //common
                       SizedBox(height: 40 * Scale.height),
                       selectColorArea(), //common
-                      SizedBox(height: 30 * Scale.height),
+                      SizedBox(height: 40 * Scale.height),
                       registPhotoArea(), //common
-                      SizedBox(height: 30 * Scale.height),
+                      SizedBox(height: 40 * Scale.height),
                       selectSizeArea(), //dynamic
-                      SizedBox(height: 30 * Scale.height),
+                      SizedBox(height: 40 * Scale.height),
                       registPriceByOptionArea(), //common
-                      SizedBox(height: 30 * Scale.height),
+                      SizedBox(height: 40 * Scale.height),
                       materialArea(), //common
-                      SizedBox(height: 30 * Scale.height),
+                      SizedBox(height: 40 * Scale.height),
                       additionalInfo(), //dynamic
+                      SizedBox(height: 40 * Scale.height),
                       laundryInfoArea(),
+                      SizedBox(height: 40 * Scale.height),
                       styleInfoArea(),
+                      SizedBox(height: 40 * Scale.height),
+                      manufactureCountryArea(),
                     ],
                   ),
                 ),
@@ -771,13 +775,140 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     ),
                   ),
                   onTap: () {
-                    context.read<ColorBloc>().add(ClickColorButtonEvent(
-                        color: state.colorList[index]['name'],
-                        colorId: state.colorList[index]['id']));
+                    context.read<ColorBloc>().add(
+                          ClickColorAddButtonEvent(
+                              color: state.colorList[index]['name'],
+                              customedName: state.colorList[index]['name'],
+                              colorId: state.colorList[index]['id']),
+                        );
                   },
                 );
               },
             ),
+            ListView.builder(
+                shrinkWrap: true,
+                itemCount:
+                    context.read<ColorBloc>().state.selectedColorMap.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 4 * Scale.height),
+                    child: Container(
+                      color: Colors.grey[100]!,
+                      child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 5 * Scale.height),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                InkWell(
+                                    onTap: () {
+                                      context.read<ColorBloc>().add(
+                                          ClickColorRemoveButtonEvent(
+                                              customedName: context
+                                                      .read<ColorBloc>()
+                                                      .state
+                                                      .selectedColorMap[index]
+                                                  ['customedName'],
+                                              color: context
+                                                      .read<ColorBloc>()
+                                                      .state
+                                                      .selectedColorMap[index]
+                                                  ['color'],
+                                              colorId: context
+                                                      .read<ColorBloc>()
+                                                      .state
+                                                      .selectedColorMap[index]
+                                                  ['colorId']));
+                                    },
+                                    child: const Icon(Icons.clear)),
+                                Text(
+                                  "계열 : ${context.read<ColorBloc>().state.selectedColorMap[index]['color']}",
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w400, "NotoSansKR", 16.0),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  "색상이름:",
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w400, "NotoSansKR", 16.0),
+                                ),
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(right: 25 * Scale.width),
+                                  child: SizedBox(
+                                    width: 100 * Scale.width,
+                                    height: 30 * Scale.width,
+                                    child: TextFormField(
+                                      key: Key(context
+                                              .read<ColorBloc>()
+                                              .state
+                                              .selectedColorMap[index]
+                                          ['customedName']),
+                                      initialValue: context
+                                              .read<ColorBloc>()
+                                              .state
+                                              .selectedColorMap[index]
+                                          ['customedName'],
+                                      onChanged: ((value) {
+                                        context.read<ColorBloc>().add(
+                                            ChangeColorCustomedNameEvent(
+                                                customedName: value,
+                                                selectedColorIndex: index));
+                                      }),
+                                      maxLength: 15,
+                                      textInputAction: TextInputAction.next,
+                                      showCursor: false,
+                                      decoration: InputDecoration(
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.fromLTRB(
+                                          10 * Scale.width,
+                                          10 * Scale.height,
+                                          10 * Scale.width,
+                                          10 * Scale.height,
+                                        ),
+                                        counterText: "",
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.auto,
+                                        labelStyle: TextStyle(
+                                          color: const Color(0xff666666),
+                                          height: 0.6,
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: "NotoSansKR",
+                                          fontStyle: FontStyle.normal,
+                                          fontSize: 14 * Scale.height,
+                                        ),
+                                        border: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(7)),
+                                          borderSide: BorderSide(
+                                              color: Color(0xffcccccc),
+                                              width: 1),
+                                        ),
+                                        focusedBorder: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(7)),
+                                          borderSide: BorderSide(
+                                              color: Color(0xffcccccc),
+                                              width: 1),
+                                        ),
+                                      ),
+                                      textAlign: TextAlign.left,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                })
           ],
         );
       },
@@ -988,7 +1119,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                   TabController colorTabController = TabController(
                       length: (BlocProvider.of<ColorBloc>(context)
                           .state
-                          .selectedColorList
+                          .selectedColorMap
                           .length),
                       vsync: this);
                   colorTabController.addListener(() {
@@ -1003,7 +1134,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                       Tab(
                         height: 20 * Scale.height,
                         child: Text(
-                          color['color'],
+                          color['customedName'],
                           style: textStyle(Colors.black, FontWeight.w500,
                               "NotoSansKR", 12.0),
                         ),
@@ -1169,213 +1300,230 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
     return BlocBuilder<CategoryBloc, CategoryState>(
       builder: (context, state) {
         if (context.read<CategoryBloc>().state.selectedSubCategory.isNotEmpty) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "사이즈 선택(필수)",
-                style: textStyle(
-                    Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
-              ),
-              SizedBox(height: 10 * Scale.height),
-              Column(
-                children: [
-                  Container(
-                    width: double.maxFinite,
-                    height: 50 * Scale.height,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(8)),
-                      border: Border.all(color: Colors.grey[300]!),
+          return BlocBuilder<SizeBloc, SizeState>(
+            builder: (context, state) {
+              if (context.read<SizeBloc>().state.sizeList.isNotEmpty) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "사이즈 선택(필수)",
+                      style: textStyle(
+                          Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
                     ),
-                    child: BlocBuilder<SizeBloc, SizeState>(
-                      builder: (context, state) {
-                        return ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: context
-                                .read<SizeBloc>()
-                                .state
-                                .selectedSize
-                                .length,
-                            itemBuilder: (context, index) {
-                              return Padding(
-                                padding: EdgeInsets.all(5 * Scale.width),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(8)),
-                                    color: Colors.grey[200],
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.all(8 * Scale.width),
-                                    child: Center(
-                                      child: InkWell(
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              context
-                                                  .read<SizeBloc>()
-                                                  .state
-                                                  .selectedSize[index],
-                                              style: textStyle(
-                                                  Colors.black,
-                                                  FontWeight.w500,
-                                                  "NotoSansKR",
-                                                  12.0),
-                                            ),
-                                            SizedBox(width: 4 * Scale.width),
-                                            const Icon(
-                                              Icons.clear,
-                                              size: 15,
-                                            ),
-                                          ],
-                                        ),
-                                        onTap: () {
-                                          context.read<SizeBloc>().add(
-                                              ClickRemoveSizeButton(
-                                                  size: context
-                                                      .read<SizeBloc>()
-                                                      .state
-                                                      .selectedSize[index]));
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            });
-                      },
-                    ),
-                  ),
-                  BlocBuilder<SizeBloc, SizeState>(
-                    builder: (context, state) {
-                      return GridView.builder(
-                        shrinkWrap: true,
-                        physics: const ScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 17 * Scale.width,
-                            vertical: 15 * Scale.height),
-                        itemCount:
-                            context.read<SizeBloc>().state.sizeList.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                          mainAxisSpacing: 30 * Scale.height,
-                          crossAxisSpacing: 10 * Scale.width,
-                          childAspectRatio: 1.4,
-                        ),
-                        itemBuilder: (BuildContext context, int index) {
-                          return GestureDetector(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(8),
-                                ),
-                                border: Border.all(
-                                    color: context
-                                            .read<SizeBloc>()
-                                            .state
-                                            .selectedSize
-                                            .contains(state.sizeList[index])
-                                        ? Colors.indigo[400]!
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  state.sizeList[index]['name'],
-                                  style: textStyle(
-                                      context
-                                              .read<SizeBloc>()
-                                              .state
-                                              .selectedSize
-                                              .contains(
-                                                  state.sizeList[index]['name'])
-                                          ? Colors.black
-                                          : Colors.grey[400]!,
-                                      FontWeight.w500,
-                                      "NotoSansKR",
-                                      13.0),
-                                ),
-                              ),
-                            ),
-                            onTap: () {
-                              if (context
+                    SizedBox(height: 10 * Scale.height),
+                    Column(
+                      children: [
+                        Container(
+                          width: double.maxFinite,
+                          height: 50 * Scale.height,
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(8)),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: context
                                   .read<SizeBloc>()
                                   .state
                                   .selectedSize
-                                  .contains(state.sizeList[index]['name'])) {
-                                context.read<SizeBloc>().add(
-                                    ClickRemoveSizeButton(
-                                        size: state.sizeList[index]['name'],
-                                        sizeId: state.sizeList[index]['id']));
-                              } else {
-                                context.read<SizeBloc>().add(ClickSizeButton(
-                                    size: state.sizeList[index]['name'],
-                                    sizeId: state.sizeList[index]['id']));
-                              }
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-              Table(
-                border: TableBorder.all(color: Colors.grey[200]!),
-                children: <TableRow>[
-                  TableRow(children: [
-                    TableCell(
-                      child: Center(
-                        child: Text("사이즈",
-                            style: textStyle(Colors.black, FontWeight.w500,
-                                "NotoSansKR", 10.0)),
-                      ),
+                                  .length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.all(5 * Scale.width),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(8)),
+                                      color: Colors.grey[200],
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8 * Scale.width),
+                                      child: Center(
+                                        child: InkWell(
+                                          child: Row(
+                                            children: [
+                                              Text(
+                                                context
+                                                    .read<SizeBloc>()
+                                                    .state
+                                                    .selectedSize[index],
+                                                style: textStyle(
+                                                    Colors.black,
+                                                    FontWeight.w500,
+                                                    "NotoSansKR",
+                                                    12.0),
+                                              ),
+                                              SizedBox(width: 4 * Scale.width),
+                                              const Icon(
+                                                Icons.clear,
+                                                size: 15,
+                                              ),
+                                            ],
+                                          ),
+                                          onTap: () {
+                                            context.read<SizeBloc>().add(
+                                                ClickRemoveSizeButton(
+                                                    size: context
+                                                        .read<SizeBloc>()
+                                                        .state
+                                                        .selectedSize[index]));
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                        ),
+                        BlocBuilder<SizeBloc, SizeState>(
+                          builder: (context, state) {
+                            return GridView.builder(
+                              shrinkWrap: true,
+                              physics: const ScrollPhysics(),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 17 * Scale.width,
+                                  vertical: 15 * Scale.height),
+                              itemCount: context
+                                  .read<SizeBloc>()
+                                  .state
+                                  .sizeList
+                                  .length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 4,
+                                mainAxisSpacing: 30 * Scale.height,
+                                crossAxisSpacing: 10 * Scale.width,
+                                childAspectRatio: 1.4,
+                              ),
+                              itemBuilder: (BuildContext context, int index) {
+                                return GestureDetector(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(8),
+                                      ),
+                                      border: Border.all(
+                                          color: context
+                                                  .read<SizeBloc>()
+                                                  .state
+                                                  .selectedSize
+                                                  .contains(
+                                                      state.sizeList[index])
+                                              ? Colors.indigo[400]!
+                                              : Colors.grey[300]!),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        state.sizeList[index]['name'],
+                                        style: textStyle(
+                                            context
+                                                    .read<SizeBloc>()
+                                                    .state
+                                                    .selectedSize
+                                                    .contains(
+                                                        state.sizeList[index]
+                                                            ['name'])
+                                                ? Colors.black
+                                                : Colors.grey[400]!,
+                                            FontWeight.w500,
+                                            "NotoSansKR",
+                                            13.0),
+                                      ),
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    if (context
+                                        .read<SizeBloc>()
+                                        .state
+                                        .selectedSize
+                                        .contains(
+                                            state.sizeList[index]['name'])) {
+                                      context.read<SizeBloc>().add(
+                                          ClickRemoveSizeButton(
+                                              size: state.sizeList[index]
+                                                  ['name'],
+                                              sizeId: state.sizeList[index]
+                                                  ['id']));
+                                    } else {
+                                      context.read<SizeBloc>().add(
+                                          ClickSizeButton(
+                                              size: state.sizeList[index]
+                                                  ['name'],
+                                              sizeId: state.sizeList[index]
+                                                  ['id']));
+                                    }
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    TableCell(
-                      child: Center(
-                        child: Text("허리둘레",
-                            style: textStyle(Colors.black, FontWeight.w500,
-                                "NotoSansKR", 10.0)),
-                      ),
-                    ),
-                    TableCell(
-                      child: Center(
-                        child: Text("힙둘레",
-                            style: textStyle(Colors.black, FontWeight.w500,
-                                "NotoSansKR", 10.0)),
-                      ),
-                    ),
-                    TableCell(
-                      child: Center(
-                        child: Text("밑위길이",
-                            style: textStyle(Colors.black, FontWeight.w500,
-                                "NotoSansKR", 10.0)),
-                      ),
-                    ),
-                    TableCell(
-                      child: Center(
-                        child: Text("허벅지둘레",
-                            style: textStyle(Colors.black, FontWeight.w500,
-                                "NotoSansKR", 10.0)),
-                      ),
-                    ),
-                    TableCell(
-                      child: Center(
-                        child: Text("밑단둘레",
-                            style: textStyle(Colors.black, FontWeight.w500,
-                                "NotoSansKR", 10.0)),
-                      ),
-                    ),
-                    TableCell(
-                      child: Center(
-                        child: Text("총길이",
-                            style: textStyle(Colors.black, FontWeight.w500,
-                                "NotoSansKR", 10.0)),
-                      ),
-                    ),
-                  ])
-                ],
-              )
-            ],
+                    Table(
+                      border: TableBorder.all(color: Colors.grey[200]!),
+                      children: <TableRow>[
+                        TableRow(children: [
+                          TableCell(
+                            child: Center(
+                              child: Text("사이즈",
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text("허리둘레",
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text("힙둘레",
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text("밑위길이",
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text("허벅지둘레",
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text("밑단둘레",
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                            ),
+                          ),
+                          TableCell(
+                            child: Center(
+                              child: Text("총길이",
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                            ),
+                          ),
+                        ])
+                      ],
+                    )
+                  ],
+                );
+              } else {
+                return Container();
+              }
+            },
           );
         } else {
           return Container();
@@ -1389,7 +1537,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "옵션별 단가 등록하기",
+          "옵션별 재고,단가 등록",
           style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
         ),
         Divider(
@@ -1403,166 +1551,207 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
         ),
         BlocBuilder<PricePerOptionBloc, PricePerOptionState>(
           builder: (context, state) {
-            return Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Row(
-                  children: [
-                    Checkbox(
-                        activeColor: Colors.indigo[300],
-                        side: BorderSide(
-                            color: Colors.grey[500]!, width: 1 * Scale.width),
-                        value:
-                            context.read<PricePerOptionBloc>().state.isClicked,
-                        onChanged: (value) {
-                          String missedValue = "";
-                          if (BlocProvider.of<ColorBloc>(context)
-                              .state
-                              .selectedColorList
-                              .isEmpty) {
-                            missedValue = missedValue + " [색상]";
-                          }
-                          if (BlocProvider.of<SizeBloc>(context)
-                              .state
-                              .selectedSize
-                              .isEmpty) {
-                            missedValue = missedValue + " [사이즈]";
-                          }
-                          if (BlocProvider.of<PriceBloc>(context)
-                              .state
-                              .price
-                              .isEmpty) {
-                            missedValue = missedValue + " [가격]";
-                          }
-                          if (missedValue.isEmpty) {
-                            context.read<PricePerOptionBloc>().add(
-                                ClickedShowPricePerOptionEvent(
-                                    isClicked: value!));
-                          } else {
-                            missedValue = missedValue + "의 데이터가 없습니다!";
-                            showAlertDialog(context, missedValue);
-                          }
-                        }),
-                    Text(
-                      "옵션별로 단가를 등록하려면 체크해주세요.",
-                      style: textStyle(Colors.grey[600]!, FontWeight.w500,
-                          "NotoSansKR", 11.0),
-                    ),
-                  ],
-                ),
-                context.read<PricePerOptionBloc>().state.isClicked
-                    ? ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: context
-                            .read<PricePerOptionBloc>()
-                            .state
-                            .pricePerOptionList
-                            .length,
-                        itemBuilder: (context, index) {
-                          return Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                    border:
-                                        Border.all(color: Colors.grey[300]!),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(8))),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 22 * Scale.width,
-                                      vertical: 20 * Scale.height),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        context
-                                            .read<PricePerOptionBloc>()
-                                            .state
-                                            .pricePerOptionList[index]['color'],
-                                        style: textStyle(
-                                            Colors.black,
-                                            FontWeight.w500,
-                                            "NotoSansKR",
-                                            14.0),
-                                      ),
-                                      Text(
-                                        context
-                                            .read<PricePerOptionBloc>()
-                                            .state
-                                            .pricePerOptionList[index]['size'],
-                                        style: textStyle(
-                                            Colors.black,
-                                            FontWeight.w500,
-                                            "NotoSansKR",
-                                            14.0),
-                                      ),
-                                      Row(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () {
-                                              context
-                                                  .read<PricePerOptionBloc>()
-                                                  .add(
-                                                      ClickMinusPriceButtonEvent(
-                                                          index: index));
-                                            },
-                                            child: SizedBox(
-                                              width: 35 * Scale.width,
-                                              height: 35 * Scale.width,
-                                              child: SvgPicture.asset(
-                                                "assets/images/svg/minus.svg",
-                                                width: 18 * Scale.width,
-                                                fit: BoxFit.scaleDown,
-                                              ),
-                                            ),
-                                          ),
-                                          BlocBuilder<PricePerOptionBloc,
-                                              PricePerOptionState>(
-                                            builder: (context, state) {
-                                              return Text(
-                                                "${int.parse(BlocProvider.of<PriceBloc>(context).state.price) + context.read<PricePerOptionBloc>().state.pricePerOptionList[index]['price_difference']}",
-                                                style: textStyle(
-                                                    Colors.black,
-                                                    FontWeight.w500,
-                                                    "NotoSansKR",
-                                                    14.0),
-                                              );
-                                            },
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              context
-                                                  .read<PricePerOptionBloc>()
-                                                  .add(
-                                                      ClickPlusPriceButtonEvent(
-                                                          index: index));
-                                            },
-                                            child: SizedBox(
-                                              width: 35 * Scale.width,
-                                              height: 35 * Scale.width,
-                                              child: SvgPicture.asset(
-                                                "assets/images/svg/plus.svg",
-                                                width: 18 * Scale.width,
-                                                fit: BoxFit.scaleDown,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+            if (BlocProvider.of<ColorBloc>(context)
+                    .state
+                    .selectedColorList
+                    .isNotEmpty &&
+                BlocProvider.of<SizeBloc>(context)
+                    .state
+                    .selectedSize
+                    .isNotEmpty &&
+                BlocProvider.of<PriceBloc>(context).state.price.isNotEmpty) {
+              return Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: context
+                        .read<PricePerOptionBloc>()
+                        .state
+                        .pricePerOptionList
+                        .length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey[300]!),
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8))),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 22 * Scale.width,
+                                  vertical: 20 * Scale.height),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  InkWell(
+                                    child: const Icon(Icons.clear, size: 15),
+                                    onTap: () {
+                                      context.read<PricePerOptionBloc>().add(
+                                          ClickedRemovePricePerOptionEvent(
+                                              index));
+                                    },
                                   ),
-                                ),
+                                  Text(
+                                    context
+                                            .read<PricePerOptionBloc>()
+                                            .state
+                                            .pricePerOptionList[index]['color']
+                                        ['customedName'],
+                                    style: textStyle(Colors.black,
+                                        FontWeight.w500, "NotoSansKR", 14.0),
+                                  ),
+                                  Text(
+                                    context
+                                            .read<PricePerOptionBloc>()
+                                            .state
+                                            .pricePerOptionList[index]['size']
+                                        ['size'],
+                                    style: textStyle(Colors.black,
+                                        FontWeight.w500, "NotoSansKR", 14.0),
+                                  ),
+                                  SizedBox(
+                                    width: 60 * Scale.width,
+                                    height: 35 * Scale.height,
+                                    child: BlocBuilder<PricePerOptionBloc,
+                                        PricePerOptionState>(
+                                      builder: (context, state) {
+                                        return TextFormField(
+                                          key: Key(index.toString()),
+                                          controller: state
+                                              .inventoryControllerList[index],
+                                          keyboardType: TextInputType.number,
+                                          onChanged: (value) {
+                                            if (value.isNotEmpty) {
+                                              context
+                                                  .read<PricePerOptionBloc>()
+                                                  .add(InputInventoryEvent(
+                                                      index: index,
+                                                      inventory:
+                                                          int.parse(value)));
+                                            }
+                                          },
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp('[0-9]')),
+                                          ],
+                                          onFieldSubmitted: (value) {
+                                            currentFocus.unfocus();
+                                          },
+                                          style: const TextStyle(
+                                            color: Color(0xff666666),
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: "NotoSansKR",
+                                            fontSize: 13.0,
+                                          ),
+                                          maxLength: 8,
+                                          decoration: InputDecoration(
+                                            counterText: "",
+                                            contentPadding: EdgeInsets.zero,
+                                            hintStyle: textStyle(
+                                                const Color(0xffcccccc),
+                                                FontWeight.w500,
+                                                "NotoSansKR",
+                                                11.0),
+                                            border: const OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                              borderSide: BorderSide(
+                                                  color: Color(0xffcccccc),
+                                                  width: 1),
+                                            ),
+                                            focusedBorder:
+                                                const OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                              borderSide: BorderSide(
+                                                  color: Color(0xffcccccc),
+                                                  width: 1),
+                                            ),
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 85 * Scale.width,
+                                    height: 35 * Scale.height,
+                                    child: Builder(
+                                      builder: (context) {
+                                        return TextFormField(
+                                          key: Key(index.toString()),
+                                          controller:
+                                              state.priceControllerList[index],
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(signed: true),
+                                          onChanged: (value) {
+                                            context
+                                                .read<PricePerOptionBloc>()
+                                                .add(ChangePricePerOptionEvent(
+                                                    index: index,
+                                                    changePrice: value));
+                                          },
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp('[0-9]')),
+                                          ],
+                                          onFieldSubmitted: (value) {
+                                            currentFocus.unfocus();
+                                          },
+                                          style: const TextStyle(
+                                            color: Color(0xff666666),
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: "NotoSansKR",
+                                            fontSize: 13.0,
+                                          ),
+                                          maxLength: 8,
+                                          decoration: InputDecoration(
+                                            counterText: "",
+                                            contentPadding: EdgeInsets.zero,
+                                            hintStyle: textStyle(
+                                                const Color(0xffcccccc),
+                                                FontWeight.w500,
+                                                "NotoSansKR",
+                                                11.0),
+                                            border: const OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                              borderSide: BorderSide(
+                                                  color: Color(0xffcccccc),
+                                                  width: 1),
+                                            ),
+                                            focusedBorder:
+                                                const OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(5)),
+                                              borderSide: BorderSide(
+                                                  color: Color(0xffcccccc),
+                                                  width: 1),
+                                            ),
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(height: 5 * Scale.height),
-                            ],
-                          );
-                        },
-                      )
-                    : const SizedBox(),
-              ],
-            );
+                            ),
+                          ),
+                          SizedBox(height: 5 * Scale.height),
+                        ],
+                      );
+                    },
+                  )
+                ],
+              );
+            } else {
+              return Container();
+            }
           },
         ),
       ],
@@ -1598,139 +1787,156 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
         ),
         BlocBuilder<FabricBloc, FabricState>(
           builder: (context, state) {
-            return GridView.builder(
-              shrinkWrap: true,
-              physics: const ScrollPhysics(),
-              padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
-              itemCount: context.read<FabricBloc>().state.fabricList!.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 2.5,
-              ),
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                context.read<FabricBloc>().state.sum == 100 ||
+                        context.read<FabricBloc>().state.sum == 0
+                    ? Container()
+                    : Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10 * Scale.height),
+                        child: Text(
+                          "혼용률의 합은 100이어야 합니다!",
+                          style: textStyle(
+                              Colors.red, FontWeight.w500, "NotoSansKR", 13),
+                        ),
+                      ),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  itemCount:
+                      context.read<FabricBloc>().state.fabricList!.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2.5,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Transform.scale(
-                              scale: 0.8,
-                              child: SizedBox(
-                                width: 25 * Scale.width,
-                                height: 25 * Scale.width,
-                                child: Checkbox(
-                                  activeColor: Colors.indigo[300],
-                                  side: BorderSide(
-                                      color: Colors.grey[500]!,
-                                      width: 1 * Scale.width),
-                                  value: context
+                            Row(
+                              children: [
+                                Transform.scale(
+                                  scale: 0.8,
+                                  child: SizedBox(
+                                    width: 25 * Scale.width,
+                                    height: 25 * Scale.width,
+                                    child: Checkbox(
+                                      activeColor: Colors.indigo[300],
+                                      side: BorderSide(
+                                          color: Colors.grey[500]!,
+                                          width: 1 * Scale.width),
+                                      value: context
+                                          .read<FabricBloc>()
+                                          .state
+                                          .isClicked[index],
+                                      onChanged: (value) {
+                                        context.read<FabricBloc>().add(
+                                            ClickFabricButtonEvent(
+                                                isChecked: value!,
+                                                fabric: context
+                                                    .read<FabricBloc>()
+                                                    .state
+                                                    .fabricList![index]['name'],
+                                                fabricIndex: index));
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                Text(
+                                  context
                                       .read<FabricBloc>()
                                       .state
-                                      .isClicked[index],
-                                  onChanged: (value) {
-                                    context.read<FabricBloc>().add(
-                                        ClickFabricButtonEvent(
-                                            isChecked: value!,
-                                            fabric: context
-                                                .read<FabricBloc>()
-                                                .state
-                                                .fabricList![index]['name'],
-                                            fabricIndex: index));
-                                  },
+                                      .fabricList![index]['name'],
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, "NotoSansKR", 13.0),
                                 ),
-                              ),
+                              ],
                             ),
-                            Text(
-                              context
-                                  .read<FabricBloc>()
-                                  .state
-                                  .fabricList![index]['name'],
-                              style: textStyle(Colors.black, FontWeight.w500,
-                                  "NotoSansKR", 13.0),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  SizedBox(
+                                    width: 90 * Scale.width,
+                                    height: 40 * Scale.height,
+                                    child: TextFormField(
+                                      controller: state.textController?[index],
+                                      keyboardType: TextInputType.number,
+                                      onChanged: (value) {
+                                        context.read<FabricBloc>().add(
+                                            InputFabricPercentEvent(
+                                                fabricPercent: value,
+                                                fabricIndex: index));
+                                      },
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.allow(
+                                            RegExp('[0-9]')),
+                                      ],
+                                      onFieldSubmitted: (value) {
+                                        currentFocus.unfocus();
+                                      },
+                                      style: const TextStyle(
+                                        color: Color(0xff666666),
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: "NotoSansKR",
+                                        fontSize: 13.0,
+                                      ),
+                                      maxLength: 3,
+                                      enabled: context
+                                              .read<FabricBloc>()
+                                              .state
+                                              .isClicked[index]
+                                          ? true
+                                          : false,
+                                      decoration: InputDecoration(
+                                        counterText: "",
+                                        contentPadding: EdgeInsets.zero,
+                                        hintText: "숫자만 입력  %",
+                                        hintStyle: textStyle(
+                                            const Color(0xffcccccc),
+                                            FontWeight.w500,
+                                            "NotoSansKR",
+                                            11.0),
+                                        border: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
+                                          borderSide: BorderSide(
+                                              color: Color(0xffcccccc),
+                                              width: 1),
+                                        ),
+                                        focusedBorder: const OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(5)),
+                                          borderSide: BorderSide(
+                                              color: Color(0xffcccccc),
+                                              width: 1),
+                                        ),
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              SizedBox(
-                                width: 90 * Scale.width,
-                                height: 40 * Scale.height,
-                                child: TextFormField(
-                                  controller: state.textController?[index],
-                                  keyboardType:
-                                      const TextInputType.numberWithOptions(
-                                          signed: true),
-                                  onChanged: (value) {
-                                    context.read<FabricBloc>().add(
-                                        InputFabricPercentEvent(
-                                            fabricPercent: value,
-                                            fabricIndex: index));
-                                  },
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp('[0-9]')),
-                                  ],
-                                  onFieldSubmitted: (value) {
-                                    currentFocus.unfocus();
-                                  },
-                                  style: const TextStyle(
-                                    color: Color(0xff666666),
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "NotoSansKR",
-                                    fontSize: 13.0,
-                                  ),
-                                  maxLength: 3,
-                                  enabled: context
-                                          .read<FabricBloc>()
-                                          .state
-                                          .isClicked[index]
-                                      ? true
-                                      : false,
-                                  decoration: InputDecoration(
-                                    counterText: "",
-                                    contentPadding: EdgeInsets.zero,
-                                    hintText: "숫자만 입력  %",
-                                    hintStyle: textStyle(
-                                        const Color(0xffcccccc),
-                                        FontWeight.w500,
-                                        "NotoSansKR",
-                                        11.0),
-                                    border: const OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                      borderSide: BorderSide(
-                                          color: Color(0xffcccccc), width: 1),
-                                    ),
-                                    focusedBorder: const OutlineInputBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5)),
-                                      borderSide: BorderSide(
-                                          color: Color(0xffcccccc), width: 1),
-                                    ),
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  onTap: () {
-                    // context.read<FabricBloc>().add(ClickFabricButtonEvent(isChecked: , fabric: materialList[index], fabricId: index));
+                      ),
+                      onTap: () {
+                        // context.read<FabricBloc>().add(ClickFabricButtonEvent(isChecked: , fabric: materialList[index], fabricId: index));
+                      },
+                    );
                   },
-                );
-              },
+                ),
+              ],
             );
           },
         ),
@@ -1971,52 +2177,37 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             context.read<CategoryBloc>().state.selectedSubCategory.isNotEmpty) {
           return BlocBuilder<InititemBloc, InititemState>(
             builder: (context, state) {
-              return Column(
-                children: [
-                  Text(
-                    "세탁정보 선택",
-                    style: textStyle(
-                        Colors.black, FontWeight.w700, "NotoSansKR", 14.0),
-                  ),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const ScrollPhysics(),
-                    padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
-                    itemCount:
-                        context.read<LaundryBloc>().state.washingList.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 30 * Scale.height,
-                      crossAxisSpacing: 10 * Scale.width,
-                      childAspectRatio: 1.4,
+              if (context.read<LaundryBloc>().state.washingList.isNotEmpty) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "세탁정보 선택",
+                      style: textStyle(
+                          Colors.black, FontWeight.w700, "NotoSansKR", 14.0),
                     ),
-                    itemBuilder: (BuildContext context, int index) {
-                      return GestureDetector(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(8),
-                            ),
-                            border: Border.all(
-                                color: context
-                                        .read<LaundryBloc>()
-                                        .state
-                                        .selectedLaundry
-                                        .contains(context
-                                            .read<LaundryBloc>()
-                                            .state
-                                            .washingList[index])
-                                    ? Colors.indigo[400]!
-                                    : Colors.grey[300]!),
-                          ),
-                          child: Center(
-                            child: Text(
-                              context
-                                  .read<LaundryBloc>()
-                                  .state
-                                  .washingList[index]['name'],
-                              style: textStyle(
-                                  context
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const ScrollPhysics(),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 15 * Scale.height),
+                      itemCount:
+                          context.read<LaundryBloc>().state.washingList.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 30 * Scale.height,
+                        crossAxisSpacing: 10 * Scale.width,
+                        childAspectRatio: 1.4,
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        return GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(8),
+                              ),
+                              border: Border.all(
+                                  color: context
                                           .read<LaundryBloc>()
                                           .state
                                           .selectedLaundry
@@ -2024,23 +2215,44 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                               .read<LaundryBloc>()
                                               .state
                                               .washingList[index])
-                                      ? Colors.black
-                                      : Colors.grey[400]!,
-                                  FontWeight.w500,
-                                  "NotoSansKR",
-                                  13.0),
+                                      ? Colors.indigo[400]!
+                                      : Colors.grey[300]!),
+                            ),
+                            child: Center(
+                              child: Text(
+                                context
+                                    .read<LaundryBloc>()
+                                    .state
+                                    .washingList[index]['name'],
+                                style: textStyle(
+                                    context
+                                            .read<LaundryBloc>()
+                                            .state
+                                            .selectedLaundry
+                                            .contains(context
+                                                .read<LaundryBloc>()
+                                                .state
+                                                .washingList[index])
+                                        ? Colors.black
+                                        : Colors.grey[400]!,
+                                    FontWeight.w500,
+                                    "NotoSansKR",
+                                    13.0),
+                              ),
                             ),
                           ),
-                        ),
-                        onTap: () {
-                          context.read<LaundryBloc>().add(
-                              ClickLaudnryButtonEvent(laundryIndex: index));
-                        },
-                      );
-                    },
-                  ),
-                ],
-              );
+                          onTap: () {
+                            context.read<LaundryBloc>().add(
+                                ClickLaudnryButtonEvent(laundryIndex: index));
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                );
+              } else {
+                return Container();
+              }
             },
           );
         } else {
@@ -2053,6 +2265,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
   Widget styleInfoArea() {
     return BlocBuilder<StyleBloc, StyleState>(builder: ((context, state) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             "스타일",
@@ -2145,5 +2358,17 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
         ],
       );
     }));
+  }
+
+  Widget manufactureCountryArea() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "제조국",
+          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+        ),
+      ],
+    );
   }
 }
