@@ -42,32 +42,90 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
 
   Future<void> manufactureData(
       ClickRegistButtonEvent event, Emitter<DataGatherState> emit) async {
-    if (nameBloc.state.name.isEmpty) {
-      emit(state.copyWith(isAllVerified: false, error: '상품명을 입력해주세요'));
-      return;
-    }
-    registData['name'] = nameBloc.state.name;
-
+    print("데이터 조합");
     if (categoryBloc.state.selectedSubCategory.isEmpty) {
-      emit(state.copyWith(isAllVerified: false, error: '세부 카테고리를 선택해주세요'));
+      emit(state.copyWith(
+          isAllVerified: false,
+          fetchState: FetchState.failure,
+          error: '세부 카테고리를 선택해주세요'));
+      emit(state.copyWith(fetchState: FetchState.initial));
       return;
     }
     registData['sub_category'] = categoryBloc.state.selectedSubCategory['id'];
 
+    if (nameBloc.state.name.isEmpty) {
+      emit(state.copyWith(
+          isAllVerified: false,
+          fetchState: FetchState.failure,
+          error: '상품명을 입력해주세요'));
+      emit(state.copyWith(fetchState: FetchState.initial));
+      return;
+    }
+    registData['name'] = nameBloc.state.name;
+
+    if (colorBloc.state.selectedColorList.isEmpty) {
+      emit(state.copyWith(
+          isAllVerified: false,
+          fetchState: FetchState.failure,
+          error: '색상정보를 선택해주세요'));
+      emit(state.copyWith(fetchState: FetchState.initial));
+      return;
+    }
+    for (var value in colorBloc.state.selectedColorMap) {
+      if (colorBloc.state.errorMessage.isNotEmpty) {
+        emit(state.copyWith(
+            isAllVerified: false,
+            fetchState: FetchState.failure,
+            error: colorBloc.state.errorMessage));
+        emit(state.copyWith(fetchState: FetchState.initial));
+      }
+      if (value['images'] == null) {
+        emit(state.copyWith(
+            isAllVerified: false,
+            fetchState: FetchState.failure,
+            error: '색상별 이미지를 등록해주세요'));
+        emit(state.copyWith(fetchState: FetchState.initial));
+        return;
+      }
+    }
+    await setColorInfo(); //색상에 대한 정보 병합
+
+    if (photoBloc.state.basicPhoto.isEmpty) {
+      emit(state.copyWith(
+          isAllVerified: false,
+          fetchState: FetchState.failure,
+          error: '기본이미지를 등록해주세요'));
+      emit(state.copyWith(fetchState: FetchState.initial));
+      return;
+    }
+    getNetworkBasicImagesPath(); //이미지 s3에 올리는 요청
+
     if (styleBloc.state.selectedStyle.isEmpty) {
-      emit(state.copyWith(isAllVerified: false, error: '스타일을 선택해주세요'));
+      emit(state.copyWith(
+          isAllVerified: false,
+          fetchState: FetchState.failure,
+          error: '스타일을 선택해주세요'));
+      emit(state.copyWith(fetchState: FetchState.initial));
       return;
     }
     registData['style'] = styleBloc.state.selectedStyle['id'];
 
     if (ageGroupBloc.state.selectedAgeGroupId == -1) {
-      emit(state.copyWith(isAllVerified: false, error: '연령대를 선택해주세요'));
+      emit(state.copyWith(
+          isAllVerified: false,
+          fetchState: FetchState.failure,
+          error: '연령대를 선택해주세요'));
+      emit(state.copyWith(fetchState: FetchState.initial));
       return;
     }
     registData['age'] = ageGroupBloc.state.selectedAgeGroupId;
 
     if (fabricBloc.state.selectedFabric.isEmpty) {
-      emit(state.copyWith(isAllVerified: false, error: '소재를 선택해주세요'));
+      emit(state.copyWith(
+          isAllVerified: false,
+          fetchState: FetchState.failure,
+          error: '소재를 선택해주세요'));
+      emit(state.copyWith(fetchState: FetchState.initial));
       return;
     }
     registData['materials'] = [];
@@ -77,26 +135,21 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
           {"material": element['name'], "mixing_rate": element['percent']});
     }
 
-    if (laundryBloc.state.selectedLaundry.isEmpty) {
-      emit(state.copyWith(isAllVerified: false, error: '세탁정보를 선택해주세요'));
-      return;
+    if (laundryBloc.state.washingList.isNotEmpty) {
+      if (laundryBloc.state.selectedLaundry.isEmpty) {
+        emit(state.copyWith(
+            isAllVerified: false,
+            fetchState: FetchState.failure,
+            error: '세탁정보를 선택해주세요'));
+        emit(state.copyWith(fetchState: FetchState.initial));
+        return;
+      }
     }
+
     registData['laundry_informations'] = [];
     for (var element in laundryBloc.state.selectedLaundry) {
       registData['laundry_informations'].add(element['id']);
     }
-
-    if (photoBloc.state.basicPhoto.isEmpty) {
-      emit(state.copyWith(isAllVerified: false, error: '기본이미지를 등록해주세요'));
-      return;
-    }
-    await getNetworkBasicImagesPath(); //이미지 s3에 올리는 요청 그리고
-
-    if (colorBloc.state.colorList.isEmpty) {
-      emit(state.copyWith(isAllVerified: false, error: '색상정보를 선택해주세요'));
-      return;
-    }
-    await setColorInfo(); //색상에 대한 정보 병합
 
     setAdditionalInfo(); //추가 정보 데이터 병합
 

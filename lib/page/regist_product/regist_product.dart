@@ -122,56 +122,7 @@ class _RegistProductState extends State<RegistProduct> {
           ),
         ),
         body: const ScrollArea(),
-        bottomSheet: registryButton(),
       ),
-    );
-  }
-
-  Widget registryButton() {
-    return BlocBuilder<DataGatherBloc, DataGatherState>(
-      builder: (context, state) {
-        return InkWell(
-          onTap: () {
-            context.read<DataGatherBloc>().add(ClickRegistButtonEvent());
-            if (context.read<DataGatherBloc>().state.error.isNotEmpty) {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    content: Text(
-                      state.error,
-                      style: textStyle(
-                          Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        child: Text(
-                          "확인",
-                          style: textStyle(Colors.black, FontWeight.w500,
-                              'NotoSansKR', 15.0),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            }
-          },
-          child: Container(
-              height: 70 * Scale.height,
-              color: Colors.indigo[500],
-              child: Center(
-                child: Text(
-                  "다음",
-                  style: textStyle(
-                      Colors.white, FontWeight.w500, "NotoSansKR", 20.0),
-                ),
-              )),
-        );
-      },
     );
   }
 }
@@ -214,46 +165,52 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
           }
           if (context.read<InititemBloc>().state.fetchState ==
               FetchState.success) {
-            return SingleChildScrollView(
-              child: Container(
-                color: Colors.white,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-                  child: Column(
-                    children: [
-                      precautionsArea(),
-                      SizedBox(height: 8 * Scale.height),
-                      selectCategoryArea(), //common
-                      SizedBox(height: 8 * Scale.height),
-                      writeProductName(), //common
-                      SizedBox(height: 8 * Scale.height),
-                      writePriceArea(), //common
-                      SizedBox(height: 40 * Scale.height),
-                      selectColorArea(), //common
-                      SizedBox(height: 40 * Scale.height),
-                      registPhotoArea(), //common
-                      SizedBox(height: 40 * Scale.height),
-                      selectSizeArea(), //dynamic
-                      SizedBox(height: 40 * Scale.height),
-                      registPriceByOptionArea(), //common
-                      SizedBox(height: 40 * Scale.height),
-                      materialArea(), //common
-                      SizedBox(height: 40 * Scale.height),
-                      additionalInfo(), //dynamic
-                      SizedBox(height: 40 * Scale.height),
-                      laundryInfoArea(),
-                      SizedBox(height: 40 * Scale.height),
-                      styleInfoArea(),
-                      SizedBox(height: 40 * Scale.height),
-                      manufactureCountryArea(),
-                      SizedBox(height: 40 * Scale.height),
-                      ageGroupArea(),
+            return Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Container(
+                    color: Colors.white,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                      child: Column(
+                        children: [
+                          precautionsArea(),
+                          SizedBox(height: 8 * Scale.height),
+                          selectCategoryArea(), //common
+                          SizedBox(height: 8 * Scale.height),
+                          writeProductName(), //common
+                          SizedBox(height: 8 * Scale.height),
+                          writePriceArea(), //common
+                          SizedBox(height: 40 * Scale.height),
+                          selectColorArea(), //common
+                          SizedBox(height: 40 * Scale.height),
+                          registPhotoArea(), //common
+                          SizedBox(height: 40 * Scale.height),
+                          selectSizeArea(), //dynamic
+                          SizedBox(height: 40 * Scale.height),
+                          registPriceByOptionArea(), //common
+                          SizedBox(height: 40 * Scale.height),
+                          materialArea(), //common
+                          SizedBox(height: 40 * Scale.height),
+                          additionalInfo(), //dynamic
+                          SizedBox(height: 40 * Scale.height),
+                          laundryInfoArea(),
+                          SizedBox(height: 40 * Scale.height),
+                          styleInfoArea(),
+                          SizedBox(height: 40 * Scale.height),
+                          manufactureCountryArea(),
+                          SizedBox(height: 40 * Scale.height),
+                          ageGroupArea(),
 
-                      SizedBox(height: 40 * Scale.height),
-                    ],
+                          SizedBox(height: 100 * Scale.height),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                Positioned(bottom: 0, child: registryButton()),
+              ],
             );
           } else {
             return progressBar();
@@ -2742,6 +2699,64 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
         } else {
           return Container();
         }
+      },
+    );
+  }
+
+  Widget registryButton() {
+    final dataGatherBloc = BlocProvider.of<DataGatherBloc>(context);
+    return BlocConsumer<DataGatherBloc, DataGatherState>(
+      listener: ((context, state) {
+        if (state.fetchState == FetchState.failure) {
+          showDialog(
+            context: context,
+            builder: (context) => BlocProvider.value(
+              value: dataGatherBloc,
+              child: BlocBuilder<DataGatherBloc, DataGatherState>(
+                builder: (context, state) {
+                  return AlertDialog(
+                    content: Text(
+                      state.error,
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text(
+                          "확인",
+                          style: textStyle(Colors.black, FontWeight.w500,
+                              'NotoSansKR', 15.0),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          );
+        }
+      }),
+      builder: (context, state) {
+        return InkWell(
+          onTap: () {
+            BlocProvider.of<DataGatherBloc>(context)
+                .add(ClickRegistButtonEvent());
+          },
+          child: Container(
+              height: 70 * Scale.height,
+              width: 414 * Scale.width,
+              color: Colors.indigo[500],
+              child: Center(
+                child: Text(
+                  "다음",
+                  style: textStyle(
+                      Colors.white, FontWeight.w500, "NotoSansKR", 20.0),
+                ),
+              )),
+        );
       },
     );
   }
