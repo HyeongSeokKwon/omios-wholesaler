@@ -1,7 +1,7 @@
 part of 'style_bloc.dart';
 
 class StyleState extends Equatable {
-  final String selectedStyle;
+  final Map selectedStyle;
   List<dynamic> styleList;
   StyleState({
     required this.selectedStyle,
@@ -10,13 +10,13 @@ class StyleState extends Equatable {
 
   factory StyleState.initial() {
     return StyleState(
-      selectedStyle: '',
+      selectedStyle: {},
       styleList: const [],
     );
   }
 
   StyleState copyWith({
-    String? selectedStyle,
+    Map? selectedStyle,
     List<dynamic>? styleList,
   }) {
     return StyleState(

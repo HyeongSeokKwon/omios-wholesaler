@@ -11,7 +11,7 @@ class StyleBloc extends Bloc<StyleEvent, StyleState> {
 
   void clickStyleButton(ClickStyleButtonEvent event, Emitter<StyleState> emit) {
     emit(state.copyWith(
-      selectedStyle: state.styleList[event.styleIndex]['name'],
+      selectedStyle: state.styleList[event.styleIndex],
     ));
   }
 }

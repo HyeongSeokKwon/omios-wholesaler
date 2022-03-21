@@ -24,8 +24,12 @@ class ColorBloc extends Bloc<ColorEvent, ColorState> {
       });
       colorList.add(event.color);
       colorMap.sort((a, b) => (a['colorId']).compareTo(b['colorId']));
+
       emit(state.copyWith(
-          selectedColorMap: colorMap, selectedColorList: colorList));
+          selectedColorMap: colorMap,
+          selectedColorList: colorList,
+          errorMessage:
+              checkDuplicated(colorMap) == false ? "" : "중복된 색상명이 존재합니다"));
     }
   }
 
@@ -39,7 +43,10 @@ class ColorBloc extends Bloc<ColorEvent, ColorState> {
         colorMap.remove(color);
         colorList.remove(color['color']);
         emit(state.copyWith(
-            selectedColorMap: colorMap, selectedColorList: colorList));
+            selectedColorMap: colorMap,
+            selectedColorList: colorList,
+            errorMessage:
+                checkDuplicated(colorMap) == false ? "" : "중복된 색상명이 존재합니다"));
         return;
       }
     }
@@ -55,9 +62,26 @@ class ColorBloc extends Bloc<ColorEvent, ColorState> {
     for (var color in colorMap) {
       if (mapEquals(color, state.selectedColorMap[event.selectedColorIndex])) {
         colorMap[event.selectedColorIndex]['customedName'] = event.customedName;
-        emit(state.copyWith(selectedColorMap: colorMap));
-        return;
+        emit(state.copyWith(
+            selectedColorMap: colorMap,
+            errorMessage:
+                checkDuplicated(colorMap) == false ? "" : "중복된 색상명이 존재합니다"));
+        break;
       }
     }
+  }
+
+  bool checkDuplicated(List selectedColors) {
+    List checkList = [];
+    print("check color dp");
+    for (var element in selectedColors) {
+      print(checkList);
+      if (checkList.contains(element['customedName'])) {
+        return true;
+      } else {
+        checkList.add(element['customedName']);
+      }
+    }
+    return false;
   }
 }

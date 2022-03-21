@@ -153,7 +153,7 @@ class HttpService {
     Map<String, dynamic> responseJson;
 
     try {
-      //updateToken();
+      updateToken();
       response = await http.post(Uri.parse(addressUrl + addtionalUrl),
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
           body: body);

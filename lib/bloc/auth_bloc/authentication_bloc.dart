@@ -24,15 +24,11 @@ class AuthenticationBloc
   }
 
   void changeId(ChangeIdEvent event, Emitter<AuthenticationState> emit) {
-    state.id = event.id;
-    state.authStatus = AuthStatus.unauthenticated;
     emit(state.copyWith(id: event.id, authStatus: AuthStatus.unauthenticated));
   }
 
   void changePassword(
       ChangePasswordEvent event, Emitter<AuthenticationState> emit) {
-    state.password = event.password;
-    state.authStatus = AuthStatus.unauthenticated;
     emit(state.copyWith(
         password: event.password, authStatus: AuthStatus.unauthenticated));
   }
@@ -49,6 +45,9 @@ class AuthenticationBloc
     if (event.id.isEmpty || event.password.isEmpty) {
       return;
     }
+
+    emit(state.copyWith(authStatus: AuthStatus.loading));
+
     Map response = await authRepository.basicLogin(event.id, event.password);
     switch (response['code']) {
       case 201:
@@ -75,8 +74,6 @@ class AuthenticationBloc
     String? refreshToken = prefs.getString('refreshToken');
     Map response;
 
-    state.autoLogin = isAutoLoginClicked ?? false;
-
     if (isAutoLoginClicked == true && refreshToken != null) {
       response = await authRepository.autoLogin(refreshToken);
       switch (response['code']) {
@@ -84,16 +81,24 @@ class AuthenticationBloc
           authRepository.setAccessToken(response['data']['access']);
           authRepository.setRefreshToken(response['data']['refresh']);
 
-          emit(state.copyWith(authStatus: AuthStatus.authenticated));
+          emit(state.copyWith(
+              authStatus: AuthStatus.authenticated,
+              autoLogin: isAutoLoginClicked ?? false));
           break;
         case 401:
-          emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
+          emit(state.copyWith(
+              authStatus: AuthStatus.unauthenticated,
+              autoLogin: isAutoLoginClicked ?? false));
           break;
         default:
-          emit(state.copyWith(authStatus: AuthStatus.loginFailure));
+          emit(state.copyWith(
+              authStatus: AuthStatus.loginFailure,
+              autoLogin: isAutoLoginClicked ?? false));
       }
     } else {
-      emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
+      emit(state.copyWith(
+          authStatus: AuthStatus.unauthenticated,
+          autoLogin: isAutoLoginClicked ?? false));
     }
   }
 

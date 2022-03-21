@@ -29,7 +29,6 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
     List copy = [...state.basicPhoto];
     if (copy.length < 10) {
       List<XFile>? pickedFile = await picker.pickMultiImage();
-
       if (pickedFile != null) {
         for (var file in pickedFile) {
           if (copy.length < 10) {

@@ -52,6 +52,7 @@ class PricePerOptionBloc
             'color': color,
             'size': size,
             'price': priceBloc.state.price,
+            'price_difference': 0,
             'inventory': 0
           },
         );
@@ -71,7 +72,6 @@ class PricePerOptionBloc
           pricePerOptionList[index]['inventory'].toString();
     }
 
-    print(pricePerOptionList);
     emit(state.copyWith(
       pricePerOptionList: pricePerOptionList,
       priceControllerList: priceControllerList,
@@ -96,18 +96,31 @@ class PricePerOptionBloc
   void changePrice(
       ChangePricePerOptionEvent event, Emitter<PricePerOptionState> emit) {
     List<Map<String, dynamic>> copy = [];
+    Set<int> inappositePriceIndexList = {};
     int standardPrice = int.parse(priceBloc.state.price);
-    int minPrice = standardPrice * 0.8.toInt();
-    int maxPrice = standardPrice * 1.2.toInt();
+    int minPrice = (standardPrice * 0.8).toInt();
+    int maxPrice = (standardPrice * 1.2).toInt();
 
     for (var value in state.pricePerOptionList) {
       copy.add(Map.from(value));
     }
+    inappositePriceIndexList.addAll(state.inappositePriceIndexList);
+
     if (int.parse(event.changePrice) >= minPrice &&
         int.parse(event.changePrice) <= maxPrice) {
       copy[event.index]['price'] = int.parse(event.changePrice);
+      copy[event.index]['price_difference'] =
+          (standardPrice - copy[event.index]['price']).abs();
+      print(copy);
+      if (inappositePriceIndexList.contains(event.index)) {
+        inappositePriceIndexList.remove(event.index);
+      }
+    } else {
+      inappositePriceIndexList.add(event.index);
     }
-    emit(state.copyWith(pricePerOptionList: copy));
+    emit(state.copyWith(
+        pricePerOptionList: copy,
+        inappositePriceIndexList: inappositePriceIndexList));
   }
 
   void changeInventory(

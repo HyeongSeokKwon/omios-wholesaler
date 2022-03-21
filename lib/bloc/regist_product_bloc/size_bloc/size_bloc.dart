@@ -65,8 +65,6 @@ class SizeBloc extends Bloc<SizeEvent, SizeState> {
         copySelectedMap.add({"size": event.size, "sizeId": event.sizeId});
         break;
     }
-    print(copySelectedList);
-    print(copySelectedMap);
     emit(state.copyWith(
         selectedSize: copySelectedList, selectedSizeMap: copySelectedMap));
   }
@@ -122,8 +120,6 @@ class SizeBloc extends Bloc<SizeEvent, SizeState> {
 
         break;
     }
-    print(copySelectedList);
-    print(copySelectedMap);
     emit(state.copyWith(
         selectedSize: copySelectedList, selectedSizeMap: copySelectedMap));
   }

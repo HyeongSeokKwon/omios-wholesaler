@@ -17,7 +17,7 @@ class AdditionalInfoState extends Equatable {
 
   factory AdditionalInfoState.initial() {
     return AdditionalInfoState(
-      selectedAdditionalInfo: const {},
+      selectedAdditionalInfo: {},
       thicknessList: const [],
       seeThroughList: const [],
       elasticityList: const [],

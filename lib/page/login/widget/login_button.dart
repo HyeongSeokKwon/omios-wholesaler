@@ -26,8 +26,6 @@ class LoginButton extends StatelessWidget {
                   MaterialStateProperty.all<Color>(const Color(0xffec5363)),
             ),
             onPressed: () {
-              context.read<AuthenticationBloc>().state.authStatus =
-                  AuthStatus.loading;
               context.read<AuthenticationBloc>().add(ClickLoginButtonEvent(
                   id: state.id, password: state.password));
             },

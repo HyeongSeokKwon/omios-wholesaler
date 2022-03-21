@@ -10,12 +10,12 @@ enum AuthStatus {
 }
 
 class AuthenticationState extends Equatable {
-  String id;
-  String password;
-  bool autoLogin;
-  AuthStatus authStatus;
+  final String id;
+  final String password;
+  final bool autoLogin;
+  final AuthStatus authStatus;
 
-  AuthenticationState({
+  const AuthenticationState({
     required this.id,
     required this.password,
     required this.autoLogin,

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:deepy_wholesaler/repository/http_repository.dart';
+import 'package:dio/dio.dart';
 
 class RegistRepository extends HttpRepository {
   late Map response;
@@ -17,8 +20,25 @@ class RegistRepository extends HttpRepository {
   Future<dynamic> getRegistryDynamic(int subCategoryId) async {
     queryParams = {};
     queryParams['sub_category'] = subCategoryId.toString();
-    response = await super.httpGet("product/registry-dynamic", queryParams);
+    response = await super.httpGet("product/registry-dynamic/", queryParams);
 
     return response['data'];
+  }
+
+  Future<dynamic> registImage(List<dynamic> basicImagePathList) async {
+    var formData = FormData.fromMap({
+      'image': List.generate(basicImagePathList.length,
+          (index) => MultipartFile.fromFileSync(basicImagePathList[index]!))
+    });
+    var res = await super.httpMultipartPost("product/image/", formData);
+
+    var response = res.data;
+
+    return response['data']['image'];
+  }
+
+  Future<dynamic> registProduct(Map body) async {
+    response = await super.httpPost("product/", json.encode(body));
+    print(response);
   }
 }

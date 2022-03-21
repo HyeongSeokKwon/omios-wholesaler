@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/repository/regist_repository.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 part 'inititem_event.dart';
 part 'inititem_state.dart';
@@ -15,6 +16,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
   SizeBloc sizeBloc;
   LaundryBloc laundryBloc;
   AdditionalInfoBloc additionalInfoBloc;
+  AgeGroupBloc ageGroupBloc;
 
   final RegistRepository registRepository = RegistRepository();
 
@@ -28,6 +30,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     required this.sizeBloc,
     required this.laundryBloc,
     required this.additionalInfoBloc,
+    required this.ageGroupBloc,
   }) : super(InititemState.initial()) {
     categoryBloc.stream.listen((CategoryState state) {
       if (state.selectedSubCategory.isNotEmpty) {
@@ -55,7 +58,16 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     categoryBloc.state.categoryInfo = categoryData;
     colorBloc.state.colorList = commonData['color'];
     fabricBloc.state.fabricList = commonData['material'];
+    fabricBloc.state.isClicked =
+        List.filled(commonData['material'].length, false, growable: true);
+
+    fabricBloc.state.textController = List.generate(
+      commonData['material'].length,
+      (i) => TextEditingController(),
+    );
+
     styleBloc.state.styleList = commonData['style'];
+    ageGroupBloc.state.ageGroupList = commonData['age'];
 
     emit(state.copyWith(fetchState: FetchState.success));
   }
@@ -76,6 +88,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     sizeBloc.state.sizeList = dynamicData['size'] ?? [];
 
     laundryBloc.state.washingList = dynamicData['laundry_inforamtion'] ?? [];
+
     additionalInfoBloc.state.elasticityList = dynamicData['flexibility'] ?? [];
     additionalInfoBloc.state.thicknessList = dynamicData['thickness'] ?? [];
     additionalInfoBloc.state.seeThroughList = dynamicData['see_through'] ?? [];

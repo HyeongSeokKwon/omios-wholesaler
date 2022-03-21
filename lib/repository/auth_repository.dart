@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:deepy_wholesaler/repository/http_repository.dart';
 
 class AuthRepository extends HttpRepository {
@@ -10,7 +12,7 @@ class AuthRepository extends HttpRepository {
     };
 
     try {
-      response = await super.httpPost('/token/', body);
+      response = await super.httpPost('/token/', json.encode(body));
       return response;
     } catch (e) {
       rethrow;
@@ -23,7 +25,7 @@ class AuthRepository extends HttpRepository {
     };
 
     try {
-      response = await super.httpPost('/token/refresh/', body);
+      response = await super.httpPost('/token/refresh/', json.encode(body));
       return response;
     } catch (e) {
       rethrow;

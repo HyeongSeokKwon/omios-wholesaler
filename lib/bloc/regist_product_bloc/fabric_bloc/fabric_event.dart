@@ -28,4 +28,13 @@ class InputFabricPercentEvent extends FabricEvent {
   });
 }
 
+class EditFabricsNameEvent extends FabricEvent {
+  final String fabricName;
+  final int fabricIndex;
+  const EditFabricsNameEvent({
+    required this.fabricName,
+    required this.fabricIndex,
+  });
+}
+
 class CheckFabricsSumEvent extends FabricEvent {}

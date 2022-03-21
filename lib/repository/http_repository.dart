@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:deepy_wholesaler/http/http_exception.dart';
-import 'package:get/state_manager.dart';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -120,6 +120,7 @@ class HttpRepository {
         );
       }));
       print(response.statusCode);
+      print(response.body);
       responseJson = _response(response);
       return responseJson;
     } on SocketException {
@@ -133,6 +134,9 @@ class HttpRepository {
       [Map<String, String>? queryParams]) async {
     http.Response response;
     var responseJson = {};
+    print(
+      Uri.http(addressUrl, baseUrl, queryParams),
+    );
     try {
       response = await http.get(Uri.http(addressUrl, baseUrl, queryParams));
 
@@ -154,11 +158,48 @@ class HttpRepository {
               addressUrl,
               addtionalUrl,
             ),
-            headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
+            headers: {
+              "Content-Type": "application/json",
+              HttpHeaders.authorizationHeader: 'Bearer $accessToken'
+            },
             body: body);
       }));
       responseJson = _response(response);
       return responseJson;
+    } on SocketException {
+      throw FetchDataException('연결된 인터넷이 없습니다.');
+    } on FetchDataException {
+      throw Exception("서버 오류가 발생했습니다.");
+    }
+  }
+
+  Future<dynamic> httpMultipartPost(String addtionalUrl, var body) async {
+    Response response;
+
+    try {
+      response = await updateToken().then(((value) async {
+        return await Dio().post(
+          Uri.http(addressUrl, addtionalUrl).toString(),
+          options: Options(headers: {
+            HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+            "Content-Type": "multipart/form-data;",
+          }),
+          data: body,
+        );
+      }));
+      // response = await updateToken().then(((value) async {
+      //   return await http.post(
+      //       Uri.http(
+      //         addressUrl,
+      //         addtionalUrl,
+      //       ),
+      //       headers: {
+      //         "Content-Type": "multipart/form-data",
+      //         HttpHeaders.authorizationHeader: 'Bearer $accessToken'
+      //       },
+      //       body: body);
+      // }));
+      return response;
     } on SocketException {
       throw FetchDataException('연결된 인터넷이 없습니다.');
     } on FetchDataException {

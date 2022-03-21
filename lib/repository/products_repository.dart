@@ -7,8 +7,10 @@ class ProductsRepository extends HttpRepository {
   Future<dynamic> getMyproducts() async {
     queryParams = {};
     queryParams['main_category'] = '1';
-
-    response = await super.httpGet("product", queryParams);
+    print("===");
+    response = await super.httpPublicGet("product", queryParams);
+    print("===");
+    print(response);
     return response['data']['results'];
   }
 

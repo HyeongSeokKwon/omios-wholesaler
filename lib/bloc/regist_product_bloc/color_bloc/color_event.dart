@@ -46,3 +46,5 @@ class ChangeColorCustomedNameEvent extends ColorEvent {
     required this.selectedColorIndex,
   });
 }
+
+class VerifyDataEvent extends ColorEvent {}

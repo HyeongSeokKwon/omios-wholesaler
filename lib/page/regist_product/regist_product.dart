@@ -1,6 +1,6 @@
 import 'package:deepy_wholesaler/bloc/bloc.dart';
+import 'package:deepy_wholesaler/bloc/regist_product_bloc/data_gather_bloc/data_gather_bloc.dart';
 import 'package:deepy_wholesaler/util/util.dart';
-import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:deepy_wholesaler/widget/progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,17 +14,22 @@ class RegistProduct extends StatefulWidget {
 }
 
 class _RegistProductState extends State<RegistProduct> {
-  PriceBloc priceBloc = PriceBloc();
-  ColorBloc colorBloc = ColorBloc();
-  SizeBloc sizeBloc = SizeBloc();
-  FabricBloc fabricBloc = FabricBloc();
-  StyleBloc styleBloc = StyleBloc();
-  LaundryBloc laundryBloc = LaundryBloc();
-  CategoryBloc categoryBloc = CategoryBloc();
-  AdditionalInfoBloc additionalInfoBloc = AdditionalInfoBloc();
-
   @override
   Widget build(BuildContext context) {
+    NameBloc nameBloc = NameBloc();
+    PriceBloc priceBloc = PriceBloc();
+    ColorBloc colorBloc = ColorBloc();
+    SizeBloc sizeBloc = SizeBloc();
+    PricePerOptionBloc pricePerOptionBloc =
+        PricePerOptionBloc(colorBloc, priceBloc, sizeBloc);
+    FabricBloc fabricBloc = FabricBloc();
+    StyleBloc styleBloc = StyleBloc();
+    LaundryBloc laundryBloc = LaundryBloc();
+    CategoryBloc categoryBloc = CategoryBloc();
+    AdditionalInfoBloc additionalInfoBloc = AdditionalInfoBloc();
+    AgeGroupBloc ageGroupBloc = AgeGroupBloc();
+    PhotoBloc photoBloc = PhotoBloc(colorBloc);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<InititemBloc>(
@@ -36,7 +41,11 @@ class _RegistProductState extends State<RegistProduct> {
             sizeBloc: sizeBloc,
             laundryBloc: laundryBloc,
             additionalInfoBloc: additionalInfoBloc,
+            ageGroupBloc: ageGroupBloc,
           ),
+        ),
+        BlocProvider<NameBloc>(
+          create: (BuildContext context) => nameBloc,
         ),
         BlocProvider<CategoryBloc>(
           create: (BuildContext context) => categoryBloc,
@@ -48,14 +57,13 @@ class _RegistProductState extends State<RegistProduct> {
           create: (BuildContext context) => colorBloc,
         ),
         BlocProvider<PhotoBloc>(
-          create: (BuildContext context) => PhotoBloc(colorBloc),
+          create: (BuildContext context) => photoBloc,
         ),
         BlocProvider<SizeBloc>(
           create: (BuildContext context) => sizeBloc,
         ),
         BlocProvider<PricePerOptionBloc>(
-          create: (BuildContext context) =>
-              PricePerOptionBloc(colorBloc, priceBloc, sizeBloc),
+          create: (BuildContext context) => pricePerOptionBloc,
         ),
         BlocProvider<FabricBloc>(
           create: (BuildContext context) => fabricBloc,
@@ -68,7 +76,24 @@ class _RegistProductState extends State<RegistProduct> {
         ),
         BlocProvider<AdditionalInfoBloc>(
           create: (BuildContext context) => additionalInfoBloc,
-        )
+        ),
+        BlocProvider<AgeGroupBloc>(
+          create: (BuildContext context) => ageGroupBloc,
+        ),
+        BlocProvider<DataGatherBloc>(
+            create: (BuildContext context) => DataGatherBloc(
+                nameBloc: nameBloc,
+                categoryBloc: categoryBloc,
+                priceBloc: priceBloc,
+                colorBloc: colorBloc,
+                photoBloc: photoBloc,
+                pricePerOptionBloc: pricePerOptionBloc,
+                styleBloc: styleBloc,
+                fabricBloc: fabricBloc,
+                sizeBloc: sizeBloc,
+                laundryBloc: laundryBloc,
+                additionalInfoBloc: additionalInfoBloc,
+                ageGroupBloc: ageGroupBloc))
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -97,7 +122,56 @@ class _RegistProductState extends State<RegistProduct> {
           ),
         ),
         body: const ScrollArea(),
+        bottomSheet: registryButton(),
       ),
+    );
+  }
+
+  Widget registryButton() {
+    return BlocBuilder<DataGatherBloc, DataGatherState>(
+      builder: (context, state) {
+        return InkWell(
+          onTap: () {
+            context.read<DataGatherBloc>().add(ClickRegistButtonEvent());
+            if (context.read<DataGatherBloc>().state.error.isNotEmpty) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    content: Text(
+                      state.error,
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text(
+                          "확인",
+                          style: textStyle(Colors.black, FontWeight.w500,
+                              'NotoSansKR', 15.0),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+          },
+          child: Container(
+              height: 70 * Scale.height,
+              color: Colors.indigo[500],
+              child: Center(
+                child: Text(
+                  "다음",
+                  style: textStyle(
+                      Colors.white, FontWeight.w500, "NotoSansKR", 20.0),
+                ),
+              )),
+        );
+      },
     );
   }
 }
@@ -110,8 +184,15 @@ class ScrollArea extends StatefulWidget {
 }
 
 class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
+  final GlobalKey<FormState> _key = GlobalKey<FormState>();
   TextEditingController priceEditController = TextEditingController();
   late FocusScopeNode currentFocus;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return scrollArea();
@@ -165,6 +246,10 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                       styleInfoArea(),
                       SizedBox(height: 40 * Scale.height),
                       manufactureCountryArea(),
+                      SizedBox(height: 40 * Scale.height),
+                      ageGroupArea(),
+
+                      SizedBox(height: 40 * Scale.height),
                     ],
                   ),
                 ),
@@ -537,36 +622,64 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 15.0),
           ),
         ),
-        TextFormField(
-          textInputAction: TextInputAction.next,
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9' ']")),
-          ],
-          decoration: InputDecoration(
-            isDense: true,
-            counterText: "",
-            floatingLabelBehavior: FloatingLabelBehavior.auto,
-            labelStyle: TextStyle(
-              color: const Color(0xff666666),
-              height: 0.6,
-              fontWeight: FontWeight.w400,
-              fontFamily: "NotoSansKR",
-              fontStyle: FontStyle.normal,
-              fontSize: 14 * Scale.height,
-            ),
-            border: const OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(7)),
-              borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: const BorderRadius.all(Radius.circular(7)),
-              borderSide: BorderSide(color: Colors.indigo[400]!, width: 1),
-            ),
-            hintText: ("상품명을 입력하세요"),
-            hintStyle: textStyle(
-                const Color(0xffcccccc), FontWeight.w400, "NotoSansKR", 14.0),
-          ),
-          textAlign: TextAlign.left,
+        BlocBuilder<NameBloc, NameState>(
+          builder: (context, state) {
+            return Form(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              child: TextFormField(
+                textInputAction: TextInputAction.next,
+                validator: (text) {
+                  if (text!.trim().isEmpty) {
+                    return '상품명을 입력해주세요.';
+                  } else {
+                    return null;
+                  }
+                },
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9' ']")),
+                ],
+                onChanged: (value) {
+                  context.read<NameBloc>().add(ChangeNameEvent(name: value));
+                },
+                decoration: InputDecoration(
+                  isDense: true,
+                  counterText: "",
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  labelStyle: TextStyle(
+                    color: const Color(0xff666666),
+                    height: 0.6,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: "NotoSansKR",
+                    fontStyle: FontStyle.normal,
+                    fontSize: 14 * Scale.height,
+                  ),
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(7)),
+                    borderSide: BorderSide(color: Color(0xffcccccc), width: 1),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    borderSide:
+                        BorderSide(color: Colors.indigo[400]!, width: 1),
+                  ),
+                  errorBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    borderSide: BorderSide(
+                        color: Colors.grey[400]!, width: 1 * Scale.width),
+                  ),
+                  focusedErrorBorder: OutlineInputBorder(
+                    borderRadius: const BorderRadius.all(Radius.circular(7)),
+                    borderSide: BorderSide(
+                        color: Colors.grey[400]!, width: 1 * Scale.width),
+                  ),
+                  hintText: ("상품명을 입력하세요"),
+                  hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
+                      "NotoSansKR", 14.0),
+                ),
+                textAlign: TextAlign.left,
+              ),
+            );
+          },
         ),
       ],
     );
@@ -785,6 +898,9 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 );
               },
             ),
+            context.read<ColorBloc>().state.errorMessage.isEmpty
+                ? Container()
+                : Text(context.read<ColorBloc>().state.errorMessage),
             ListView.builder(
                 shrinkWrap: true,
                 itemCount:
@@ -844,11 +960,9 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     width: 100 * Scale.width,
                                     height: 30 * Scale.width,
                                     child: TextFormField(
-                                      key: Key(context
-                                              .read<ColorBloc>()
-                                              .state
-                                              .selectedColorMap[index]
-                                          ['customedName']),
+                                      key: Key(state.selectedColorMap[index]
+                                              ['colorId']
+                                          .toString()),
                                       initialValue: context
                                               .read<ColorBloc>()
                                               .state
@@ -861,7 +975,6 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                 selectedColorIndex: index));
                                       }),
                                       maxLength: 15,
-                                      textInputAction: TextInputAction.next,
                                       showCursor: false,
                                       decoration: InputDecoration(
                                         isDense: true,
@@ -1549,6 +1662,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
           style:
               textStyle(Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
         ),
+        SizedBox(height: 10 * Scale.height),
         BlocBuilder<PricePerOptionBloc, PricePerOptionState>(
           builder: (context, state) {
             if (BlocProvider.of<ColorBloc>(context)
@@ -1561,8 +1675,19 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     .isNotEmpty &&
                 BlocProvider.of<PriceBloc>(context).state.price.isNotEmpty) {
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
                 children: [
+                  context
+                          .read<PricePerOptionBloc>()
+                          .state
+                          .inappositePriceIndexList
+                          .isEmpty
+                      ? Container()
+                      : Text("옵션별 가격은 -20% ~ +20%까지 설정 가능합니다.",
+                          style: textStyle(
+                              Colors.red, FontWeight.w400, "NotoSansKR", 12.0)),
+                  SizedBox(height: 5 * Scale.height),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -1576,7 +1701,14 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                         children: [
                           Container(
                             decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey[300]!),
+                                border: Border.all(
+                                    color: context
+                                            .read<PricePerOptionBloc>()
+                                            .state
+                                            .inappositePriceIndexList
+                                            .contains(index)
+                                        ? Colors.red
+                                        : Colors.grey[300]!),
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(8))),
                             child: Padding(
@@ -1805,11 +1937,10 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const ScrollPhysics(),
-                  itemCount:
-                      context.read<FabricBloc>().state.fabricList!.length,
+                  itemCount: context.read<FabricBloc>().state.fabricList.length,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 2.5,
+                    childAspectRatio: 1.8,
                   ),
                   itemBuilder: (BuildContext context, int index) {
                     return GestureDetector(
@@ -1818,50 +1949,202 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                           border: Border.all(color: Colors.grey[300]!),
                         ),
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Row(
-                              children: [
-                                Transform.scale(
-                                  scale: 0.8,
-                                  child: SizedBox(
-                                    width: 25 * Scale.width,
-                                    height: 25 * Scale.width,
-                                    child: Checkbox(
-                                      activeColor: Colors.indigo[300],
-                                      side: BorderSide(
-                                          color: Colors.grey[500]!,
-                                          width: 1 * Scale.width),
-                                      value: context
-                                          .read<FabricBloc>()
-                                          .state
-                                          .isClicked[index],
-                                      onChanged: (value) {
-                                        context.read<FabricBloc>().add(
-                                            ClickFabricButtonEvent(
-                                                isChecked: value!,
-                                                fabric: context
-                                                    .read<FabricBloc>()
-                                                    .state
-                                                    .fabricList![index]['name'],
-                                                fabricIndex: index));
-                                      },
+                            Padding(
+                              padding: EdgeInsets.only(right: 8 * Scale.width),
+                              child: Container(
+                                height: 50 * Scale.height,
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Transform.scale(
+                                          scale: 0.8,
+                                          child: SizedBox(
+                                            width: 25 * Scale.width,
+                                            height: 25 * Scale.width,
+                                            child: Checkbox(
+                                              activeColor: Colors.indigo[300],
+                                              side: BorderSide(
+                                                  color: Colors.grey[500]!,
+                                                  width: 1 * Scale.width),
+                                              value: context
+                                                  .read<FabricBloc>()
+                                                  .state
+                                                  .isClicked[index],
+                                              onChanged: (value) {
+                                                context.read<FabricBloc>().add(
+                                                    ClickFabricButtonEvent(
+                                                        isChecked: value!,
+                                                        fabric: context
+                                                                .read<FabricBloc>()
+                                                                .state
+                                                                .fabricList[
+                                                            index]['name'],
+                                                        fabricIndex: index));
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          context
+                                              .read<FabricBloc>()
+                                              .state
+                                              .fabricList[index]['name'],
+                                          style: textStyle(
+                                              Colors.black,
+                                              FontWeight.w500,
+                                              "NotoSansKR",
+                                              13.0),
+                                        ),
+                                      ],
                                     ),
-                                  ),
+                                    InkWell(
+                                      onTap: () {
+                                        final fabricBloc =
+                                            BlocProvider.of<FabricBloc>(
+                                                context);
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            TextEditingController
+                                                nameController =
+                                                TextEditingController();
+                                            return BlocProvider.value(
+                                              value: fabricBloc,
+                                              child: AlertDialog(
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0)),
+                                                title: Text(
+                                                  "소재 편집",
+                                                  style: textStyle(
+                                                      Colors.black,
+                                                      FontWeight.w500,
+                                                      'NotoSansKR',
+                                                      20.0),
+                                                ),
+                                                content: SingleChildScrollView(
+                                                  child: TextFormField(
+                                                    controller: nameController,
+                                                    onFieldSubmitted: (value) {
+                                                      currentFocus.unfocus();
+                                                    },
+                                                    style: const TextStyle(
+                                                      color: Color(0xff666666),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontFamily: "NotoSansKR",
+                                                      fontSize: 13.0,
+                                                    ),
+                                                    decoration: InputDecoration(
+                                                      counterText: "",
+                                                      contentPadding:
+                                                          EdgeInsets.zero,
+                                                      hintText:
+                                                          "원하는 소재 이름을 작성해주세요",
+                                                      hintStyle: textStyle(
+                                                          const Color(
+                                                              0xffcccccc),
+                                                          FontWeight.w500,
+                                                          "NotoSansKR",
+                                                          14.0),
+                                                      border:
+                                                          const OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    5)),
+                                                        borderSide: BorderSide(
+                                                            color: Color(
+                                                                0xffcccccc),
+                                                            width: 1),
+                                                      ),
+                                                      focusedBorder:
+                                                          const OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    5)),
+                                                        borderSide: BorderSide(
+                                                            color: Color(
+                                                                0xffcccccc),
+                                                            width: 1),
+                                                      ),
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                ),
+                                                actions: <Widget>[
+                                                  BlocBuilder<FabricBloc,
+                                                      FabricState>(
+                                                    builder: (context, state) {
+                                                      return TextButton(
+                                                        child: Text(
+                                                          "적용",
+                                                          style: textStyle(
+                                                              Colors.grey,
+                                                              FontWeight.w400,
+                                                              'NotoSansKR',
+                                                              16.0),
+                                                        ),
+                                                        onPressed: () {
+                                                          BlocProvider.of<
+                                                                      FabricBloc>(
+                                                                  context)
+                                                              .add(EditFabricsNameEvent(
+                                                                  fabricIndex:
+                                                                      index,
+                                                                  fabricName:
+                                                                      nameController
+                                                                          .text));
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                      );
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text(
+                                                      "취소",
+                                                      style: textStyle(
+                                                          Colors.grey,
+                                                          FontWeight.w400,
+                                                          'NotoSansKR',
+                                                          16.0),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Container(
+                                          child: Text(
+                                        "소재 편집",
+                                        style: textStyle(
+                                            Colors.grey,
+                                            FontWeight.w400,
+                                            "NotoSansKR",
+                                            12.0),
+                                      )),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  context
-                                      .read<FabricBloc>()
-                                      .state
-                                      .fabricList![index]['name'],
-                                  style: textStyle(Colors.black,
-                                      FontWeight.w500, "NotoSansKR", 13.0),
-                                ),
-                              ],
+                              ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(right: 8),
+                              padding: EdgeInsets.only(
+                                right: 8 * Scale.width,
+                              ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
@@ -1869,7 +2152,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     width: 90 * Scale.width,
                                     height: 40 * Scale.height,
                                     child: TextFormField(
-                                      controller: state.textController?[index],
+                                      controller: state.textController[index],
                                       keyboardType: TextInputType.number,
                                       onChanged: (value) {
                                         context.read<FabricBloc>().add(
@@ -2319,7 +2602,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     value: context
                                                 .read<StyleBloc>()
                                                 .state
-                                                .selectedStyle ==
+                                                .selectedStyle['name'] ==
                                             context
                                                 .read<StyleBloc>()
                                                 .state
@@ -2369,6 +2652,97 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
           style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
         ),
       ],
+    );
+  }
+
+  Widget ageGroupArea() {
+    return BlocBuilder<AgeGroupBloc, AgeGroupState>(
+      builder: (context, state) {
+        if (context.read<InititemBloc>().state.fetchState ==
+            FetchState.success) {
+          return BlocBuilder<InititemBloc, InititemState>(
+              builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "타겟 연령층",
+                  style: textStyle(
+                      Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                ),
+                Divider(
+                  color: Colors.black,
+                  thickness: 2 * Scale.height,
+                ),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+                  itemCount:
+                      context.read<AgeGroupBloc>().state.ageGroupList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 30 * Scale.height,
+                    crossAxisSpacing: 10 * Scale.width,
+                    childAspectRatio: 1.4,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                          border: Border.all(
+                              color: context
+                                          .read<AgeGroupBloc>()
+                                          .state
+                                          .selectedAgeGroupId ==
+                                      context
+                                          .read<AgeGroupBloc>()
+                                          .state
+                                          .ageGroupList[index]['id']
+                                  ? Colors.indigo[400]!
+                                  : Colors.grey[300]!),
+                        ),
+                        child: Center(
+                          child: Text(
+                            context
+                                .read<AgeGroupBloc>()
+                                .state
+                                .ageGroupList[index]['name'],
+                            style: textStyle(
+                                context
+                                            .read<AgeGroupBloc>()
+                                            .state
+                                            .selectedAgeGroupId ==
+                                        context
+                                            .read<AgeGroupBloc>()
+                                            .state
+                                            .ageGroupList[index]['id']
+                                    ? Colors.black
+                                    : Colors.grey[400]!,
+                                FontWeight.w500,
+                                "NotoSansKR",
+                                13.0),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        context
+                            .read<AgeGroupBloc>()
+                            .add(ClickAgeGroupButtonEvent(index: index));
+                      },
+                    );
+                  },
+                ),
+              ],
+            );
+          });
+        } else {
+          return Container();
+        }
+      },
     );
   }
 }
