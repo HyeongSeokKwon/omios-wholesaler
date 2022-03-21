@@ -17,7 +17,7 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
 
   PhotoBloc(this.colorBloc) : super(PhotoState.initial()) {
     on<ClickGetBasicPhotoEvent>(getBasicPhoto);
-    on<ClickGetColorByPhotoEvent>(getPhotoByImage);
+    on<ClickGetColorByPhotoEvent>(getPhotoByColor);
     on<ClickMoveButton>(moveTabEvent);
     on<ReorderPhotoEvent>(reorderPhoto);
     on<ClickBasicPhotoRemoveEvent>(removeBasicImage);
@@ -44,7 +44,7 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
     return;
   }
 
-  Future<void> getPhotoByImage(
+  Future<void> getPhotoByColor(
       ClickGetColorByPhotoEvent event, Emitter<PhotoState> emit) async {
     Image? photoByColor = state.photoByColor;
 
@@ -54,12 +54,8 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
         File(colorPhoto.path),
       );
     }
+    colorBloc.state.selectedColorMap[event.index]['images'] = photoByColor;
 
-    for (var i in colorBloc.state.selectedColorMap) {
-      if (i['color'] == event.color) {
-        i['images'] = photoByColor;
-      }
-    }
     emit(state.copyWith(photoByColor: photoByColor));
   }
 

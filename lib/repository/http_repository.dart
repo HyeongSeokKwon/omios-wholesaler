@@ -109,9 +109,6 @@ class HttpRepository {
     http.Response response;
     var responseJson = {};
 
-    print(
-      Uri.http(addressUrl, baseUrl, queryParams),
-    );
     try {
       response = await updateToken().then(((value) async {
         return await http.get(
@@ -119,8 +116,6 @@ class HttpRepository {
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
         );
       }));
-      print(response.statusCode);
-      print(response.body);
       responseJson = _response(response);
       return responseJson;
     } on SocketException {
@@ -164,6 +159,7 @@ class HttpRepository {
             },
             body: body);
       }));
+      print(response.body);
       responseJson = _response(response);
       return responseJson;
     } on SocketException {

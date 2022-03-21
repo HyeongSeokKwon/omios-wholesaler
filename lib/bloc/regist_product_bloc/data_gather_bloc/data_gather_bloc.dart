@@ -63,6 +63,16 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
     }
     registData['name'] = nameBloc.state.name;
 
+    if (priceBloc.state.price.isEmpty) {
+      emit(state.copyWith(
+          isAllVerified: false,
+          fetchState: FetchState.failure,
+          error: '가격을 입력해주세요'));
+      emit(state.copyWith(fetchState: FetchState.initial));
+      return;
+    }
+    registData['price'] = int.parse(priceBloc.state.price);
+
     if (colorBloc.state.selectedColorList.isEmpty) {
       emit(state.copyWith(
           isAllVerified: false,
@@ -78,6 +88,7 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
             fetchState: FetchState.failure,
             error: colorBloc.state.errorMessage));
         emit(state.copyWith(fetchState: FetchState.initial));
+        return;
       }
       if (value['images'] == null) {
         emit(state.copyWith(
@@ -98,7 +109,7 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
       emit(state.copyWith(fetchState: FetchState.initial));
       return;
     }
-    getNetworkBasicImagesPath(); //이미지 s3에 올리는 요청
+    await getNetworkBasicImagesPath(); //이미지 s3에 올리는 요청
 
     if (styleBloc.state.selectedStyle.isEmpty) {
       emit(state.copyWith(

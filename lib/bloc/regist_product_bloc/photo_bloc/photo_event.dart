@@ -10,10 +10,10 @@ abstract class PhotoEvent extends Equatable {
 class ClickGetBasicPhotoEvent extends PhotoEvent {}
 
 class ClickGetColorByPhotoEvent extends PhotoEvent {
-  final String color;
+  final int index;
 
   const ClickGetColorByPhotoEvent({
-    required this.color,
+    required this.index,
   });
 }
 

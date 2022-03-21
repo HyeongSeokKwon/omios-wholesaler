@@ -1226,7 +1226,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                 onTap: () {
                                   context.read<PhotoBloc>().add(
                                       ClickGetColorByPhotoEvent(
-                                          color: color['color']));
+                                          index: colorTabController.index));
                                 },
                                 child: Container(
                                   decoration: const BoxDecoration(
