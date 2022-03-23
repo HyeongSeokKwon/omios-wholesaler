@@ -27,8 +27,10 @@ class _RegistProductState extends State<RegistProduct> {
     LaundryBloc laundryBloc = LaundryBloc();
     CategoryBloc categoryBloc = CategoryBloc();
     AdditionalInfoBloc additionalInfoBloc = AdditionalInfoBloc();
+    ManufacturecountryBloc manufacturecountryBloc = ManufacturecountryBloc();
     AgeGroupBloc ageGroupBloc = AgeGroupBloc();
     PhotoBloc photoBloc = PhotoBloc(colorBloc);
+    TagBloc tagBloc = TagBloc();
 
     return MultiBlocProvider(
       providers: [
@@ -77,9 +79,13 @@ class _RegistProductState extends State<RegistProduct> {
         BlocProvider<AdditionalInfoBloc>(
           create: (BuildContext context) => additionalInfoBloc,
         ),
+        BlocProvider<ManufacturecountryBloc>(
+          create: (BuildContext context) => manufacturecountryBloc,
+        ),
         BlocProvider<AgeGroupBloc>(
           create: (BuildContext context) => ageGroupBloc,
         ),
+        BlocProvider<TagBloc>(create: (BuildContext context) => tagBloc),
         BlocProvider<DataGatherBloc>(
             create: (BuildContext context) => DataGatherBloc(
                 nameBloc: nameBloc,
@@ -203,6 +209,8 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                           SizedBox(height: 40 * Scale.height),
                           ageGroupArea(),
 
+                          SizedBox(height: 40 * Scale.height),
+                          searchTagArea(),
                           SizedBox(height: 100 * Scale.height),
                         ],
                       ),
@@ -2601,14 +2609,200 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
   }
 
   Widget manufactureCountryArea() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "제조국",
-          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
-        ),
-      ],
+    return BlocBuilder<ManufacturecountryBloc, ManufacturecountryState>(
+      builder: (context, state) {
+        if (context.read<InititemBloc>().state.fetchState ==
+            FetchState.success) {
+          return BlocBuilder<InititemBloc, InititemState>(
+            builder: (context, state) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "제조국",
+                    style: textStyle(
+                        Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                  ),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const ScrollPhysics(),
+                    padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+                    itemCount: context
+                        .read<ManufacturecountryBloc>()
+                        .state
+                        .countryList
+                        .length,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 30 * Scale.height,
+                      crossAxisSpacing: 10 * Scale.width,
+                      childAspectRatio: 1.4,
+                    ),
+                    itemBuilder: (BuildContext context, int index) {
+                      return GestureDetector(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(8),
+                            ),
+                            border: Border.all(
+                                color: context
+                                            .read<ManufacturecountryBloc>()
+                                            .state
+                                            .selectedCountry ==
+                                        context
+                                            .read<ManufacturecountryBloc>()
+                                            .state
+                                            .countryList[index]
+                                    ? Colors.indigo[400]!
+                                    : Colors.grey[300]!),
+                          ),
+                          child: Center(
+                            child: Text(
+                              context
+                                  .read<ManufacturecountryBloc>()
+                                  .state
+                                  .countryList[index],
+                              style: textStyle(
+                                  context
+                                              .read<ManufacturecountryBloc>()
+                                              .state
+                                              .selectedCountry ==
+                                          context
+                                              .read<ManufacturecountryBloc>()
+                                              .state
+                                              .countryList[index]
+                                      ? Colors.black
+                                      : Colors.grey[400]!,
+                                  FontWeight.w500,
+                                  "NotoSansKR",
+                                  13.0),
+                            ),
+                          ),
+                        ),
+                        onTap: () {
+                          final countryBloc =
+                              BlocProvider.of<ManufacturecountryBloc>(context);
+                          if (countryBloc.state.countryList[index] == '기타') {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                TextEditingController contryController =
+                                    TextEditingController();
+                                return BlocProvider.value(
+                                  value: countryBloc,
+                                  child: AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0)),
+                                    title: Text(
+                                      "제조국 추가",
+                                      style: textStyle(Colors.black,
+                                          FontWeight.w500, 'NotoSansKR', 20.0),
+                                    ),
+                                    content: SingleChildScrollView(
+                                      child: TextFormField(
+                                        controller: contryController,
+                                        onFieldSubmitted: (value) {
+                                          currentFocus.unfocus();
+                                        },
+                                        style: const TextStyle(
+                                          color: Color(0xff666666),
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: "NotoSansKR",
+                                          fontSize: 13.0,
+                                        ),
+                                        decoration: InputDecoration(
+                                          counterText: "",
+                                          contentPadding: EdgeInsets.zero,
+                                          hintText: "제조국명을 작성해주세요",
+                                          hintStyle: textStyle(
+                                              const Color(0xffcccccc),
+                                              FontWeight.w500,
+                                              "NotoSansKR",
+                                              14.0),
+                                          border: const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5)),
+                                            borderSide: BorderSide(
+                                                color: Color(0xffcccccc),
+                                                width: 1),
+                                          ),
+                                          focusedBorder:
+                                              const OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5)),
+                                            borderSide: BorderSide(
+                                                color: Color(0xffcccccc),
+                                                width: 1),
+                                          ),
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    actions: <Widget>[
+                                      BlocBuilder<ManufacturecountryBloc,
+                                          ManufacturecountryState>(
+                                        builder: (context, state) {
+                                          return TextButton(
+                                            child: Text(
+                                              "적용",
+                                              style: textStyle(
+                                                  Colors.grey,
+                                                  FontWeight.w400,
+                                                  'NotoSansKR',
+                                                  16.0),
+                                            ),
+                                            onPressed: () {
+                                              BlocProvider.of<
+                                                          ManufacturecountryBloc>(
+                                                      context)
+                                                  .add(EditCountryEvent(
+                                                      country: contryController
+                                                          .text));
+                                              Navigator.pop(context);
+                                            },
+                                          );
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text(
+                                          "취소",
+                                          style: textStyle(
+                                              Colors.grey,
+                                              FontWeight.w400,
+                                              'NotoSansKR',
+                                              16.0),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          } else {
+                            context.read<ManufacturecountryBloc>().add(
+                                SelectCountryEvent(
+                                    country: context
+                                        .read<ManufacturecountryBloc>()
+                                        .state
+                                        .countryList[index]));
+                          }
+                        },
+                      );
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else {
+          return Container();
+        }
+      },
     );
   }
 
@@ -2693,6 +2887,176 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     );
                   },
                 ),
+              ],
+            );
+          });
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+
+  Widget searchTagArea() {
+    TextEditingController tagController = TextEditingController();
+    return BlocBuilder<AgeGroupBloc, AgeGroupState>(
+      builder: (context, state) {
+        if (context.read<InititemBloc>().state.fetchState ==
+            FetchState.success) {
+          return BlocBuilder<InititemBloc, InititemState>(
+              builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "태그 입력",
+                  style: textStyle(
+                      Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                ),
+                Divider(
+                  color: Colors.black,
+                  thickness: 2 * Scale.height,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 12 * Scale.height),
+                  child: Text(
+                    "태그를 등록하면 더 많은 곳에 추가 노출 됩니다.",
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  ),
+                ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 250 * Scale.width,
+                      child: TextFormField(
+                        onFieldSubmitted: (value) {
+                          currentFocus.unfocus();
+                        },
+                        onChanged: (value) {
+                          context
+                              .read<TagBloc>()
+                              .add(ChangeSearchTagTextEvent(searchTag: value));
+                        },
+                        controller: tagController,
+                        style: const TextStyle(
+                          color: Color(0xff666666),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: "NotoSansKR",
+                          fontSize: 13.0,
+                        ),
+                        decoration: InputDecoration(
+                          counterText: "",
+                          contentPadding:
+                              EdgeInsets.only(left: 15 * Scale.width),
+                          hintText: "태그를 입력해주세요",
+                          hintStyle: textStyle(const Color(0xffcccccc),
+                              FontWeight.w500, "NotoSansKR", 14.0),
+                          border: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Color(0xffcccccc), width: 1),
+                          ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Color(0xffcccccc), width: 1),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10 * Scale.width),
+                    InkWell(
+                      onTap: () {
+                        BlocProvider.of<TagBloc>(context)
+                            .add(AddTagEvent(tag: tagController.text));
+                        tagController.text = '';
+                      },
+                      child: Container(
+                          width: 60 * Scale.width,
+                          height: 50 * Scale.height,
+                          decoration: BoxDecoration(
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(5)),
+                              border: Border.all(
+                                  color: const Color(0xffcccccc), width: 1)),
+                          child: Center(
+                            child: Text("등록",
+                                style: textStyle(Colors.black, FontWeight.w400,
+                                    "NotoSansKR", 13.0)),
+                          )),
+                    )
+                  ],
+                ),
+                BlocBuilder<TagBloc, TagState>(
+                  builder: (context, state) {
+                    return context.read<TagBloc>().state.tagsList.isEmpty
+                        ? Container()
+                        : ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount:
+                                context.read<TagBloc>().state.tagsList.length,
+                            itemBuilder: (context, index) {
+                              return InkWell(
+                                onTap: () {
+                                  context.read<TagBloc>().add(AutoCompleteEvent(
+                                      index: index,
+                                      tagController: tagController));
+                                },
+                                child: Container(
+                                  height: 35 * Scale.height,
+                                  width: 100 * Scale.width,
+                                  color: Colors.grey[50],
+                                  child: Text(
+                                    BlocProvider.of<TagBloc>(context)
+                                        .state
+                                        .tagsList[index]['name'],
+                                    style: textStyle(Colors.black,
+                                        FontWeight.w400, "NotoSansKR", 14.0),
+                                  ),
+                                ),
+                              );
+                            });
+                  },
+                ),
+                Divider(thickness: 1.5),
+                BlocBuilder<TagBloc, TagState>(builder: (context, state) {
+                  return Container(
+                    height: 40 * Scale.height,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount:
+                          context.read<TagBloc>().state.selectedTags.length,
+                      itemBuilder: (context, index) {
+                        return SizedBox(
+                          height: 30 * Scale.height,
+                          width: 90 * Scale.width,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                context
+                                    .read<TagBloc>()
+                                    .state
+                                    .selectedTags[index]['name'],
+                                style: textStyle(Colors.black, FontWeight.w400,
+                                    "NotoSansKR", 13.0),
+                              ),
+                              InkWell(
+                                child: const Icon(Icons.clear),
+                                onTap: () {
+                                  context
+                                      .read<TagBloc>()
+                                      .add(RemoveTagEvent(index: index));
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                })
               ],
             );
           });

@@ -39,6 +39,13 @@ class RegistRepository extends HttpRepository {
 
   Future<dynamic> registProduct(Map body) async {
     response = await super.httpPost("product/", json.encode(body));
+  }
+
+  Future<dynamic> getTags(String tag) async {
+    queryParams = {};
+    queryParams['query'] = tag;
+    response = await super.httpGet("product/tag/", queryParams);
     print(response);
+    return response['data'];
   }
 }
