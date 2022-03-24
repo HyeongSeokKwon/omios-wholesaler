@@ -17,6 +17,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
   LaundryBloc laundryBloc;
   AdditionalInfoBloc additionalInfoBloc;
   AgeGroupBloc ageGroupBloc;
+  ThemeBloc themeBloc;
 
   final RegistRepository registRepository = RegistRepository();
 
@@ -31,6 +32,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     required this.laundryBloc,
     required this.additionalInfoBloc,
     required this.ageGroupBloc,
+    required this.themeBloc,
   }) : super(InititemState.initial()) {
     categoryBloc.stream.listen((CategoryState state) {
       if (state.selectedSubCategory.isNotEmpty) {
@@ -68,6 +70,8 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
 
     styleBloc.state.styleList = commonData['style'];
     ageGroupBloc.state.ageGroupList = commonData['age'];
+    themeBloc.state.themeList = commonData['theme'];
+    themeBloc.state.themeList.add({'id': 0, 'name': '없음'});
 
     emit(state.copyWith(fetchState: FetchState.success));
   }

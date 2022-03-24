@@ -30,6 +30,7 @@ class _RegistProductState extends State<RegistProduct> {
     ManufacturecountryBloc manufacturecountryBloc = ManufacturecountryBloc();
     AgeGroupBloc ageGroupBloc = AgeGroupBloc();
     PhotoBloc photoBloc = PhotoBloc(colorBloc);
+    ThemeBloc themeBloc = ThemeBloc();
     TagBloc tagBloc = TagBloc();
 
     return MultiBlocProvider(
@@ -44,6 +45,7 @@ class _RegistProductState extends State<RegistProduct> {
             laundryBloc: laundryBloc,
             additionalInfoBloc: additionalInfoBloc,
             ageGroupBloc: ageGroupBloc,
+            themeBloc: themeBloc,
           ),
         ),
         BlocProvider<NameBloc>(
@@ -86,20 +88,25 @@ class _RegistProductState extends State<RegistProduct> {
           create: (BuildContext context) => ageGroupBloc,
         ),
         BlocProvider<TagBloc>(create: (BuildContext context) => tagBloc),
+        BlocProvider<ThemeBloc>(create: (BuildContext context) => themeBloc),
         BlocProvider<DataGatherBloc>(
             create: (BuildContext context) => DataGatherBloc(
-                nameBloc: nameBloc,
-                categoryBloc: categoryBloc,
-                priceBloc: priceBloc,
-                colorBloc: colorBloc,
-                photoBloc: photoBloc,
-                pricePerOptionBloc: pricePerOptionBloc,
-                styleBloc: styleBloc,
-                fabricBloc: fabricBloc,
-                sizeBloc: sizeBloc,
-                laundryBloc: laundryBloc,
-                additionalInfoBloc: additionalInfoBloc,
-                ageGroupBloc: ageGroupBloc))
+                  nameBloc: nameBloc,
+                  categoryBloc: categoryBloc,
+                  priceBloc: priceBloc,
+                  colorBloc: colorBloc,
+                  photoBloc: photoBloc,
+                  pricePerOptionBloc: pricePerOptionBloc,
+                  styleBloc: styleBloc,
+                  fabricBloc: fabricBloc,
+                  sizeBloc: sizeBloc,
+                  laundryBloc: laundryBloc,
+                  additionalInfoBloc: additionalInfoBloc,
+                  ageGroupBloc: ageGroupBloc,
+                  tagBloc: tagBloc,
+                  themeBloc: themeBloc,
+                  manufacturecountryBloc: manufacturecountryBloc,
+                ))
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -211,7 +218,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
 
                           SizedBox(height: 40 * Scale.height),
                           searchTagArea(),
-                          SizedBox(height: 100 * Scale.height),
+                          themeArea(), SizedBox(height: 100 * Scale.height),
                         ],
                       ),
                     ),
@@ -3018,7 +3025,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                             });
                   },
                 ),
-                Divider(thickness: 1.5),
+                const Divider(thickness: 1.5),
                 BlocBuilder<TagBloc, TagState>(builder: (context, state) {
                   return Container(
                     height: 40 * Scale.height,
@@ -3057,6 +3064,95 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     ),
                   );
                 })
+              ],
+            );
+          });
+        } else {
+          return Container();
+        }
+      },
+    );
+  }
+
+  Widget themeArea() {
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, state) {
+        if (context.read<InititemBloc>().state.fetchState ==
+            FetchState.success) {
+          return BlocBuilder<InititemBloc, InititemState>(
+              builder: (context, state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "테마 선택",
+                  style: textStyle(
+                      Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                ),
+                Divider(
+                  color: Colors.black,
+                  thickness: 2 * Scale.height,
+                ),
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const ScrollPhysics(),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 17 * Scale.width,
+                      vertical: 15 * Scale.height),
+                  itemCount: context.read<ThemeBloc>().state.themeList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 30 * Scale.height,
+                    crossAxisSpacing: 10 * Scale.width,
+                    childAspectRatio: 1.4,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    return GestureDetector(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                          border: Border.all(
+                              color: context
+                                          .read<ThemeBloc>()
+                                          .state
+                                          .selectedTheme ==
+                                      context
+                                          .read<ThemeBloc>()
+                                          .state
+                                          .themeList[index]['id']
+                                  ? Colors.indigo[400]!
+                                  : Colors.grey[300]!),
+                        ),
+                        child: Center(
+                          child: Text(
+                            context.read<ThemeBloc>().state.themeList[index]
+                                ['name'],
+                            style: textStyle(
+                                context.read<ThemeBloc>().state.selectedTheme ==
+                                        context
+                                            .read<ThemeBloc>()
+                                            .state
+                                            .themeList[index]['id']
+                                    ? Colors.black
+                                    : Colors.grey[400]!,
+                                FontWeight.w500,
+                                "NotoSansKR",
+                                13.0),
+                          ),
+                        ),
+                      ),
+                      onTap: () {
+                        context.read<ThemeBloc>().add(ChangeThemeEvent(
+                            themeId: context
+                                .read<ThemeBloc>()
+                                .state
+                                .themeList[index]['id']));
+                      },
+                    );
+                  },
+                ),
               ],
             );
           });

@@ -19,6 +19,9 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
   LaundryBloc laundryBloc;
   AdditionalInfoBloc additionalInfoBloc;
   AgeGroupBloc ageGroupBloc;
+  TagBloc tagBloc;
+  ThemeBloc themeBloc;
+  ManufacturecountryBloc manufacturecountryBloc;
 
   final RegistRepository _registRepository = RegistRepository();
   Map<String, dynamic> registData = {};
@@ -36,6 +39,9 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
     required this.laundryBloc,
     required this.additionalInfoBloc,
     required this.ageGroupBloc,
+    required this.tagBloc,
+    required this.themeBloc,
+    required this.manufacturecountryBloc,
   }) : super(DataGatherState.initial()) {
     on<ClickRegistButtonEvent>(manufactureData);
   }
@@ -164,7 +170,37 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
 
     setAdditionalInfo(); //추가 정보 데이터 병합
 
-    registData['tags'] = [1, 2, 3]; //임시로 tag data 넣어 놓았음.
+    if (manufacturecountryBloc.state.selectedCountry.isEmpty) {
+      emit(state.copyWith(
+          isAllVerified: false,
+          fetchState: FetchState.failure,
+          error: "제조국을 선택해주세요"));
+
+      emit(state.copyWith(fetchState: FetchState.initial));
+      return;
+    }
+    registData['manufacturing_country'] =
+        manufacturecountryBloc.state.selectedCountry;
+
+    if (tagBloc.state.selectedTags.isEmpty) {
+      emit(state.copyWith(
+          isAllVerified: false,
+          fetchState: FetchState.failure,
+          error: "태그를 선택해주세요"));
+
+      emit(state.copyWith(fetchState: FetchState.initial));
+      return;
+    }
+    registData['tags'] = [];
+    for (var value in tagBloc.state.selectedTags) {
+      registData['tags'].add(value['id']);
+    }
+
+    if (themeBloc.state.selectedTheme == 0) {
+      registData['theme'] = null;
+    } else {
+      registData['theme'] = themeBloc.state.selectedTheme;
+    }
 
     await _registRepository.registProduct(registData);
   }
