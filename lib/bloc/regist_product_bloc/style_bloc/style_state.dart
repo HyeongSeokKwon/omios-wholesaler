@@ -1,7 +1,7 @@
 part of 'style_bloc.dart';
 
 class StyleState extends Equatable {
-  final Map selectedStyle;
+  Map selectedStyle;
   List<dynamic> styleList;
   StyleState({
     required this.selectedStyle,

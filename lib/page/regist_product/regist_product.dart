@@ -7,7 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 class RegistProduct extends StatefulWidget {
-  const RegistProduct({Key? key}) : super(key: key);
+  RegistMode registMode;
+  InitEditItemBloc? initEditItemBloc;
+  RegistProduct({Key? key, required this.registMode, this.initEditItemBloc})
+      : super(key: key);
 
   @override
   _RegistProductState createState() => _RegistProductState();
@@ -37,15 +40,21 @@ class _RegistProductState extends State<RegistProduct> {
       providers: [
         BlocProvider<InititemBloc>(
           create: (BuildContext context) => InititemBloc(
+            nameBloc: nameBloc,
+            priceBloc: priceBloc,
             categoryBloc: categoryBloc,
             colorBloc: colorBloc,
             fabricBloc: fabricBloc,
             styleBloc: styleBloc,
             sizeBloc: sizeBloc,
+            pricePerOptionBloc: pricePerOptionBloc,
             laundryBloc: laundryBloc,
             additionalInfoBloc: additionalInfoBloc,
             ageGroupBloc: ageGroupBloc,
             themeBloc: themeBloc,
+            registMode: widget.registMode,
+            manufacturecountryBloc: manufacturecountryBloc,
+            initEditItemBloc: widget.initEditItemBloc,
           ),
         ),
         BlocProvider<NameBloc>(
@@ -134,22 +143,21 @@ class _RegistProductState extends State<RegistProduct> {
             ],
           ),
         ),
-        body: const ScrollArea(),
+        body: ScrollArea(registMode: widget.registMode),
       ),
     );
   }
 }
 
 class ScrollArea extends StatefulWidget {
-  const ScrollArea({Key? key}) : super(key: key);
+  RegistMode? registMode;
+  ScrollArea({this.registMode, Key? key}) : super(key: key);
 
   @override
   State<ScrollArea> createState() => _ScrollAreaState();
 }
 
 class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
-  final GlobalKey<FormState> _key = GlobalKey<FormState>();
-  TextEditingController priceEditController = TextEditingController();
   late FocusScopeNode currentFocus;
 
   @override
@@ -174,8 +182,9 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
         builder: (context, state) {
           if (context.read<InititemBloc>().state.fetchState ==
               FetchState.initial) {
-            context.read<InititemBloc>().add(FetchInitCommonInfoEvent());
+            context.read<InititemBloc>().add(const FetchInitCommonInfoEvent());
           }
+
           if (context.read<InititemBloc>().state.fetchState ==
               FetchState.success) {
             return Stack(
@@ -607,6 +616,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     return null;
                   }
                 },
+                controller: state.textEditingController,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9' ']")),
                 ],
@@ -657,8 +667,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
     );
   }
 
-  Widget addPriceButton(
-      int addPrice, String unit, TextEditingController priceEditController) {
+  Widget addPriceButton(int addPrice, String unit) {
     return BlocBuilder<PriceBloc, PriceState>(
       builder: (context, state) {
         return TextButton(
@@ -681,12 +690,12 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
               case "천원":
                 context.read<PriceBloc>().add(ClickAddButtonEvent(
                     addPrice: addPrice * 1000,
-                    priceEditController: priceEditController));
+                    priceEditController: state.textEditingController));
                 break;
               case "만원":
                 context.read<PriceBloc>().add(ClickAddButtonEvent(
                     addPrice: addPrice * 10000,
-                    priceEditController: priceEditController));
+                    priceEditController: state.textEditingController));
                 break;
             }
           },
@@ -712,7 +721,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             Form(
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: TextFormField(
-                controller: priceEditController,
+                controller: state.textEditingController,
                 keyboardType: const TextInputType.numberWithOptions(
                     signed: true, decimal: true),
                 onChanged: (value) {
@@ -778,23 +787,23 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                addPriceButton(1, "천원", priceEditController),
+                addPriceButton(1, "천원"),
                 SizedBox(
                   width: 5 * Scale.width,
                 ),
-                addPriceButton(3, "천원", priceEditController),
+                addPriceButton(3, "천원"),
                 SizedBox(
                   width: 5 * Scale.width,
                 ),
-                addPriceButton(5, "천원", priceEditController),
+                addPriceButton(5, "천원"),
                 SizedBox(
                   width: 5 * Scale.width,
                 ),
-                addPriceButton(1, "만원", priceEditController),
+                addPriceButton(1, "만원"),
                 SizedBox(
                   width: 5 * Scale.width,
                 ),
-                addPriceButton(2, "만원", priceEditController),
+                addPriceButton(2, "만원"),
               ],
             )
           ],
@@ -2222,7 +2231,11 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             break;
           default:
         }
-
+        print(selectList!);
+        print(context
+            .read<AdditionalInfoBloc>()
+            .state
+            .selectedAdditionalInfo[type]);
         return ListView.builder(
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
@@ -2243,7 +2256,9 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 SizedBox(
                   width: 15 * Scale.width,
                   child: Radio<dynamic>(
-                    value: selectList?[index],
+                    value: type == 'lining'
+                        ? selectList![index]['value']
+                        : selectList?[index],
                     activeColor: Colors.grey[500],
                     groupValue: context
                         .read<AdditionalInfoBloc>()

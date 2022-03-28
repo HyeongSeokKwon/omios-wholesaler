@@ -108,7 +108,6 @@ class HttpRepository {
       [Map<String, dynamic>? queryParams]) async {
     http.Response response;
     var responseJson = {};
-    print(Uri.http(addressUrl, baseUrl, queryParams));
     try {
       response = await updateToken().then(((value) async {
         return await http.get(
@@ -116,7 +115,6 @@ class HttpRepository {
           headers: {HttpHeaders.authorizationHeader: 'Bearer $accessToken'},
         );
       }));
-      print(response.body);
       responseJson = _response(response);
       return responseJson;
     } on SocketException {

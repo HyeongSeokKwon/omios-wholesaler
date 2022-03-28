@@ -16,9 +16,9 @@ class FabricState extends Equatable {
 
   factory FabricState.initial() {
     return FabricState(
-      selectedFabric: const [],
+      selectedFabric: [],
       fabricList: const [],
-      isClicked: const [],
+      isClicked: [],
       textController: const [],
       sum: 0,
     );

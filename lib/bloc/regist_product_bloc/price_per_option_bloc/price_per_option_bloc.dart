@@ -42,11 +42,11 @@ class PricePerOptionBloc
     List<TextEditingController> inventoryControllerList;
     colorBloc.state.selectedColorMap
         .sort((a, b) => (a['colorId']).compareTo(b['colorId']));
-    sizeBloc.state.selectedSizeMap!
+    sizeBloc.state.selectedSizeMap
         .sort((a, b) => (a['sizeId']).compareTo(b['sizeId']));
 
     for (var color in colorBloc.state.selectedColorMap) {
-      for (var size in sizeBloc.state.selectedSizeMap!) {
+      for (var size in sizeBloc.state.selectedSizeMap) {
         pricePerOptionList.add(
           {
             'color': color,
@@ -111,7 +111,7 @@ class PricePerOptionBloc
       copy[event.index]['price'] = int.parse(event.changePrice);
       copy[event.index]['price_difference'] =
           (standardPrice - copy[event.index]['price']).abs();
-      print(copy);
+
       if (inappositePriceIndexList.contains(event.index)) {
         inappositePriceIndexList.remove(event.index);
       }

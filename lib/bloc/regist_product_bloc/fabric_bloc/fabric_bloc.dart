@@ -24,9 +24,6 @@ class FabricBloc extends Bloc<FabricEvent, FabricState> {
         "percent": state.textController[event.fabricIndex].text.isNotEmpty
             ? int.parse(state.textController[event.fabricIndex].text)
             : 0,
-        // state.textController![event.fabricIndex].text.isNotEmpty
-        //     ? int.parse(state.textController![event.fabricIndex].text)
-        //     : 0
       });
     } else {
       state.textController[event.fabricIndex].text = "";

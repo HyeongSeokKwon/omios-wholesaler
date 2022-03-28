@@ -45,7 +45,6 @@ class RegistRepository extends HttpRepository {
     queryParams = {};
     queryParams['query'] = tag;
     response = await super.httpGet("product/tag/", queryParams);
-    print(response);
     return response['data'];
   }
 }

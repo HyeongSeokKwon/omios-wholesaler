@@ -1,3 +1,4 @@
+import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/page/login/login.dart';
 import 'package:deepy_wholesaler/page/regist_product/regist_product.dart';
 import 'package:deepy_wholesaler/util/util.dart';
@@ -120,7 +121,9 @@ class WholeSalerInfoArea extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const RegistProduct()));
+                                  builder: (context) => RegistProduct(
+                                        registMode: RegistMode.regist,
+                                      )));
                         },
                       ),
                       SizedBox(

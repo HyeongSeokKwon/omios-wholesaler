@@ -2,11 +2,11 @@ part of 'size_bloc.dart';
 
 class SizeState extends Equatable {
   List<String> selectedSize;
-  List<Map>? selectedSizeMap;
+  List<Map> selectedSizeMap;
   List<dynamic> sizeList;
   SizeState(
       {required this.selectedSize,
-      this.selectedSizeMap,
+      required this.selectedSizeMap,
       required this.sizeList});
 
   factory SizeState.initial() {

@@ -1,5 +1,6 @@
 import 'package:deepy_wholesaler/bloc/myproducts_bloc/myproducts_bloc.dart';
 import 'package:deepy_wholesaler/model/product_model.dart';
+import 'package:deepy_wholesaler/page/edit_product/edit_product.dart';
 import 'package:deepy_wholesaler/widget/progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,7 +10,6 @@ import '../../../widget/product_card.dart';
 
 class WholeSalerProductArea extends StatelessWidget {
   const WholeSalerProductArea({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MyproductsBloc, MyproductsState>(
@@ -33,10 +33,21 @@ class WholeSalerProductArea extends StatelessWidget {
             childAspectRatio: 0.6,
           ),
           itemBuilder: (context, int index) {
-            return ProductCard(
-                product: Product.fromJson(
-                    context.read<MyproductsBloc>().state.productsData[index]),
-                imageWidth: 110 * Scale.width);
+            int productId =
+                context.read<MyproductsBloc>().state.productsData[index]['id'];
+            return InkWell(
+              child: ProductCard(
+                  product: Product.fromJson(
+                      context.read<MyproductsBloc>().state.productsData[index]),
+                  imageWidth: 110 * Scale.width),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            EditProduct(productId: productId)));
+              },
+            );
           },
         );
       } else if (state.fetchStatus == FetchStatus.error) {

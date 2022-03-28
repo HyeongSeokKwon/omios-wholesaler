@@ -14,7 +14,7 @@ class SizeBloc extends Bloc<SizeEvent, SizeState> {
     List<String> copySelectedList = [];
     List<Map> copySelectedMap = [];
     copySelectedList.addAll(state.selectedSize);
-    for (var value in state.selectedSizeMap!) {
+    for (var value in state.selectedSizeMap) {
       copySelectedMap.add(Map.from(value));
     }
     switch (event.size) {
@@ -73,7 +73,7 @@ class SizeBloc extends Bloc<SizeEvent, SizeState> {
     List<String> copySelectedList = [];
     List<Map> copySelectedMap = [];
     copySelectedList.addAll(state.selectedSize);
-    for (var value in state.selectedSizeMap!) {
+    for (var value in state.selectedSizeMap) {
       copySelectedMap.add(Map.from(value));
     }
 
@@ -81,7 +81,7 @@ class SizeBloc extends Bloc<SizeEvent, SizeState> {
       case 'S-M':
         state.selectedSize
             .removeWhere((element) => element == 'S' && element == 'M');
-        for (var value in state.selectedSizeMap!) {
+        for (var value in state.selectedSizeMap) {
           if (value['size'] == 'S' || value['size'] == 'M') {
             copySelectedMap.remove(value);
           }
@@ -90,7 +90,7 @@ class SizeBloc extends Bloc<SizeEvent, SizeState> {
       case 'S-L':
         state.selectedSize.removeWhere(
             (element) => element == 'S' && element == 'M' && element == 'L');
-        for (var value in state.selectedSizeMap!) {
+        for (var value in state.selectedSizeMap) {
           if (value['size'] == 'S' ||
               value['size'] == 'M' ||
               value['size'] == 'L') {
@@ -104,7 +104,7 @@ class SizeBloc extends Bloc<SizeEvent, SizeState> {
             element == 'M' &&
             element == 'L' &&
             element == 'XL');
-        for (var value in state.selectedSizeMap!) {
+        for (var value in state.selectedSizeMap) {
           if (value['size'] == 'S' ||
               value['size'] == 'M' ||
               value['size'] == 'L' ||

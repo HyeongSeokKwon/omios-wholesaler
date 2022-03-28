@@ -9,4 +9,9 @@ abstract class InititemEvent extends Equatable {
 
 class FetchInitDynamicInfoEvent extends InititemEvent {}
 
-class FetchInitCommonInfoEvent extends InititemEvent {}
+class FetchInitCommonInfoEvent extends InititemEvent {
+  final Map? registedData;
+  const FetchInitCommonInfoEvent({
+    this.registedData,
+  });
+}

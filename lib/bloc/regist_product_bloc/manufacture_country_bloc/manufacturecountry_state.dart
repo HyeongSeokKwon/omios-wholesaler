@@ -1,17 +1,17 @@
 part of 'manufacturecountry_bloc.dart';
 
 class ManufacturecountryState extends Equatable {
-  final String selectedCountry;
+  String selectedCountry;
   final List countryList;
 
-  const ManufacturecountryState({
+  ManufacturecountryState({
     required this.selectedCountry,
     required this.countryList,
   });
 
   factory ManufacturecountryState.initial() {
-    return const ManufacturecountryState(
-        selectedCountry: '', countryList: ['한국', '중국', '기타']);
+    return ManufacturecountryState(
+        selectedCountry: '', countryList: const ['한국', '중국', '기타']);
   }
 
   @override

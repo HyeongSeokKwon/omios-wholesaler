@@ -1,7 +1,7 @@
 part of 'laundry_bloc.dart';
 
 class LaundryState extends Equatable {
-  final List<Map> selectedLaundry;
+  List<Map> selectedLaundry;
   List<dynamic> washingList;
 
   LaundryState({
@@ -10,7 +10,7 @@ class LaundryState extends Equatable {
   });
 
   factory LaundryState.initial() {
-    return LaundryState(selectedLaundry: const [], washingList: const []);
+    return LaundryState(selectedLaundry: [], washingList: const []);
   }
 
   @override

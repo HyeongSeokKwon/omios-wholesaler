@@ -17,3 +17,4 @@ export 'regist_product_bloc/age_group_bloc/age_group_bloc.dart';
 export 'regist_product_bloc/tag_bloc/tag_bloc.dart';
 export 'regist_product_bloc/manufacture_country_bloc/manufacturecountry_bloc.dart';
 export 'regist_product_bloc/theme_bloc/theme_bloc.dart';
+export 'edit_product_bloc/initItem_bloc/inititem_bloc.dart';

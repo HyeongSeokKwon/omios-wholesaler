@@ -1,15 +1,20 @@
 part of 'name_bloc.dart';
 
 class NameState extends Equatable {
-  final String name;
+  String name;
+  TextEditingController textEditingController;
   final String errorMessage;
-  const NameState({
+  NameState({
+    required this.textEditingController,
     required this.name,
     required this.errorMessage,
   });
 
   factory NameState.initial() {
-    return const NameState(name: "", errorMessage: "");
+    return NameState(
+        name: "",
+        textEditingController: TextEditingController(),
+        errorMessage: "");
   }
 
   @override
@@ -17,10 +22,13 @@ class NameState extends Equatable {
 
   NameState copyWith({
     String? name,
+    TextEditingController? textEditingController,
     String? errorMessage,
   }) {
     return NameState(
       name: name ?? this.name,
+      textEditingController:
+          textEditingController ?? this.textEditingController,
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }

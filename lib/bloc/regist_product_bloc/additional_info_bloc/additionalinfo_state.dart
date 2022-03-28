@@ -1,7 +1,7 @@
 part of 'additionalinfo_bloc.dart';
 
 class AdditionalInfoState extends Equatable {
-  Map<String, Map> selectedAdditionalInfo;
+  Map<String, dynamic> selectedAdditionalInfo;
 
   List<dynamic>? thicknessList;
   List<dynamic>? seeThroughList;
@@ -37,7 +37,7 @@ class AdditionalInfoState extends Equatable {
   }
 
   AdditionalInfoState copyWith({
-    Map<String, Map>? selectedAdditionalInfo,
+    Map<String, dynamic>? selectedAdditionalInfo,
     List<dynamic>? thicknessList,
     List<dynamic>? seeThroughList,
     List<dynamic>? elasticityList,

@@ -1,15 +1,15 @@
 part of 'inititem_bloc.dart';
 
-enum FetchState { success, dynamicSuccess, failure, loading, initial }
+enum FetchState { success, failure, loading, initial }
+enum RegistMode { regist, edit }
 
 class InititemState extends Equatable {
   final FetchState fetchState;
-  const InititemState({
-    required this.fetchState,
-  });
+  late RegistMode? registMode;
+  InititemState({required this.fetchState, this.registMode});
 
   factory InititemState.initial() {
-    return const InititemState(fetchState: FetchState.initial);
+    return InititemState(fetchState: FetchState.initial);
   }
 
   @override

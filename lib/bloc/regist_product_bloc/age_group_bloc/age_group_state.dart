@@ -2,7 +2,7 @@ part of 'age_group_bloc.dart';
 
 class AgeGroupState extends Equatable {
   List ageGroupList;
-  final int selectedAgeGroupId;
+  int selectedAgeGroupId;
 
   AgeGroupState({
     required this.ageGroupList,

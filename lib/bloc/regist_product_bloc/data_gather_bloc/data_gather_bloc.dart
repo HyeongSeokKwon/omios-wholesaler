@@ -217,7 +217,7 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
       registData['lining'] = null;
     } else {
       registData['lining'] =
-          additionalInfoBloc.state.selectedAdditionalInfo['lining']!['value'];
+          additionalInfoBloc.state.selectedAdditionalInfo['lining'];
     }
     if (additionalInfoBloc.state.seeThroughList == []) {
       registData['see_through'] = null;

@@ -12,7 +12,7 @@ class AdditionalInfoBloc
 
   void clickAdditionalInfo(
       ClickAdditionalInfoEvent event, Emitter<AdditionalInfoState> emit) {
-    Map<String, Map> copy = {};
+    Map<String, dynamic> copy = {};
 
     copy.addAll(state.selectedAdditionalInfo);
     switch (event.type) {
@@ -26,7 +26,7 @@ class AdditionalInfoBloc
         copy['flexibility'] = state.elasticityList![event.index];
         break;
       case "lining":
-        copy['lining'] = state.liningList![event.index];
+        copy['lining'] = state.liningList![event.index]['value'];
 
         break;
       default:
