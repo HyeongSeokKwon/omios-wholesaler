@@ -32,7 +32,6 @@ class ColorState extends Equatable {
     List<dynamic>? colorList,
     String? errorMessage,
   }) {
-    print(errorMessage);
     return ColorState(
       selectedColorMap: selectedColorMap ?? this.selectedColorMap,
       selectedColorList: selectedColorList ?? this.selectedColorList,

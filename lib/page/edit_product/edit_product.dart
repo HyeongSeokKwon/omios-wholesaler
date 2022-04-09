@@ -98,6 +98,11 @@ class InfoArea extends StatelessWidget {
                   textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 20.0),
             ),
             Text(
+              "${state.data['id']}",
+              style:
+                  textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 20.0),
+            ),
+            Text(
               "${state.data['price']}",
               style:
                   textStyle(Colors.black, FontWeight.w400, "NotoSansKR", 20.0),

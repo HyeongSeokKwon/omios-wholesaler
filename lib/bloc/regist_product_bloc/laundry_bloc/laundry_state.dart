@@ -10,7 +10,7 @@ class LaundryState extends Equatable {
   });
 
   factory LaundryState.initial() {
-    return LaundryState(selectedLaundry: [], washingList: const []);
+    return LaundryState(selectedLaundry: [], washingList: []);
   }
 
   @override

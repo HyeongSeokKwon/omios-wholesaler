@@ -7,9 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 
 class RegistProduct extends StatefulWidget {
-  RegistMode registMode;
-  InitEditItemBloc? initEditItemBloc;
-  RegistProduct({Key? key, required this.registMode, this.initEditItemBloc})
+  final RegistMode registMode;
+  final InitEditItemBloc? initEditItemBloc;
+  const RegistProduct(
+      {Key? key, required this.registMode, this.initEditItemBloc})
       : super(key: key);
 
   @override
@@ -45,11 +46,13 @@ class _RegistProductState extends State<RegistProduct> {
             categoryBloc: categoryBloc,
             colorBloc: colorBloc,
             fabricBloc: fabricBloc,
+            photoBloc: photoBloc,
             styleBloc: styleBloc,
             sizeBloc: sizeBloc,
             pricePerOptionBloc: pricePerOptionBloc,
             laundryBloc: laundryBloc,
             additionalInfoBloc: additionalInfoBloc,
+            tagBloc: tagBloc,
             ageGroupBloc: ageGroupBloc,
             themeBloc: themeBloc,
             registMode: widget.registMode,
@@ -115,6 +118,7 @@ class _RegistProductState extends State<RegistProduct> {
                   tagBloc: tagBloc,
                   themeBloc: themeBloc,
                   manufacturecountryBloc: manufacturecountryBloc,
+                  initEditItemBloc: widget.initEditItemBloc,
                 ))
       ],
       child: Scaffold(
@@ -150,8 +154,8 @@ class _RegistProductState extends State<RegistProduct> {
 }
 
 class ScrollArea extends StatefulWidget {
-  RegistMode? registMode;
-  ScrollArea({this.registMode, Key? key}) : super(key: key);
+  RegistMode registMode;
+  ScrollArea({required this.registMode, Key? key}) : super(key: key);
 
   @override
   State<ScrollArea> createState() => _ScrollAreaState();
@@ -187,6 +191,18 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
 
           if (context.read<InititemBloc>().state.fetchState ==
               FetchState.success) {
+            if (widget.registMode == RegistMode.edit &&
+                BlocProvider.of<DataGatherBloc>(context).state.fetchState ==
+                    FetchState.initial &&
+                BlocProvider.of<CategoryBloc>(context)
+                    .state
+                    .selectedSubCategory
+                    .isNotEmpty &&
+                BlocProvider.of<DataGatherBloc>(context).state.gatherState ==
+                    GatherState.initial) {
+              BlocProvider.of<DataGatherBloc>(context).add(CombineDataEvent(
+                  registMode: widget.registMode, callState: 'init'));
+            }
             return Stack(
               children: [
                 SingleChildScrollView(
@@ -307,166 +323,8 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 ),
               ),
               onTap: () {
-                final categoryBloc = BlocProvider.of<CategoryBloc>(context);
-                showModalBottomSheet<void>(
-                  isDismissible: false,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  context: context,
-                  builder: (context) => BlocProvider.value(
-                    value: categoryBloc,
-                    child: Stack(
-                      children: [
-                        BlocBuilder<CategoryBloc, CategoryState>(
-                          builder: (context, state) {
-                            return GestureDetector(
-                              child: Container(
-                                  width: 414 * Scale.width,
-                                  height: 896 * Scale.height,
-                                  color: Colors.transparent),
-                              onTap: Navigator.of(context).pop,
-                            );
-                          },
-                        ),
-                        Positioned(
-                          child: DraggableScrollableSheet(
-                            initialChildSize: 0.6,
-                            maxChildSize: 1.0,
-                            builder: (_, controller) {
-                              return Stack(children: [
-                                Container(
-                                  width: 414 * Scale.width,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(25.0),
-                                      topRight: Radius.circular(25.0),
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 22 * Scale.width),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(
-                                              top: 25 * Scale.height,
-                                              bottom: 30 * Scale.height),
-                                          child: Text("대분류 선택",
-                                              style: textStyle(
-                                                  const Color(0xff333333),
-                                                  FontWeight.w700,
-                                                  "NotoSansKR",
-                                                  21.0)),
-                                        ),
-                                        Expanded(
-                                          child: Center(
-                                            child: ListView.separated(
-                                              itemCount:
-                                                  state.categoryInfo!.length,
-                                              separatorBuilder:
-                                                  (context, index) {
-                                                return const Divider();
-                                              },
-                                              itemBuilder: ((context, index) {
-                                                return InkWell(
-                                                  onTap: () {
-                                                    context
-                                                        .read<CategoryBloc>()
-                                                        .add(ClickMainCategoryEvent(
-                                                            mainCategoryIndex:
-                                                                index));
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: SizedBox(
-                                                    height: 70 * Scale.height,
-                                                    width: double.infinity,
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          context
-                                                                  .read<
-                                                                      CategoryBloc>()
-                                                                  .state
-                                                                  .categoryInfo![
-                                                              index]['name'],
-                                                          style: textStyle(
-                                                              Colors.black,
-                                                              FontWeight.w300,
-                                                              "NotoSansKR",
-                                                              19.0),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              }),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ]);
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-            InkWell(
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
-                child: Container(
-                    height: 40 * Scale.height,
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey[400]!,
-                        ),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(7))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(left: 6 * Scale.width),
-                          child: Text(
-                              context
-                                      .read<CategoryBloc>()
-                                      .state
-                                      .selectedSubCategory
-                                      .isEmpty
-                                  ? "소분류"
-                                  : "${state.selectedSubCategory['name']}",
-                              style: textStyle(Colors.grey[600]!,
-                                  FontWeight.w500, 'NotoSansKR', 13.0)),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_down,
-                          size: 25,
-                          color: Colors.grey[600],
-                        )
-                      ],
-                    )),
-              ),
-              onTap: () {
-                final categoryBloc = BlocProvider.of<CategoryBloc>(context);
-                if (context
-                    .read<CategoryBloc>()
-                    .state
-                    .selectedMainCategory
-                    .isNotEmpty) {
+                if (widget.registMode == RegistMode.regist) {
+                  final categoryBloc = BlocProvider.of<CategoryBloc>(context);
                   showModalBottomSheet<void>(
                     isDismissible: false,
                     isScrollControlled: true,
@@ -515,7 +373,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                             padding: EdgeInsets.only(
                                                 top: 25 * Scale.height,
                                                 bottom: 30 * Scale.height),
-                                            child: Text("소분류 선택",
+                                            child: Text("대분류 선택",
                                                 style: textStyle(
                                                     const Color(0xff333333),
                                                     FontWeight.w700,
@@ -525,8 +383,8 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                           Expanded(
                                             child: Center(
                                               child: ListView.separated(
-                                                itemCount: state
-                                                    .subCategoryInfo.length,
+                                                itemCount:
+                                                    state.categoryInfo!.length,
                                                 separatorBuilder:
                                                     (context, index) {
                                                   return const Divider();
@@ -536,8 +394,8 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                     onTap: () {
                                                       context
                                                           .read<CategoryBloc>()
-                                                          .add(ClickSubCategoryEvent(
-                                                              subCategoryIndex:
+                                                          .add(ClickMainCategoryEvent(
+                                                              mainCategoryIndex:
                                                                   index));
                                                       Navigator.of(context)
                                                           .pop();
@@ -555,7 +413,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                                     .read<
                                                                         CategoryBloc>()
                                                                     .state
-                                                                    .subCategoryInfo[
+                                                                    .categoryInfo![
                                                                 index]['name'],
                                                             style: textStyle(
                                                                 Colors.black,
@@ -583,6 +441,174 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                       ),
                     ),
                   );
+                }
+              },
+            ),
+            InkWell(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
+                child: Container(
+                    height: 40 * Scale.height,
+                    decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey[400]!,
+                        ),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(7))),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(left: 6 * Scale.width),
+                          child: Text(
+                              context
+                                      .read<CategoryBloc>()
+                                      .state
+                                      .selectedSubCategory
+                                      .isEmpty
+                                  ? "소분류"
+                                  : "${state.selectedSubCategory['name']}",
+                              style: textStyle(Colors.grey[600]!,
+                                  FontWeight.w500, 'NotoSansKR', 13.0)),
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_down,
+                          size: 25,
+                          color: Colors.grey[600],
+                        )
+                      ],
+                    )),
+              ),
+              onTap: () {
+                if (widget.registMode == RegistMode.regist) {
+                  final categoryBloc = BlocProvider.of<CategoryBloc>(context);
+                  if (context
+                      .read<CategoryBloc>()
+                      .state
+                      .selectedMainCategory
+                      .isNotEmpty) {
+                    showModalBottomSheet<void>(
+                      isDismissible: false,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      context: context,
+                      builder: (context) => BlocProvider.value(
+                        value: categoryBloc,
+                        child: Stack(
+                          children: [
+                            BlocBuilder<CategoryBloc, CategoryState>(
+                              builder: (context, state) {
+                                return GestureDetector(
+                                  child: Container(
+                                      width: 414 * Scale.width,
+                                      height: 896 * Scale.height,
+                                      color: Colors.transparent),
+                                  onTap: Navigator.of(context).pop,
+                                );
+                              },
+                            ),
+                            Positioned(
+                              child: DraggableScrollableSheet(
+                                initialChildSize: 0.6,
+                                maxChildSize: 1.0,
+                                builder: (_, controller) {
+                                  return Stack(children: [
+                                    Container(
+                                      width: 414 * Scale.width,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(25.0),
+                                          topRight: Radius.circular(25.0),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 22 * Scale.width),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 25 * Scale.height,
+                                                  bottom: 30 * Scale.height),
+                                              child: Text("소분류 선택",
+                                                  style: textStyle(
+                                                      const Color(0xff333333),
+                                                      FontWeight.w700,
+                                                      "NotoSansKR",
+                                                      21.0)),
+                                            ),
+                                            Expanded(
+                                              child: Center(
+                                                child: ListView.separated(
+                                                  itemCount: state
+                                                      .subCategoryInfo.length,
+                                                  separatorBuilder:
+                                                      (context, index) {
+                                                    return const Divider();
+                                                  },
+                                                  itemBuilder:
+                                                      ((context, index) {
+                                                    return InkWell(
+                                                      onTap: () {
+                                                        context
+                                                            .read<
+                                                                CategoryBloc>()
+                                                            .add(ClickSubCategoryEvent(
+                                                                subCategoryIndex:
+                                                                    index));
+
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: SizedBox(
+                                                        height:
+                                                            70 * Scale.height,
+                                                        width: double.infinity,
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                              context
+                                                                      .read<
+                                                                          CategoryBloc>()
+                                                                      .state
+                                                                      .subCategoryInfo[
+                                                                  index]['name'],
+                                                              style: textStyle(
+                                                                  Colors.black,
+                                                                  FontWeight
+                                                                      .w300,
+                                                                  "NotoSansKR",
+                                                                  19.0),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ]);
+                                },
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }
                 }
               },
             ),
@@ -930,7 +956,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                             Row(
                               children: [
                                 Text(
-                                  "색상이름:",
+                                  "색상이름 :",
                                   style: textStyle(Colors.black,
                                       FontWeight.w400, "NotoSansKR", 16.0),
                                 ),
@@ -944,6 +970,10 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                       key: Key(state.selectedColorMap[index]
                                               ['colorId']
                                           .toString()),
+                                      readOnly:
+                                          widget.registMode == RegistMode.edit
+                                              ? true
+                                              : false,
                                       initialValue: context
                                               .read<ColorBloc>()
                                               .state
@@ -960,10 +990,10 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                       decoration: InputDecoration(
                                         isDense: true,
                                         contentPadding: EdgeInsets.fromLTRB(
-                                          10 * Scale.width,
-                                          10 * Scale.height,
-                                          10 * Scale.width,
-                                          10 * Scale.height,
+                                          6 * Scale.width,
+                                          6 * Scale.height,
+                                          6 * Scale.width,
+                                          6 * Scale.height,
                                         ),
                                         counterText: "",
                                         floatingLabelBehavior:
@@ -974,7 +1004,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                           fontWeight: FontWeight.w400,
                                           fontFamily: "NotoSansKR",
                                           fontStyle: FontStyle.normal,
-                                          fontSize: 14 * Scale.height,
+                                          fontSize: 150 * Scale.height,
                                         ),
                                         border: const OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -1115,9 +1145,10 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                         height:
                                                             50 * Scale.width,
                                                         child: context
-                                                            .read<PhotoBloc>()
-                                                            .state
-                                                            .basicPhoto[index]),
+                                                                .read<PhotoBloc>()
+                                                                .state
+                                                                .basicPhoto[
+                                                            index]['image']),
                                                     Padding(
                                                       padding: EdgeInsets.only(
                                                           right:
@@ -1654,7 +1685,12 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     .state
                     .selectedSize
                     .isNotEmpty &&
-                BlocProvider.of<PriceBloc>(context).state.price.isNotEmpty) {
+                BlocProvider.of<PriceBloc>(context).state.price.isNotEmpty &&
+                context
+                    .read<PricePerOptionBloc>()
+                    .state
+                    .pricePerOptionList
+                    .isNotEmpty) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
@@ -1722,7 +1758,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                             .read<PricePerOptionBloc>()
                                             .state
                                             .pricePerOptionList[index]['size']
-                                        ['size'],
+                                        ['name'],
                                     style: textStyle(Colors.black,
                                         FontWeight.w500, "NotoSansKR", 14.0),
                                   ),
@@ -2231,11 +2267,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             break;
           default:
         }
-        print(selectList!);
-        print(context
-            .read<AdditionalInfoBloc>()
-            .state
-            .selectedAdditionalInfo[type]);
+
         return ListView.builder(
           scrollDirection: Axis.horizontal,
           shrinkWrap: true,
@@ -2440,12 +2472,10 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
   }
 
   Widget laundryInfoArea() {
-    return BlocBuilder<LaundryBloc, LaundryState>(
+    return BlocBuilder<CategoryBloc, CategoryState>(
       builder: (context, state) {
-        if (context.read<InititemBloc>().state.fetchState ==
-                FetchState.success &&
-            context.read<CategoryBloc>().state.selectedSubCategory.isNotEmpty) {
-          return BlocBuilder<InititemBloc, InititemState>(
+        if (context.read<CategoryBloc>().state.selectedSubCategory.isNotEmpty) {
+          return BlocBuilder<LaundryBloc, LaundryState>(
             builder: (context, state) {
               if (context.read<LaundryBloc>().state.washingList.isNotEmpty) {
                 return Column(
@@ -3014,7 +3044,6 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                         ? Container()
                         : ListView.builder(
                             shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
                             itemCount:
                                 context.read<TagBloc>().state.tagsList.length,
                             itemBuilder: (context, index) {
@@ -3026,7 +3055,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                 },
                                 child: Container(
                                   height: 35 * Scale.height,
-                                  width: 100 * Scale.width,
+                                  width: 250 * Scale.width,
                                   color: Colors.grey[50],
                                   child: Text(
                                     BlocProvider.of<TagBloc>(context)
@@ -3042,7 +3071,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 ),
                 const Divider(thickness: 1.5),
                 BlocBuilder<TagBloc, TagState>(builder: (context, state) {
-                  return Container(
+                  return SizedBox(
                     height: 40 * Scale.height,
                     child: ListView.builder(
                       shrinkWrap: true,
@@ -3050,29 +3079,32 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                       itemCount:
                           context.read<TagBloc>().state.selectedTags.length,
                       itemBuilder: (context, index) {
-                        return SizedBox(
-                          height: 30 * Scale.height,
-                          width: 90 * Scale.width,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                context
-                                    .read<TagBloc>()
-                                    .state
-                                    .selectedTags[index]['name'],
-                                style: textStyle(Colors.black, FontWeight.w400,
-                                    "NotoSansKR", 13.0),
-                              ),
-                              InkWell(
-                                child: const Icon(Icons.clear),
-                                onTap: () {
+                        return Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8.0 * Scale.width),
+                          child: SizedBox(
+                            height: 30 * Scale.height,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
                                   context
                                       .read<TagBloc>()
-                                      .add(RemoveTagEvent(index: index));
-                                },
-                              )
-                            ],
+                                      .state
+                                      .selectedTags[index]['name'],
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w400, "NotoSansKR", 13.0),
+                                ),
+                                InkWell(
+                                  child: const Icon(Icons.clear),
+                                  onTap: () {
+                                    context
+                                        .read<TagBloc>()
+                                        .add(RemoveTagEvent(index: index));
+                                  },
+                                )
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -3182,6 +3214,10 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
     final dataGatherBloc = BlocProvider.of<DataGatherBloc>(context);
     return BlocConsumer<DataGatherBloc, DataGatherState>(
       listener: ((context, state) {
+        if (state.gatherState == GatherState.success) {
+          BlocProvider.of<DataGatherBloc>(context)
+              .add(RegistEvent(registMode: widget.registMode));
+        }
         if (state.fetchState == FetchState.failure) {
           showDialog(
             context: context,
@@ -3217,8 +3253,9 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
       builder: (context, state) {
         return InkWell(
           onTap: () {
-            BlocProvider.of<DataGatherBloc>(context)
-                .add(ClickRegistButtonEvent());
+            BlocProvider.of<DataGatherBloc>(context).add(CombineDataEvent(
+              registMode: widget.registMode,
+            ));
           },
           child: Container(
               height: 70 * Scale.height,

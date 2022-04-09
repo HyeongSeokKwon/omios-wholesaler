@@ -11,7 +11,7 @@ class ManufacturecountryState extends Equatable {
 
   factory ManufacturecountryState.initial() {
     return ManufacturecountryState(
-        selectedCountry: '', countryList: const ['한국', '중국', '기타']);
+        selectedCountry: '', countryList: const ['대한민국', '중국', '기타']);
   }
 
   @override

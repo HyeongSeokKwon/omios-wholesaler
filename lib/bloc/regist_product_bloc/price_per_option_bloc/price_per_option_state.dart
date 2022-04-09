@@ -13,10 +13,10 @@ class PricePerOptionState extends Equatable {
 
   factory PricePerOptionState.initial() {
     return PricePerOptionState(
-        pricePerOptionList: const [],
+        pricePerOptionList: [],
         inappositePriceIndexList: const {},
-        priceControllerList: const [],
-        inventoryControllerList: const []);
+        priceControllerList: [],
+        inventoryControllerList: []);
   }
 
   @override

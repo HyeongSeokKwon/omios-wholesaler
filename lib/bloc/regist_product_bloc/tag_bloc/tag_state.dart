@@ -10,7 +10,7 @@ class TagState extends Equatable {
   });
 
   factory TagState.initial() {
-    return const TagState(tagsList: [], selectedTags: []);
+    return TagState(tagsList: [], selectedTags: []);
   }
 
   @override

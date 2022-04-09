@@ -73,9 +73,7 @@ class ColorBloc extends Bloc<ColorEvent, ColorState> {
 
   bool checkDuplicated(List selectedColors) {
     List checkList = [];
-    print("check color dp");
     for (var element in selectedColors) {
-      print(checkList);
       if (checkList.contains(element['customedName'])) {
         return true;
       } else {

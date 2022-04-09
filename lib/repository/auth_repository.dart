@@ -12,7 +12,7 @@ class AuthRepository extends HttpRepository {
     };
 
     try {
-      response = await super.httpPost('/token/', json.encode(body));
+      response = await super.httpPost('users/tokens', json.encode(body));
       return response;
     } catch (e) {
       rethrow;
@@ -25,7 +25,8 @@ class AuthRepository extends HttpRepository {
     };
 
     try {
-      response = await super.httpPost('/token/refresh/', json.encode(body));
+      response =
+          await super.httpPost('users/tokens/refresh', json.encode(body));
       return response;
     } catch (e) {
       rethrow;

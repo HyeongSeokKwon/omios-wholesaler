@@ -17,7 +17,7 @@ class CategoryBloc extends Bloc<CategoryEvent, CategoryState> {
       state.copyWith(
         selectedMainCategory: state.categoryInfo![event.mainCategoryIndex],
         subCategoryInfo: state.categoryInfo![event.mainCategoryIndex]
-            ['sub_category'],
+            ['sub_categories'],
         selectedSubCategory: {},
       ),
     );

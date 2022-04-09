@@ -5,8 +5,7 @@ class EditRepository extends HttpRepository {
   late Map<String, dynamic> queryParams;
 
   Future<dynamic> getSalerProductInfo(int productId) async {
-    response = await super.httpGet("product/$productId/saler");
-    print(response['data']);
+    response = await super.httpGet("products/$productId");
     return response['data'];
   }
 }

@@ -35,6 +35,10 @@ class PricePerOptionBloc
     on<InputInventoryEvent>(changeInventory);
   }
 
+  void sizeInfoChanged() {}
+
+  void colorInfoChanged() {}
+
   void createPricePerOptionList(
       ClickedShowPricePerOptionEvent event, Emitter<PricePerOptionState> emit) {
     List<Map<String, dynamic>> pricePerOptionList = [];
@@ -42,9 +46,8 @@ class PricePerOptionBloc
     List<TextEditingController> inventoryControllerList;
     colorBloc.state.selectedColorMap
         .sort((a, b) => (a['colorId']).compareTo(b['colorId']));
-    sizeBloc.state.selectedSizeMap
-        .sort((a, b) => (a['sizeId']).compareTo(b['sizeId']));
 
+    sizeBloc.state.selectedSizeMap.sort((a, b) => (a['id']).compareTo(b['id']));
     for (var color in colorBloc.state.selectedColorMap) {
       for (var size in sizeBloc.state.selectedSizeMap) {
         pricePerOptionList.add(

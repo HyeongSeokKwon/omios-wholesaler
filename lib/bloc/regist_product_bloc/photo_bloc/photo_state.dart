@@ -1,7 +1,7 @@
 part of 'photo_bloc.dart';
 
 class PhotoState extends Equatable {
-  List<dynamic> basicPhoto;
+  List<Map> basicPhoto;
   Image? photoByColor;
   int colorTabIndex;
 
@@ -19,7 +19,7 @@ class PhotoState extends Equatable {
   List<Object?> get props => [basicPhoto, photoByColor, colorTabIndex];
 
   PhotoState copyWith({
-    List<dynamic>? basicPhoto,
+    List<Map>? basicPhoto,
     Image? photoByColor,
     int? colorTabIndex,
   }) {

@@ -7,4 +7,18 @@ abstract class DataGatherEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ClickRegistButtonEvent extends DataGatherEvent {}
+class RegistEvent extends DataGatherEvent {
+  final RegistMode registMode;
+  const RegistEvent({
+    required this.registMode,
+  });
+}
+
+class CombineDataEvent extends DataGatherEvent {
+  final RegistMode registMode;
+  final String? callState;
+  const CombineDataEvent({
+    required this.registMode,
+    this.callState,
+  });
+}

@@ -14,6 +14,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
   PriceBloc priceBloc;
   ColorBloc colorBloc;
   StyleBloc styleBloc;
+  PhotoBloc photoBloc;
   FabricBloc fabricBloc;
   SizeBloc sizeBloc;
   LaundryBloc laundryBloc;
@@ -22,6 +23,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
   AgeGroupBloc ageGroupBloc;
   ThemeBloc themeBloc;
   ManufacturecountryBloc manufacturecountryBloc;
+  TagBloc tagBloc;
   RegistMode registMode;
   InitEditItemBloc? initEditItemBloc;
 
@@ -36,6 +38,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     required this.colorBloc,
     required this.styleBloc,
     required this.fabricBloc,
+    required this.photoBloc,
     required this.sizeBloc,
     required this.laundryBloc,
     required this.pricePerOptionBloc,
@@ -43,6 +46,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     required this.ageGroupBloc,
     required this.themeBloc,
     required this.manufacturecountryBloc,
+    required this.tagBloc,
     required this.registMode,
     this.initEditItemBloc,
   }) : super(InititemState.initial()) {
@@ -76,9 +80,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
 
   void insertRegistryDynamicData(Map dynamicData) {
     sizeBloc.state.sizeList = dynamicData['size'] ?? [];
-
-    laundryBloc.state.washingList = dynamicData['laundry_inforamtion'] ?? [];
-
+    laundryBloc.state.washingList = dynamicData['laundry_information'] ?? [];
     additionalInfoBloc.state.elasticityList = dynamicData['flexibility'] ?? [];
     additionalInfoBloc.state.thicknessList = dynamicData['thickness'] ?? [];
     additionalInfoBloc.state.seeThroughList = dynamicData['see_through'] ?? [];
@@ -98,24 +100,22 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
       emit(state.copyWith(fetchState: FetchState.failure));
     });
 
-    commonData = await registRepository.getRegistryCommon().catchError((e) {
+    commonData = await registRepository.getRegistryData().catchError((e) {
       emit(state.copyWith(fetchState: FetchState.failure));
     });
-
-    insertRegistryCommonData(categoryData, commonData);
+    insertRegistryCommonData(categoryData, commonData); //항목데이터
 
     if (registMode == RegistMode.edit) {
       insertCommonData(initEditItemBloc!.state.data, categoryData);
       emit(state.copyWith(fetchState: FetchState.loading));
-
       Map dynamicData;
       dynamicData = await registRepository
-          .getRegistryDynamic(categoryBloc.state.selectedSubCategory['id'])
+          .getRegistryData(categoryBloc.state.selectedSubCategory['id'])
           .catchError((e) {
         emit(state.copyWith(fetchState: FetchState.failure));
       });
 
-      insertRegistryDynamicData(dynamicData);
+      insertRegistryDynamicData(dynamicData); //항목데이터
       insertDynamicData(initEditItemBloc!.state.data);
     }
 
@@ -131,7 +131,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
 
     Map dynamicData;
     dynamicData = await registRepository
-        .getRegistryDynamic(categoryBloc.state.selectedSubCategory['id'])
+        .getRegistryData(categoryBloc.state.selectedSubCategory['id'])
         .catchError((e) {
       emit(state.copyWith(fetchState: FetchState.failure));
     });
@@ -145,8 +145,9 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
   void insertCommonData(Map registedData, List categoryData) {
     //category 주입 완료
     for (var value in categoryData) {
-      for (var subValue in value['sub_category']) {
-        if (subValue['id'] == registedData['sub_category']) {
+      for (var subValue in value['sub_categories']) {
+        if (subValue['id'] == registedData['sub_category']['id']) {
+          categoryBloc.state.subCategoryInfo = value['sub_categories'];
           categoryBloc.state.selectedMainCategory = value;
           categoryBloc.state.selectedSubCategory = subValue;
         }
@@ -164,53 +165,74 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
 
     //style 주입 완료
     for (var value in styleBloc.state.styleList) {
-      if (value['id'] == registedData['style']) {
+      if (value['id'] == registedData['style']['id']) {
         styleBloc.state.selectedStyle = value;
       }
     }
 
     //age 주입 완료
     for (var value in ageGroupBloc.state.ageGroupList) {
-      if (value['id'] == registedData['age']) {
+      if (value['id'] == registedData['age']['id']) {
         ageGroupBloc.state.selectedAgeGroupId = value['id'];
       }
     }
 
     //theme 주입 완료
-    themeBloc.state.selectedTheme = registedData['theme'] ?? 0;
+    themeBloc.state.selectedTheme = registedData['theme']['id'] ?? 0;
 
     //제조국 주입 완료
     manufacturecountryBloc.state.selectedCountry =
         registedData['manufacturing_country'];
     //소재 주입 완료
     for (var value in registedData['materials']) {
+      bool isCustomed = true;
       fabricBloc.state.selectedFabric.add({
         'name': value['material'],
-        'fabricId': value['id'],
+        'id': value['id'],
         'percent': value['mixing_rate']
       });
+
       for (var subValue in fabricBloc.state.fabricList) {
         if (subValue['name'] == value['material']) {
+          isCustomed = false;
           int index = fabricBloc.state.fabricList.indexOf(subValue);
           fabricBloc.state.isClicked[index] = true;
           fabricBloc.state.textController[index].text =
               value['mixing_rate'].toString();
         }
       }
+      if (isCustomed) {
+        fabricBloc.state.textController
+            .add(TextEditingController(text: value['mixing_rate'].toString()));
+        fabricBloc.state.isClicked.add(true);
+        fabricBloc.state.fabricList
+            .add({'name': value['material'], 'id': value['id']});
+      }
     }
+
+    for (var value in registedData['tags']) {
+      tagBloc.state.selectedTags.add(value);
+    }
+
     //색깔 주입
     for (var value in registedData['colors']) {
       for (var subValue in colorBloc.state.colorList) {
-        if (subValue['id'] == value['color']) {
+        if (value['on_sale'] == true && subValue['id'] == value['color']) {
           colorBloc.state.selectedColorMap.add({
+            'id': value['id'],
             'color': subValue['name'],
             'colorId': subValue['id'],
             'customedName': value['display_color_name'],
-            'images': null,
+            'images': Image.network(value['image_url']),
           });
           colorBloc.state.selectedColorList.add(subValue['name']);
         }
       }
+    }
+
+    for (var value in registedData['images']) {
+      photoBloc.state.basicPhoto
+          .add({'image': Image.network(value['image_url']), 'id': value['id']});
     }
   }
 
@@ -220,11 +242,25 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
 
     for (var value in registedData['colors']) {
       for (var subValue in value['options']) {
-        size.add(subValue['size']);
+        if (subValue['on_sale']) {
+          size.add(subValue['size']);
+        }
       }
     }
 
     sizeBloc.state.selectedSize = size.toList();
+    for (var sizeValue in sizeBloc.state.selectedSize) {
+      bool isCustomed = true;
+      for (var subSizeValue in sizeBloc.state.sizeList) {
+        if (sizeValue == subSizeValue['name']) {
+          isCustomed = false;
+          break;
+        }
+      }
+      if (isCustomed) {
+        sizeBloc.state.sizeList.add({'id': 0, 'name': sizeValue});
+      }
+    }
     for (var value in sizeBloc.state.sizeList) {
       for (var subValue in sizeBloc.state.selectedSize) {
         if (subValue == value['name']) {
@@ -237,40 +273,52 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
       Map colorInfo = {};
       Map sizeInfo = {};
       for (var subValue in colorBloc.state.selectedColorMap) {
-        if (subValue['customedName'] == value['display_color_name']) {
+        if (value['on_sale'] == true &&
+            subValue['customedName'] == value['display_color_name']) {
           colorInfo = subValue;
         }
       }
 
-      for (var subValue in sizeBloc.state.selectedSizeMap) {
-        if (subValue['size'] == value['options']['size']) {
-          sizeInfo = subValue;
+      for (var option in value['options']) {
+        for (var sizeValue in sizeBloc.state.selectedSizeMap) {
+          if (sizeValue['name'] == option['size']) {
+            sizeInfo = sizeValue;
+          }
+        }
+        if (colorInfo.isNotEmpty && sizeInfo.isNotEmpty) {
+          pricePerOptionBloc.state.pricePerOptionList.add({
+            'id': option['id'],
+            'color': colorInfo,
+            'size': sizeInfo,
+            'price': int.parse(priceBloc.state.price),
+            'price_difference': option['price_difference'],
+            'inventory': 0,
+          });
+          pricePerOptionBloc.state.inventoryControllerList
+              .add(TextEditingController(text: 0.toString()));
+          pricePerOptionBloc.state.priceControllerList.add(
+              TextEditingController(
+                  text: (int.parse(priceBloc.state.price) +
+                          option['price_difference'])
+                      .toString()));
         }
       }
-
-      pricePerOptionBloc.state.pricePerOptionList.add({
-        'color': colorInfo,
-        'size': sizeInfo,
-        'price': int.parse(priceBloc.state.price),
-        'price_difference': value['options']['price_difference'],
-        'inventory': 0,
-      });
     }
 
     for (var value in laundryBloc.state.washingList) {
       for (var subValue in registedData['laundry_informations']) {
-        if (subValue == value['id']) {
+        if (subValue['id'] == value['id']) {
           laundryBloc.state.selectedLaundry.add(value);
         }
       }
     }
     additionalInfoBloc.state.selectedAdditionalInfo.addAll({
       'thickness': additionalInfoBloc
-          .state.thicknessList![registedData['thickness'] - 1],
+          .state.thicknessList![registedData['thickness']['id'] - 1],
       'see_through': additionalInfoBloc
-          .state.seeThroughList![registedData['see_through'] - 1],
+          .state.seeThroughList![registedData['see_through']['id'] - 1],
       'flexibility': additionalInfoBloc
-          .state.elasticityList![registedData['flexibility'] - 1],
+          .state.elasticityList![registedData['flexibility']['id'] - 1],
       'lining': registedData['lining'],
     });
   }

@@ -18,51 +18,9 @@ class SizeBloc extends Bloc<SizeEvent, SizeState> {
       copySelectedMap.add(Map.from(value));
     }
     switch (event.size) {
-      case 'S-M':
-        if (!copySelectedList.contains('S')) {
-          copySelectedList.add("S");
-          copySelectedMap.add({"size": "S", "sizeId": 4});
-        }
-        if (!copySelectedList.contains('M')) {
-          copySelectedList.add("M");
-          copySelectedMap.add({"size": "M", "sizeId": 5});
-        }
-        break;
-      case 'S-L':
-        if (!copySelectedList.contains('S')) {
-          copySelectedList.add("S");
-          copySelectedMap.add({"size": "S", "sizeId": 4});
-        }
-        if (!copySelectedList.contains('M')) {
-          copySelectedList.add("M");
-          copySelectedMap.add({"size": "M", "sizeId": 5});
-        }
-        if (!copySelectedList.contains('L')) {
-          copySelectedList.add("L");
-          copySelectedMap.add({"size": "L", "sizeId": 6});
-        }
-        break;
-      case 'S-XL':
-        if (!copySelectedList.contains('S')) {
-          copySelectedList.add("S");
-          copySelectedMap.add({"size": "S", "sizeId": 4});
-        }
-        if (!copySelectedList.contains('M')) {
-          copySelectedList.add("M");
-          copySelectedMap.add({"size": "M", "sizeId": 5});
-        }
-        if (!copySelectedList.contains('L')) {
-          copySelectedList.add("L");
-          copySelectedMap.add({"size": "L", "sizeId": 6});
-        }
-        if (!copySelectedList.contains('XL')) {
-          copySelectedList.add("XL");
-          copySelectedMap.add({"size": "XL", "sizeId": 7});
-        }
-        break;
       default:
         copySelectedList.add(event.size);
-        copySelectedMap.add({"size": event.size, "sizeId": event.sizeId});
+        copySelectedMap.add({"name": event.size, "id": event.sizeId});
         break;
     }
     emit(state.copyWith(
@@ -116,7 +74,7 @@ class SizeBloc extends Bloc<SizeEvent, SizeState> {
         break;
       default:
         copySelectedList.remove(event.size);
-        copySelectedMap.removeWhere((element) => element['size'] == event.size);
+        copySelectedMap.removeWhere((element) => element['name'] == event.size);
 
         break;
     }

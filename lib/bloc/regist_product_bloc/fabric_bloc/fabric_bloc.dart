@@ -20,7 +20,6 @@ class FabricBloc extends Bloc<FabricEvent, FabricState> {
     if (event.isChecked) {
       copy.add({
         "name": state.fabricList[event.fabricIndex]['name'],
-        "fabricId": event.fabricIndex + 1,
         "percent": state.textController[event.fabricIndex].text.isNotEmpty
             ? int.parse(state.textController[event.fabricIndex].text)
             : 0,
@@ -28,7 +27,7 @@ class FabricBloc extends Bloc<FabricEvent, FabricState> {
     } else {
       state.textController[event.fabricIndex].text = "";
       for (var value in copy) {
-        if (value["fabricId"] == event.fabricIndex + 1) {
+        if (value["name"] == state.fabricList[event.fabricIndex]['name']) {
           sum -= value["percent"] as int;
           copy.remove(value);
 
@@ -36,7 +35,6 @@ class FabricBloc extends Bloc<FabricEvent, FabricState> {
         }
       }
     }
-
     copyIsClicked[event.fabricIndex] = event.isChecked;
 
     emit(state.copyWith(
@@ -61,7 +59,7 @@ class FabricBloc extends Bloc<FabricEvent, FabricState> {
       }
 
       for (var value in copy) {
-        if (value['fabricId'] == event.fabricIndex + 1) {
+        if (value['name'] == state.fabricList[event.fabricIndex]['name']) {
           value['percent'] = int.parse(event.fabricPercent);
           break;
         }

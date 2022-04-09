@@ -8,20 +8,18 @@ class RegistRepository extends HttpRepository {
   late Map<String, dynamic> queryParams;
 
   Future<dynamic> getCategoryInfo() async {
-    response = await super.httpGet("product/category/");
+    response = await super.httpGet("products/categories");
     return response['data'];
   }
 
-  Future<dynamic> getRegistryCommon() async {
-    response = await super.httpGet("product/registry-common/");
-    return response['data'];
-  }
-
-  Future<dynamic> getRegistryDynamic(int subCategoryId) async {
-    queryParams = {};
-    queryParams['sub_category'] = subCategoryId.toString();
-    response = await super.httpGet("product/registry-dynamic/", queryParams);
-
+  Future<dynamic> getRegistryData([int? subCategoryId]) async {
+    if (subCategoryId != null) {
+      queryParams = {};
+      queryParams['sub_category'] = subCategoryId.toString();
+      response = await super.httpGet("products/registry-data", queryParams);
+    } else {
+      response = await super.httpGet("products/registry-data");
+    }
     return response['data'];
   }
 
@@ -30,7 +28,7 @@ class RegistRepository extends HttpRepository {
       'image': List.generate(basicImagePathList.length,
           (index) => MultipartFile.fromFileSync(basicImagePathList[index]!))
     });
-    var res = await super.httpMultipartPost("product/image/", formData);
+    var res = await super.httpMultipartPost("products/images", formData, true);
 
     var response = res.data;
 
@@ -38,13 +36,17 @@ class RegistRepository extends HttpRepository {
   }
 
   Future<dynamic> registProduct(Map body) async {
-    response = await super.httpPost("product/", json.encode(body));
+    response = await super.httpPost("products", json.encode(body));
   }
 
   Future<dynamic> getTags(String tag) async {
     queryParams = {};
-    queryParams['query'] = tag;
-    response = await super.httpGet("product/tag/", queryParams);
+    queryParams['search_word'] = tag;
+    response = await super.httpGet("products/tags", queryParams);
     return response['data'];
+  }
+
+  Future<dynamic> updateProduct(Map body, int productId) async {
+    response = await super.httpPatch("products/$productId", json.encode(body));
   }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:deepy_wholesaler/repository/auth_repository.dart';
 
@@ -80,7 +81,10 @@ class AuthenticationBloc
         case 201:
           authRepository.setAccessToken(response['data']['access']);
           authRepository.setRefreshToken(response['data']['refresh']);
+          authRepository.id =
+              Jwt.parseJwt(response['data']['access'])['user_id'];
 
+          print(authRepository.id);
           emit(state.copyWith(
               authStatus: AuthStatus.authenticated,
               autoLogin: isAutoLoginClicked ?? false));

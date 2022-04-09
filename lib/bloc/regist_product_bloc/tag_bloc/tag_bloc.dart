@@ -26,7 +26,6 @@ class TagBloc extends Bloc<TagEvent, TagState> {
 
   void addTag(AddTagEvent event, Emitter<TagState> emit) {
     List copy = [...state.selectedTags];
-    print(copy);
     for (var value in state.tagsList) {
       if (copy.contains(value)) {
         return;

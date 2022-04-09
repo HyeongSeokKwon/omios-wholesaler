@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class HttpRepository {
   String? refreshToken;
   String? accessToken;
+  late int id;
 
   String addressUrl = '13.209.244.41';
   late SharedPreferences pref;
@@ -95,6 +96,7 @@ class HttpRepository {
             ),
           );
           responseJson = _response(response);
+          id = Jwt.parseJwt(responseJson['data']['access'])['id'];
           setAccessToken(responseJson['data']['access']);
           setRefreshToken(responseJson['data']['refresh']);
         } on SocketException {
@@ -128,9 +130,6 @@ class HttpRepository {
       [Map<String, String>? queryParams]) async {
     http.Response response;
     var responseJson = {};
-    print(
-      Uri.http(addressUrl, baseUrl, queryParams),
-    );
     try {
       response = await http.get(Uri.http(addressUrl, baseUrl, queryParams));
 
@@ -158,8 +157,8 @@ class HttpRepository {
             },
             body: body);
       }));
-      print(response.body);
       responseJson = _response(response);
+      print(responseJson);
       return responseJson;
     } on SocketException {
       throw FetchDataException('연결된 인터넷이 없습니다.');
@@ -168,7 +167,25 @@ class HttpRepository {
     }
   }
 
-  Future<dynamic> httpMultipartPost(String addtionalUrl, var body) async {
+  Future<dynamic> httpPublicPost(String baseUrl, var body) async {
+    http.Response response;
+    var responseJson = {};
+    try {
+      response = await http.post(Uri.http(addressUrl, baseUrl),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: body);
+
+      responseJson = _response(response);
+      return responseJson;
+    } on SocketException {
+      throw FetchDataException("연결된 인터넷이 없습니다!!");
+    }
+  }
+
+  Future<dynamic> httpMultipartPost(
+      String addtionalUrl, var body, bool needAuth) async {
     Response response;
 
     try {
@@ -176,7 +193,8 @@ class HttpRepository {
         return await Dio().post(
           Uri.http(addressUrl, addtionalUrl).toString(),
           options: Options(headers: {
-            HttpHeaders.authorizationHeader: 'Bearer $accessToken',
+            HttpHeaders.authorizationHeader:
+                needAuth ? 'Bearer $accessToken' : null,
             "Content-Type": "multipart/form-data;",
           }),
           data: body,
@@ -202,7 +220,32 @@ class HttpRepository {
     }
   }
 
-  Future<dynamic> httpPatch(String addtionalUrl) async {}
+  Future<dynamic> httpPatch(String addtionalUrl, var body) async {
+    http.Response response;
+    Map<String, dynamic> responseJson;
+
+    try {
+      response = await updateToken().then(((value) async {
+        return await http.patch(
+            Uri.http(
+              addressUrl,
+              addtionalUrl,
+            ),
+            headers: {
+              "Content-Type": "application/json",
+              HttpHeaders.authorizationHeader: 'Bearer $accessToken'
+            },
+            body: body);
+      }));
+      print(response.body);
+      responseJson = _response(response);
+      return responseJson;
+    } on SocketException {
+      throw FetchDataException('연결된 인터넷이 없습니다.');
+    } on FetchDataException {
+      throw Exception("서버 오류가 발생했습니다.");
+    }
+  }
 
   Future<dynamic> httpDelete(String addtionalUrl) async {}
 }
