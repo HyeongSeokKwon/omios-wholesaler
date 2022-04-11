@@ -84,7 +84,6 @@ class AuthenticationBloc
           authRepository.id =
               Jwt.parseJwt(response['data']['access'])['user_id'];
 
-          print(authRepository.id);
           emit(state.copyWith(
               authStatus: AuthStatus.authenticated,
               autoLogin: isAutoLoginClicked ?? false));
