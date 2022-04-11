@@ -86,6 +86,8 @@ class SignUpThird extends StatelessWidget {
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp('[0-9]')),
                       ],
+                      initialValue:
+                          context.read<UserInfoBloc>().state.storeNumber,
                       maxLength: 11,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
@@ -200,6 +202,8 @@ class SignUpThird extends StatelessWidget {
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       showCursor: false,
+                      initialValue:
+                          context.read<UserInfoBloc>().state.phoneNumber,
                       onChanged: (text) {
                         context
                             .read<UserInfoBloc>()
@@ -336,6 +340,29 @@ class SignUpThird extends StatelessWidget {
     TextEditingController third = TextEditingController();
     return BlocBuilder<UserInfoBloc, UserInfoState>(
       builder: (context, state) {
+        if (context
+            .read<UserInfoBloc>()
+            .state
+            .companyRegistrationNumber
+            .isNotEmpty) {
+          first.text = context
+              .read<UserInfoBloc>()
+              .state
+              .companyRegistrationNumber
+              .substring(0, 3);
+
+          second.text = context
+              .read<UserInfoBloc>()
+              .state
+              .companyRegistrationNumber
+              .substring(3, 5);
+
+          third.text = context
+              .read<UserInfoBloc>()
+              .state
+              .companyRegistrationNumber
+              .substring(5, 10);
+        }
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
           child: Column(
@@ -653,7 +680,42 @@ class SignUpThird extends StatelessWidget {
   }
 
   Widget bottomSheetArea() {
-    return BlocBuilder<UserInfoBloc, UserInfoState>(
+    return BlocConsumer<UserInfoBloc, UserInfoState>(
+      listener: ((context, state) {
+        if (context.read<UserInfoBloc>().state.signUpState ==
+            RequestState.failure) {
+          final userInfoBloc = BlocProvider.of<UserInfoBloc>(context);
+          showDialog(
+            context: context,
+            builder: (context) {
+              return BlocProvider.value(
+                value: userInfoBloc,
+                child: AlertDialog(
+                  content: Text(
+                    userInfoBloc.state.signUpErrorType,
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(
+                        "확인",
+                        style: textStyle(
+                            Colors.black, FontWeight.w500, 'NotoSansKR', 15.0),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+          // showAlertDialog(
+          //     context, context.read<UserInfoBloc>().state.signUpErrorType);
+        }
+      }),
       builder: (context, state) {
         return InkWell(
           onTap: () {

@@ -33,24 +33,39 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
     on<ClickSignUpButtonEvent>(clickSignUp);
   }
   void inputStoreName(InputStoreNameEvent event, Emitter<UserInfoState> emit) {
-    emit(state.copyWith(storeName: event.storeName));
+    emit(state.copyWith(
+        storeName: event.storeName,
+        signUpErrorType: '',
+        signUpState: RequestState.initial));
   }
 
   void inputRepresentativeName(
       InputRepresentativeNameEvent event, Emitter<UserInfoState> emit) {
-    emit(state.copyWith(name: event.name));
+    emit(state.copyWith(
+        name: event.name,
+        signUpErrorType: '',
+        signUpState: RequestState.initial));
   }
 
   void inputUserName(InputUsernameEvent event, Emitter<UserInfoState> emit) {
-    emit(state.copyWith(username: event.username));
+    emit(state.copyWith(
+        username: event.username,
+        signUpErrorType: '',
+        signUpState: RequestState.initial));
   }
 
   void inputEmail(InputEmailEvent event, Emitter<UserInfoState> emit) {
-    emit(state.copyWith(email: event.email));
+    emit(state.copyWith(
+        email: event.email,
+        signUpErrorType: '',
+        signUpState: RequestState.initial));
   }
 
   void inputPassword(InputPasswordEvent event, Emitter<UserInfoState> emit) {
-    emit(state.copyWith(password: event.password));
+    emit(state.copyWith(
+        password: event.password,
+        signUpErrorType: '',
+        signUpState: RequestState.initial));
   }
 
   Future<void> checkIdDuplicated(
@@ -67,22 +82,29 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
       print(idUnique);
       if (idUnique) {
         emit(state.copyWith(
-          idUnique: ValidateState.valid,
-          isIdEffective: ValidateState.valid,
-        ));
+            idUnique: ValidateState.valid,
+            isIdEffective: ValidateState.valid,
+            signUpErrorType: '',
+            signUpState: RequestState.initial));
       } else {
         emit(state.copyWith(
             idUnique: ValidateState.unvalid,
-            isIdEffective: ValidateState.valid));
+            isIdEffective: ValidateState.valid,
+            signUpErrorType: '',
+            signUpState: RequestState.initial));
       }
     } else if (event.id.isEmpty) {
       emit(state.copyWith(
           idUnique: ValidateState.initial,
-          isIdEffective: ValidateState.initial));
+          isIdEffective: ValidateState.initial,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     } else {
       emit(state.copyWith(
           idUnique: ValidateState.initial,
-          isIdEffective: ValidateState.unvalid));
+          isIdEffective: ValidateState.unvalid,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     }
     emit(state.copyWith(secondPageDataValid: checkSecondPageDataValid()));
   }
@@ -91,11 +113,20 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
       ValidatePasswordEvent event, Emitter<UserInfoState> emit) {
     RegExp regex = RegExp(r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[!-~]+$');
     if (regex.hasMatch(event.password) && event.password.length >= 10) {
-      emit(state.copyWith(isPasswordEffective: ValidateState.valid));
+      emit(state.copyWith(
+          isPasswordEffective: ValidateState.valid,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     } else if (event.password.isEmpty) {
-      emit(state.copyWith(isPasswordEffective: ValidateState.initial));
+      emit(state.copyWith(
+          isPasswordEffective: ValidateState.initial,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     } else {
-      emit(state.copyWith(isPasswordEffective: ValidateState.unvalid));
+      emit(state.copyWith(
+          isPasswordEffective: ValidateState.unvalid,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     }
 
     emit(state.copyWith(secondPageDataValid: checkSecondPageDataValid()));
@@ -105,11 +136,20 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
       ValidateStoreNumberEvent event, Emitter<UserInfoState> emit) {
     RegExp regex = RegExp(r'^(0(2|3[1-3]|4[1-4]|5[1-5]|6[1-4]|70))\d{7,8}$');
     if (regex.hasMatch(event.storeNumber)) {
-      emit(state.copyWith(isStoreNumberEffective: ValidateState.valid));
+      emit(state.copyWith(
+          isStoreNumberEffective: ValidateState.valid,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     } else if (event.storeNumber.isEmpty) {
-      emit(state.copyWith(isStoreNumberEffective: ValidateState.initial));
+      emit(state.copyWith(
+          isStoreNumberEffective: ValidateState.initial,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     } else {
-      emit(state.copyWith(isStoreNumberEffective: ValidateState.unvalid));
+      emit(state.copyWith(
+          isStoreNumberEffective: ValidateState.unvalid,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     }
 
     emit(state.copyWith(thirdPageDataValid: checkThirdPageDataValid()));
@@ -119,11 +159,20 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
       ValidatePhoneNumberEvent event, Emitter<UserInfoState> emit) {
     RegExp regex = RegExp(r'^01[0|1|6|7|8|9]\d{7,8}$');
     if (regex.hasMatch(event.phoneNumber)) {
-      emit(state.copyWith(isPhoneNumberEffective: ValidateState.valid));
+      emit(state.copyWith(
+          isPhoneNumberEffective: ValidateState.valid,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     } else if (event.phoneNumber.isEmpty) {
-      emit(state.copyWith(isPhoneNumberEffective: ValidateState.initial));
+      emit(state.copyWith(
+          isPhoneNumberEffective: ValidateState.initial,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     } else {
-      emit(state.copyWith(isPhoneNumberEffective: ValidateState.unvalid));
+      emit(state.copyWith(
+          isPhoneNumberEffective: ValidateState.unvalid,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     }
 
     emit(state.copyWith(thirdPageDataValid: checkThirdPageDataValid()));
@@ -133,12 +182,21 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
       CheckPasswordSame event, Emitter<UserInfoState> emit) {
     if (event.password.isNotEmpty) {
       if (event.password == event.passwordCheck) {
-        emit(state.copyWith(isPasswordSame: ValidateState.valid));
+        emit(state.copyWith(
+            isPasswordSame: ValidateState.valid,
+            signUpErrorType: '',
+            signUpState: RequestState.initial));
       } else {
-        emit(state.copyWith(isPasswordSame: ValidateState.unvalid));
+        emit(state.copyWith(
+            isPasswordSame: ValidateState.unvalid,
+            signUpErrorType: '',
+            signUpState: RequestState.initial));
       }
     } else {
-      emit(state.copyWith(isPasswordSame: ValidateState.initial));
+      emit(state.copyWith(
+          isPasswordSame: ValidateState.initial,
+          signUpErrorType: '',
+          signUpState: RequestState.initial));
     }
 
     emit(state.copyWith(secondPageDataValid: checkSecondPageDataValid()));
@@ -159,21 +217,29 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
 
   void inputStoreNumber(
       InputStoreNumberEvent event, Emitter<UserInfoState> emit) {
-    emit(state.copyWith(storeNumber: event.storeNumber));
+    emit(state.copyWith(
+        storeNumber: event.storeNumber,
+        signUpErrorType: '',
+        signUpState: RequestState.initial));
 
     emit(state.copyWith(thirdPageDataValid: checkThirdPageDataValid()));
   }
 
   void inputPhoneNumber(
       InputPhoneNumberEvent event, Emitter<UserInfoState> emit) {
-    emit(state.copyWith(phoneNumber: event.phoneNumber));
+    emit(state.copyWith(
+        phoneNumber: event.phoneNumber,
+        signUpErrorType: '',
+        signUpState: RequestState.initial));
     emit(state.copyWith(thirdPageDataValid: checkThirdPageDataValid()));
   }
 
   void inputCompanyRegistrationNumber(
       InputCompanyRegistrationNumberEvent event, Emitter<UserInfoState> emit) {
     emit(state.copyWith(
-        companyRegistrationNumber: event.first + event.second + event.third));
+        companyRegistrationNumber: event.first + event.second + event.third,
+        signUpErrorType: '',
+        signUpState: RequestState.initial));
     emit(state.copyWith(thirdPageDataValid: checkThirdPageDataValid()));
   }
 
@@ -186,7 +252,10 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
       image = File(photo.path);
     }
 
-    emit(state.copyWith(companyRegistrationImage: image));
+    emit(state.copyWith(
+        companyRegistrationImage: image,
+        signUpErrorType: '',
+        signUpState: RequestState.initial));
     emit(state.copyWith(thirdPageDataValid: checkThirdPageDataValid()));
   }
 
@@ -199,7 +268,10 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
       image = File(colorPhoto.path);
     }
 
-    emit(state.copyWith(companyRegistrationImage: image));
+    emit(state.copyWith(
+        companyRegistrationImage: image,
+        signUpErrorType: '',
+        signUpState: RequestState.initial));
     emit(state.copyWith(thirdPageDataValid: checkThirdPageDataValid()));
   }
 
@@ -220,7 +292,8 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
     String s3ImageUrl;
     Map response;
     Map body;
-
+    emit(
+        state.copyWith(signUpState: RequestState.initial, signUpErrorType: ""));
     s3ImageUrl = await signUpRepository
         .registusinessRegistrationImage(state.companyRegistrationImage!.path);
 
@@ -243,5 +316,24 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
     };
     print(body);
     response = await signUpRepository.signUpRequest(body);
+
+    switch (response['code']) {
+      case 201:
+        emit(state.copyWith(signUpState: RequestState.success));
+        break;
+      case 400:
+        if (response['message']['non_field_errors'][0] ==
+            "The similarity between password and username is too large.") {
+          emit(state.copyWith(
+              signUpState: RequestState.failure,
+              signUpErrorType: "아이디와 비밀번호가 유사합니다."));
+          return;
+        }
+        emit(state.copyWith(
+          signUpState: RequestState.failure,
+        ));
+        break;
+      default:
+    }
   }
 }

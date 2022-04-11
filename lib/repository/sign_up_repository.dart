@@ -16,7 +16,6 @@ class SignUpRepository extends HttpRepository {
     queryParams = {};
     queryParams['username'] = id;
     response = await super.httpPublicGet("users/unique", queryParams);
-    print(response);
     return response['data']['is_unique'];
   }
 
@@ -34,7 +33,6 @@ class SignUpRepository extends HttpRepository {
   Future<dynamic> signUpRequest(Map body) async {
     response =
         await super.httpPublicPost('users/wholesalers', json.encode(body));
-    print(response);
-    return response['data'];
+    return response;
   }
 }

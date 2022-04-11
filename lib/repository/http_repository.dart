@@ -25,7 +25,8 @@ class HttpRepository {
         return responseJson;
 
       case 400:
-        throw BadRequestException("400 :");
+        var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
+        return responseJson;
 
       case 401:
         var responseJson = jsonDecode(utf8.decode(response.bodyBytes));

@@ -1,6 +1,7 @@
 part of 'user_info_bloc.dart';
 
 enum ValidateState { valid, unvalid, initial }
+enum RequestState { initial, success, failure, loading }
 
 class UserInfoState extends Equatable {
   final String storeName;
@@ -20,9 +21,11 @@ class UserInfoState extends Equatable {
   final ValidateState isPhoneNumberEffective;
   final bool secondPageDataValid;
   final bool thirdPageDataValid;
-  File? companyRegistrationImage;
+  final File? companyRegistrationImage;
+  final RequestState signUpState;
+  final String signUpErrorType;
 
-  UserInfoState({
+  const UserInfoState({
     required this.storeName,
     required this.name,
     required this.username,
@@ -41,28 +44,31 @@ class UserInfoState extends Equatable {
     required this.secondPageDataValid,
     required this.thirdPageDataValid,
     required this.companyRegistrationImage,
+    required this.signUpState,
+    required this.signUpErrorType,
   });
   factory UserInfoState.initial() {
-    return UserInfoState(
-      storeName: '',
-      name: '',
-      username: '',
-      email: '',
-      password: '',
-      checkPassword: '',
-      storeNumber: '',
-      phoneNumber: '',
-      companyRegistrationNumber: '',
-      idUnique: ValidateState.initial,
-      isIdEffective: ValidateState.initial,
-      isPasswordEffective: ValidateState.initial,
-      isPasswordSame: ValidateState.initial,
-      isPhoneNumberEffective: ValidateState.initial,
-      isStoreNumberEffective: ValidateState.initial,
-      secondPageDataValid: false,
-      thirdPageDataValid: false,
-      companyRegistrationImage: null,
-    );
+    return const UserInfoState(
+        storeName: '',
+        name: '',
+        username: '',
+        email: '',
+        password: '',
+        checkPassword: '',
+        storeNumber: '',
+        phoneNumber: '',
+        companyRegistrationNumber: '',
+        idUnique: ValidateState.initial,
+        isIdEffective: ValidateState.initial,
+        isPasswordEffective: ValidateState.initial,
+        isPasswordSame: ValidateState.initial,
+        isPhoneNumberEffective: ValidateState.initial,
+        isStoreNumberEffective: ValidateState.initial,
+        secondPageDataValid: false,
+        thirdPageDataValid: false,
+        companyRegistrationImage: null,
+        signUpState: RequestState.initial,
+        signUpErrorType: '');
   }
 
   @override
@@ -86,6 +92,8 @@ class UserInfoState extends Equatable {
       secondPageDataValid,
       thirdPageDataValid,
       companyRegistrationImage,
+      signUpState,
+      signUpErrorType,
     ];
   }
 
@@ -108,6 +116,8 @@ class UserInfoState extends Equatable {
     bool? secondPageDataValid,
     bool? thirdPageDataValid,
     File? companyRegistrationImage,
+    RequestState? signUpState,
+    String? signUpErrorType,
   }) {
     return UserInfoState(
       storeName: storeName ?? this.storeName,
@@ -132,6 +142,8 @@ class UserInfoState extends Equatable {
       thirdPageDataValid: thirdPageDataValid ?? this.thirdPageDataValid,
       companyRegistrationImage:
           companyRegistrationImage ?? this.companyRegistrationImage,
+      signUpState: signUpState ?? RequestState.initial,
+      signUpErrorType: signUpErrorType ?? '',
     );
   }
 }
