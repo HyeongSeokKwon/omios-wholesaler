@@ -281,7 +281,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
 
       for (var option in value['options']) {
         for (var sizeValue in sizeBloc.state.selectedSizeMap) {
-          if (sizeValue['name'] == option['size']) {
+          if (sizeValue['name'] == option['size'] && option['on_sale']) {
             sizeInfo = sizeValue;
           }
         }
