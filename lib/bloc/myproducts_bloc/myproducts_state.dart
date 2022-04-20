@@ -8,15 +8,15 @@ enum FetchStatus {
 }
 
 class MyproductsState extends Equatable {
-  List<dynamic> productsData;
-  FetchStatus fetchStatus;
-  MyproductsState({
+  final List<dynamic> productsData;
+  final FetchStatus fetchStatus;
+  const MyproductsState({
     required this.productsData,
     required this.fetchStatus,
   });
 
   factory MyproductsState.initial() {
-    return MyproductsState(
+    return const MyproductsState(
         productsData: [], fetchStatus: FetchStatus.unfetched);
   }
 
