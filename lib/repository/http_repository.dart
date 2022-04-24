@@ -162,7 +162,7 @@ class HttpRepository {
       print(responseJson);
       return responseJson;
     } on SocketException {
-      throw FetchDataException('연결된 인터넷이 없습니다.');
+      throw const SocketException('연결된 인터넷이 없습니다.');
     } on FetchDataException {
       throw Exception("서버 오류가 발생했습니다.");
     }

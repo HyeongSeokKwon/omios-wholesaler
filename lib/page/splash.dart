@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:deepy_wholesaler/bloc/auth_bloc/authentication_bloc.dart';
 import 'package:deepy_wholesaler/repository/auth_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,6 +50,51 @@ class _SplashState extends State<Splash> {
                     break;
                   case AuthStatus.unauthenticated:
                     Navigator.popAndPushNamed(context, '/login');
+                    break;
+                  case AuthStatus.loginError:
+                    if (Platform.isIOS) {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              content: Text(state.error),
+                              actions: <Widget>[
+                                CupertinoDialogAction(
+                                  isDefaultAction: true,
+                                  child: const Text("확인"),
+                                  onPressed: () {
+                                    setState(() {});
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            content: Text(
+                              state.error,
+                              style: textStyle(Colors.black, FontWeight.w500,
+                                  'NotoSansKR', 16.0),
+                            ),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text(
+                                  "확인",
+                                  style: textStyle(Colors.black,
+                                      FontWeight.w500, 'NotoSansKR', 15.0),
+                                ),
+                                onPressed: () {
+                                  setState(() {});
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
                     break;
                   default:
                     break;

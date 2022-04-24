@@ -3,6 +3,8 @@ import 'package:deepy_wholesaler/repository/regist_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
+import '../../bloc.dart';
+
 part 'tag_event.dart';
 part 'tag_state.dart';
 
@@ -18,9 +20,14 @@ class TagBloc extends Bloc<TagEvent, TagState> {
   Future<void> getTags(
       ChangeSearchTagTextEvent event, Emitter<TagState> emit) async {
     List<dynamic> resultTags = [];
-    if (event.searchTag.isNotEmpty) {
-      resultTags = await _registRepository.getTags(event.searchTag);
+    try {
+      if (event.searchTag.isNotEmpty) {
+        resultTags = await _registRepository.getTags(event.searchTag);
+      }
+    } catch (e) {
+      emit(state.copyWith(fetchState: FetchState.error));
     }
+
     emit(state.copyWith(tagsList: resultTags));
   }
 

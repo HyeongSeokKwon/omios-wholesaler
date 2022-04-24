@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:deepy_wholesaler/page/deepy_home/home.dart';
 import 'package:deepy_wholesaler/page/splash.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      navigatorKey: NavigationService.navigatorKey,
       initialRoute: '/splash',
       routes: {
         '/splash': (context) => const Splash(),
@@ -40,4 +43,8 @@ class _MyAppState extends State<MyApp> {
       },
     );
   }
+}
+
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }

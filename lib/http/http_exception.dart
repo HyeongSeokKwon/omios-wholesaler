@@ -11,7 +11,7 @@ class CustomApiException implements Exception {
 }
 
 class FetchDataException extends CustomApiException {
-  FetchDataException(message) : super(message, '');
+  FetchDataException(message) : super(message, '서버 오류가 발생했습니다.');
 }
 
 class BadRequestException extends CustomApiException {

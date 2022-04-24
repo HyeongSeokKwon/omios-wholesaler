@@ -6,15 +6,19 @@ import 'package:flutter/material.dart';
 
 dynamic showAlertDialog(BuildContext context, String eString) {
   if (Platform.isIOS) {
-    return CupertinoAlertDialog(
-      content: Text(eString),
-      actions: const <Widget>[
-        CupertinoDialogAction(
-          isDefaultAction: true,
-          child: Text("확인"),
-        ),
-      ],
-    );
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            content: Text(eString),
+            actions: const <Widget>[
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                child: Text("확인"),
+              ),
+            ],
+          );
+        });
   } else {
     return showDialog(
       context: context,

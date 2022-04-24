@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jwt_decode/jwt_decode.dart';
@@ -48,22 +49,23 @@ class AuthenticationBloc
     }
 
     emit(state.copyWith(authStatus: AuthStatus.loading));
+    try {
+      Map response = await authRepository.basicLogin(event.id, event.password);
+      switch (response['code']) {
+        case 201:
+          authRepository.setAccessToken(response['data']['access']);
+          authRepository.setRefreshToken(response['data']['refresh']);
 
-    Map response = await authRepository.basicLogin(event.id, event.password);
-    switch (response['code']) {
-      case 201:
-        authRepository.setAccessToken(response['data']['access']);
-        authRepository.setRefreshToken(response['data']['refresh']);
+          emit(state.copyWith(authStatus: AuthStatus.loginSuccess));
+          break;
 
-        emit(state.copyWith(authStatus: AuthStatus.loginSuccess));
-        break;
-
-      case 400:
-        emit(state.copyWith(authStatus: AuthStatus.loginFailure));
-        break;
-      case 401:
-        emit(state.copyWith(authStatus: AuthStatus.loginFailure));
-        break;
+        case 401:
+          emit(state.copyWith(authStatus: AuthStatus.loginFailure));
+          break;
+      }
+    } catch (e) {
+      emit(state.copyWith(
+          authStatus: AuthStatus.loginError, error: e.toString()));
     }
   }
 
@@ -76,27 +78,33 @@ class AuthenticationBloc
     Map response;
 
     if (isAutoLoginClicked == true && refreshToken != null) {
-      response = await authRepository.autoLogin(refreshToken);
-      switch (response['code']) {
-        case 201:
-          authRepository.setAccessToken(response['data']['access']);
-          authRepository.setRefreshToken(response['data']['refresh']);
-          authRepository.id =
-              Jwt.parseJwt(response['data']['access'])['user_id'];
+      try {
+        response = await authRepository.autoLogin(refreshToken);
+        switch (response['code']) {
+          case 201:
+            authRepository.setAccessToken(response['data']['access']);
+            authRepository.setRefreshToken(response['data']['refresh']);
+            authRepository.id =
+                Jwt.parseJwt(response['data']['access'])['user_id'];
 
-          emit(state.copyWith(
-              authStatus: AuthStatus.authenticated,
-              autoLogin: isAutoLoginClicked ?? false));
-          break;
-        case 401:
-          emit(state.copyWith(
-              authStatus: AuthStatus.unauthenticated,
-              autoLogin: isAutoLoginClicked ?? false));
-          break;
-        default:
-          emit(state.copyWith(
-              authStatus: AuthStatus.loginFailure,
-              autoLogin: isAutoLoginClicked ?? false));
+            emit(state.copyWith(
+                authStatus: AuthStatus.authenticated,
+                autoLogin: isAutoLoginClicked ?? false));
+            break;
+          case 401:
+            emit(state.copyWith(
+                authStatus: AuthStatus.unauthenticated,
+                autoLogin: isAutoLoginClicked ?? false));
+            break;
+
+          default:
+            emit(state.copyWith(
+                authStatus: AuthStatus.loginFailure,
+                autoLogin: isAutoLoginClicked ?? false));
+        }
+      } catch (e) {
+        emit(state.copyWith(
+            authStatus: AuthStatus.loginError, error: e.toString()));
       }
     } else {
       emit(state.copyWith(

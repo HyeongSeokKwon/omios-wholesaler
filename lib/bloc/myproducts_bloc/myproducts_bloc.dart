@@ -14,12 +14,12 @@ class MyproductsBloc extends Bloc<MyproductsEvent, MyproductsState> {
 
   Future<void> getMyproducts(
       LoadMyproductsEvent event, Emitter<MyproductsState> emit) async {
-    List<dynamic> myproductsData =
-        await productsRepository.getMyproducts().catchError((e) {
+    try {
+      List<dynamic> myproductsData = await productsRepository.getMyproducts();
+      emit(state.copyWith(
+          productsData: myproductsData, fetchStatus: FetchStatus.fetched));
+    } catch (e) {
       emit(state.copyWith(fetchStatus: FetchStatus.error));
-    });
-
-    emit(state.copyWith(
-        productsData: myproductsData, fetchStatus: FetchStatus.fetched));
+    }
   }
 }

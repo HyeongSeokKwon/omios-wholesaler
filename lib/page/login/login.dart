@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/page/deepy_home/home.dart';
 
 import 'package:deepy_wholesaler/repository/auth_repository.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/alert_dialog.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'widget/login_widget.dart';
@@ -59,6 +62,52 @@ class _LoginState extends State<Login> {
               case AuthStatus.loginFailure:
                 ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('로그인 에러가 발생했습니다.')));
+                break;
+
+              case AuthStatus.loginError:
+                if (Platform.isIOS) {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return CupertinoAlertDialog(
+                          content: Text(state.error),
+                          actions: <Widget>[
+                            CupertinoDialogAction(
+                              isDefaultAction: true,
+                              child: const Text("확인"),
+                              onPressed: () {
+                                setState(() {});
+                              },
+                            ),
+                          ],
+                        );
+                      });
+                } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        content: Text(
+                          state.error,
+                          style: textStyle(Colors.black, FontWeight.w500,
+                              'NotoSansKR', 16.0),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            child: Text(
+                              "확인",
+                              style: textStyle(Colors.black, FontWeight.w500,
+                                  'NotoSansKR', 15.0),
+                            ),
+                            onPressed: () {
+                              setState(() {});
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
                 break;
               default:
                 break;

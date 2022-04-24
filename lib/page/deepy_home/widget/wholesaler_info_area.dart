@@ -121,7 +121,7 @@ class WholeSalerInfoArea extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => RegistProduct(
+                                  builder: (context) => const RegistProduct(
                                         registMode: RegistMode.regist,
                                       )));
                         },

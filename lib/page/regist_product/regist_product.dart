@@ -1,4 +1,5 @@
 import 'package:deepy_wholesaler/bloc/bloc.dart';
+import 'package:deepy_wholesaler/bloc/network_connection_bloc/network_connection_bloc.dart';
 import 'package:deepy_wholesaler/bloc/regist_product_bloc/data_gather_bloc/data_gather_bloc.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/progress_bar.dart';
@@ -39,6 +40,7 @@ class _RegistProductState extends State<RegistProduct> {
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (BuildContext context) => NetworkConnectionBloc()),
         BlocProvider<InititemBloc>(
           create: (BuildContext context) => InititemBloc(
             nameBloc: nameBloc,
@@ -147,15 +149,70 @@ class _RegistProductState extends State<RegistProduct> {
             ],
           ),
         ),
-        body: ScrollArea(registMode: widget.registMode),
+        body: BlocBuilder<NetworkConnectionBloc, NetworkConnectionState>(
+          builder: (context, state) {
+            print(state.networkState);
+            if (context.read<NetworkConnectionBloc>().state.networkState ==
+                NetworkState.active) {
+              return ScrollArea(registMode: widget.registMode);
+            } else {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "네트워크에 연결하지 못했어요",
+                      style: textStyle(
+                          Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+                    ),
+                    Text(
+                      "네트워크 연결상태를 확인하고",
+                      style: textStyle(
+                          Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                    ),
+                    Text(
+                      "다시 시도해 주세요",
+                      style: textStyle(
+                          Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                    ),
+                    SizedBox(height: 15 * Scale.height),
+                    InkWell(
+                      onTap: () {
+                        setState(() {
+                          context
+                              .read<InititemBloc>()
+                              .add(const FetchInitCommonInfoEvent());
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: const BorderRadiusDirectional.all(
+                                Radius.circular(19))),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 17 * Scale.width,
+                              vertical: 14 * Scale.height),
+                          child: Text("다시 시도하기",
+                              style: textStyle(Colors.black, FontWeight.w700,
+                                  'NotoSansKR', 15.0)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
+        ),
       ),
     );
   }
 }
 
 class ScrollArea extends StatefulWidget {
-  RegistMode registMode;
-  ScrollArea({required this.registMode, Key? key}) : super(key: key);
+  final RegistMode registMode;
+  const ScrollArea({required this.registMode, Key? key}) : super(key: key);
 
   @override
   State<ScrollArea> createState() => _ScrollAreaState();
@@ -252,10 +309,58 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 Positioned(bottom: 0, child: registryButton()),
               ],
             );
+          } else if (context.read<InititemBloc>().state.fetchState ==
+              FetchState.error) {
+            return networkErrorArea();
           } else {
             return progressBar();
           }
         },
+      ),
+    );
+  }
+
+  Widget networkErrorArea() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "네트워크에 연결하지 못했어요",
+            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+          ),
+          Text(
+            "네트워크 연결상태를 확인하고",
+            style: textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+          ),
+          Text(
+            "다시 시도해 주세요",
+            style: textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+          ),
+          SizedBox(height: 15 * Scale.height),
+          InkWell(
+            onTap: () {
+              setState(() {
+                context
+                    .read<InititemBloc>()
+                    .add(const FetchInitCommonInfoEvent());
+              });
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius:
+                      const BorderRadiusDirectional.all(Radius.circular(19))),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: 17 * Scale.width, vertical: 14 * Scale.height),
+                child: Text("다시 시도하기",
+                    style: textStyle(
+                        Colors.black, FontWeight.w700, 'NotoSansKR', 15.0)),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1695,16 +1800,6 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  context
-                          .read<PricePerOptionBloc>()
-                          .state
-                          .inappositePriceIndexList
-                          .isEmpty
-                      ? Container()
-                      : Text("옵션별 가격은 -20% ~ +20%까지 설정 가능합니다.",
-                          style: textStyle(
-                              Colors.red, FontWeight.w400, "NotoSansKR", 12.0)),
-                  SizedBox(height: 5 * Scale.height),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -1782,67 +1877,6 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                       inventory:
                                                           int.parse(value)));
                                             }
-                                          },
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.allow(
-                                                RegExp('[0-9]')),
-                                          ],
-                                          onFieldSubmitted: (value) {
-                                            currentFocus.unfocus();
-                                          },
-                                          style: const TextStyle(
-                                            color: Color(0xff666666),
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: "NotoSansKR",
-                                            fontSize: 13.0,
-                                          ),
-                                          maxLength: 8,
-                                          decoration: InputDecoration(
-                                            counterText: "",
-                                            contentPadding: EdgeInsets.zero,
-                                            hintStyle: textStyle(
-                                                const Color(0xffcccccc),
-                                                FontWeight.w500,
-                                                "NotoSansKR",
-                                                11.0),
-                                            border: const OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5)),
-                                              borderSide: BorderSide(
-                                                  color: Color(0xffcccccc),
-                                                  width: 1),
-                                            ),
-                                            focusedBorder:
-                                                const OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(5)),
-                                              borderSide: BorderSide(
-                                                  color: Color(0xffcccccc),
-                                                  width: 1),
-                                            ),
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 85 * Scale.width,
-                                    height: 35 * Scale.height,
-                                    child: Builder(
-                                      builder: (context) {
-                                        return TextFormField(
-                                          key: Key(index.toString()),
-                                          controller:
-                                              state.priceControllerList[index],
-                                          keyboardType: const TextInputType
-                                              .numberWithOptions(signed: true),
-                                          onChanged: (value) {
-                                            context
-                                                .read<PricePerOptionBloc>()
-                                                .add(ChangePricePerOptionEvent(
-                                                    index: index,
-                                                    changePrice: value));
                                           },
                                           inputFormatters: [
                                             FilteringTextInputFormatter.allow(
@@ -1969,7 +2003,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                           children: [
                             Padding(
                               padding: EdgeInsets.only(right: 8 * Scale.width),
-                              child: Container(
+                              child: SizedBox(
                                 height: 50 * Scale.height,
                                 child: Row(
                                   mainAxisAlignment:
@@ -2144,7 +2178,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                           },
                                         );
                                       },
-                                      child: Container(
+                                      child: SizedBox(
                                           child: Text(
                                         "소재 편집",
                                         style: textStyle(
@@ -2951,7 +2985,18 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
 
   Widget searchTagArea() {
     TextEditingController tagController = TextEditingController();
-    return BlocBuilder<AgeGroupBloc, AgeGroupState>(
+    return BlocConsumer<TagBloc, TagState>(
+      listener: ((context, state) {
+        switch (state.fetchState) {
+          case FetchState.error:
+            BlocProvider.of<NetworkConnectionBloc>(context)
+                .add(InactiveNetworkEvent());
+            break;
+          default:
+            BlocProvider.of<NetworkConnectionBloc>(context)
+                .add(ActiveNetworkEvent());
+        }
+      }),
       builder: (context, state) {
         if (context.read<InititemBloc>().state.fetchState ==
             FetchState.success) {
@@ -3038,37 +3083,33 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     )
                   ],
                 ),
-                BlocBuilder<TagBloc, TagState>(
-                  builder: (context, state) {
-                    return context.read<TagBloc>().state.tagsList.isEmpty
-                        ? Container()
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            itemCount:
-                                context.read<TagBloc>().state.tagsList.length,
-                            itemBuilder: (context, index) {
-                              return InkWell(
-                                onTap: () {
-                                  context.read<TagBloc>().add(AutoCompleteEvent(
-                                      index: index,
-                                      tagController: tagController));
-                                },
-                                child: Container(
-                                  height: 35 * Scale.height,
-                                  width: 250 * Scale.width,
-                                  color: Colors.grey[50],
-                                  child: Text(
-                                    BlocProvider.of<TagBloc>(context)
-                                        .state
-                                        .tagsList[index]['name'],
-                                    style: textStyle(Colors.black,
-                                        FontWeight.w400, "NotoSansKR", 14.0),
-                                  ),
-                                ),
-                              );
-                            });
-                  },
-                ),
+                context.read<TagBloc>().state.tagsList.isEmpty
+                    ? Container()
+                    : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount:
+                            context.read<TagBloc>().state.tagsList.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
+                            onTap: () {
+                              context.read<TagBloc>().add(AutoCompleteEvent(
+                                  index: index, tagController: tagController));
+                            },
+                            child: Container(
+                              height: 35 * Scale.height,
+                              width: 250 * Scale.width,
+                              color: Colors.grey[50],
+                              child: Text(
+                                BlocProvider.of<TagBloc>(context)
+                                    .state
+                                    .tagsList[index]['name'],
+                                style: textStyle(Colors.black, FontWeight.w400,
+                                    "NotoSansKR", 14.0),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                 const Divider(thickness: 1.5),
                 BlocBuilder<TagBloc, TagState>(builder: (context, state) {
                   return SizedBox(
