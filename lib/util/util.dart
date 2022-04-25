@@ -19,7 +19,7 @@ String setNumberFormat(int price) {
 TextStyle textStyle(
   Color color,
   FontWeight fontWeight,
-  var fontFamily,
+  String fontFamily,
   var fontSize,
 ) {
   return TextStyle(
