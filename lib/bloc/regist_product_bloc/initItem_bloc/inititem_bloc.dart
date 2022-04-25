@@ -96,30 +96,31 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     Map commonData;
     emit(state.copyWith(fetchState: FetchState.loading));
 
-    categoryData = await registRepository.getCategoryInfo().catchError((e) {
-      emit(state.copyWith(fetchState: FetchState.failure));
-    });
+    try {
+      categoryData = await registRepository.getCategoryInfo();
 
-    commonData = await registRepository.getRegistryData().catchError((e) {
-      emit(state.copyWith(fetchState: FetchState.failure));
-    });
-    insertRegistryCommonData(categoryData, commonData); //항목데이터
+      commonData = await registRepository.getRegistryData();
+      insertRegistryCommonData(categoryData, commonData); //항목데이터
 
-    if (registMode == RegistMode.edit) {
-      insertCommonData(initEditItemBloc!.state.data, categoryData);
-      emit(state.copyWith(fetchState: FetchState.loading));
-      Map dynamicData;
-      dynamicData = await registRepository
-          .getRegistryData(categoryBloc.state.selectedSubCategory['id'])
-          .catchError((e) {
-        emit(state.copyWith(fetchState: FetchState.failure));
-      });
+      if (registMode == RegistMode.edit) {
+        insertCommonData(initEditItemBloc!.state.data, categoryData);
+        emit(state.copyWith(fetchState: FetchState.loading));
+        Map dynamicData;
+        dynamicData = await registRepository
+            .getRegistryData(categoryBloc.state.selectedSubCategory['id'])
+            .catchError((e) {
+          emit(state.copyWith(fetchState: FetchState.failure));
+        });
 
-      insertRegistryDynamicData(dynamicData); //항목데이터
-      insertDynamicData(initEditItemBloc!.state.data);
+        insertRegistryDynamicData(dynamicData); //항목데이터
+        insertDynamicData(initEditItemBloc!.state.data);
+      }
+
+      emit(state.copyWith(fetchState: FetchState.success));
+    } catch (e) {
+      print(e.toString());
+      emit(state.copyWith(fetchState: FetchState.error, error: e.toString()));
     }
-
-    emit(state.copyWith(fetchState: FetchState.success));
   }
 
   //registry-dynamic api
@@ -130,15 +131,16 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     emit(state.copyWith(fetchState: FetchState.loading));
 
     Map dynamicData;
-    dynamicData = await registRepository
-        .getRegistryData(categoryBloc.state.selectedSubCategory['id'])
-        .catchError((e) {
-      emit(state.copyWith(fetchState: FetchState.failure));
-    });
+    try {
+      dynamicData = await registRepository
+          .getRegistryData(categoryBloc.state.selectedSubCategory['id']);
+      insertRegistryDynamicData(dynamicData);
 
-    insertRegistryDynamicData(dynamicData);
-
-    emit(state.copyWith(fetchState: FetchState.success));
+      emit(state.copyWith(fetchState: FetchState.success));
+    } catch (e) {
+      print(e.toString());
+      emit(state.copyWith(fetchState: FetchState.error, error: e.toString()));
+    }
   }
 
   //update시 등록된 commondata initialize
@@ -268,7 +270,6 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
         }
       }
     }
-
     for (var value in registedData['colors']) {
       Map colorInfo = {};
       Map sizeInfo = {};
@@ -280,27 +281,25 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
       }
 
       for (var option in value['options']) {
+        print(option);
         for (var sizeValue in sizeBloc.state.selectedSizeMap) {
-          if (sizeValue['name'] == option['size'] && option['on_sale']) {
+          if (sizeValue['name'] == option['size'] &&
+              option['on_sale'] == true) {
             sizeInfo = sizeValue;
           }
         }
-        if (colorInfo.isNotEmpty && sizeInfo.isNotEmpty) {
+        if (colorInfo.isNotEmpty &&
+            sizeInfo.isNotEmpty &&
+            option['on_sale'] == true) {
           pricePerOptionBloc.state.pricePerOptionList.add({
             'id': option['id'],
             'color': colorInfo,
             'size': sizeInfo,
-            'price': int.parse(priceBloc.state.price),
-            'price_difference': option['price_difference'],
             'inventory': 0,
           });
+
           pricePerOptionBloc.state.inventoryControllerList
               .add(TextEditingController(text: 0.toString()));
-          pricePerOptionBloc.state.priceControllerList.add(
-              TextEditingController(
-                  text: (int.parse(priceBloc.state.price) +
-                          option['price_difference'])
-                      .toString()));
         }
       }
     }
