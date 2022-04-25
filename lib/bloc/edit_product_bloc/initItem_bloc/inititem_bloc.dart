@@ -15,16 +15,38 @@ class InitEditItemBloc extends Bloc<InitEditItemEvent, InitEditItemState> {
   Future<void> fetchData(
       LoadEditProductDataEvent event, Emitter<InitEditItemState> emit) async {
     emit(state.copyWith(fetchState: FetchState.loading));
+    try {
+      Map data = await editRepository.getSalerProductInfo(event.productId);
+      Map processedData = colorDataProcessing(data);
 
-    Map data = await editRepository
-        .getSalerProductInfo(event.productId)
-        .catchError((e) {
-      emit(state.copyWith(fetchState: FetchState.failure));
-      return;
-    });
-
-    emit(state.copyWith(fetchState: FetchState.success, data: data));
+      emit(state.copyWith(
+          fetchState: FetchState.success,
+          data: data,
+          color: processedData['colors'],
+          size: processedData['size']));
+    } catch (e) {
+      emit(state.copyWith(fetchState: FetchState.error));
+    }
   }
 
-  void putData() {}
+  Map colorDataProcessing(Map data) {
+    List colors = [];
+    Set size = {};
+    Map processedData = {};
+    for (var value in data['colors']) {
+      if (value['on_sale']) {
+        colors.add(value['display_color_name']);
+        for (var optionValue in value['options']) {
+          if (optionValue['on_sale']) {
+            size.add(optionValue['size']);
+          }
+        }
+      }
+    }
+
+    processedData['colors'] = colors;
+    processedData['size'] = size.toList();
+    print(processedData);
+    return processedData;
+  }
 }
