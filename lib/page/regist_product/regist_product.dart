@@ -1015,22 +1015,26 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 : Text(context.read<ColorBloc>().state.errorMessage),
             ListView.builder(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount:
                     context.read<ColorBloc>().state.selectedColorMap.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 4 * Scale.height),
                     child: Container(
-                      color: Colors.grey[100]!,
+                      color: Colors.grey[50]!,
                       child: Padding(
                         padding:
-                            EdgeInsets.symmetric(vertical: 5 * Scale.height),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                InkWell(
+                            EdgeInsets.symmetric(vertical: 10 * Scale.height),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10 * Scale.width),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  InkWell(
                                     onTap: () {
                                       context.read<ColorBloc>().add(
                                           ClickColorRemoveButtonEvent(
@@ -1050,35 +1054,36 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                       .selectedColorMap[index]
                                                   ['colorId']));
                                     },
-                                    child: const Icon(Icons.clear)),
-                                Text(
-                                  "계열 : ${context.read<ColorBloc>().state.selectedColorMap[index]['color']}",
-                                  style: textStyle(Colors.black,
-                                      FontWeight.w400, "NotoSansKR", 16.0),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "색상이름 :",
-                                  style: textStyle(Colors.black,
-                                      FontWeight.w400, "NotoSansKR", 16.0),
-                                ),
-                                Padding(
-                                  padding:
-                                      EdgeInsets.only(right: 25 * Scale.width),
-                                  child: SizedBox(
+                                    child: Icon(
+                                      Icons.clear,
+                                      size: 20 * Scale.width,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  SizedBox(width: 5 * Scale.width),
+                                  Text(
+                                    "계열 : ${context.read<ColorBloc>().state.selectedColorMap[index]['color']}",
+                                    style: textStyle(Colors.grey[700]!,
+                                        FontWeight.w400, "NotoSansKR", 16.0),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text(
+                                    "색상이름 : ",
+                                    style: textStyle(Colors.grey[700]!,
+                                        FontWeight.w400, "NotoSansKR", 16.0),
+                                  ),
+                                  SizedBox(
                                     width: 100 * Scale.width,
                                     height: 30 * Scale.width,
                                     child: TextFormField(
                                       key: Key(state.selectedColorMap[index]
                                               ['colorId']
                                           .toString()),
-                                      readOnly:
-                                          widget.registMode == RegistMode.edit
-                                              ? true
-                                              : false,
+                                      style: textStyle(Colors.grey[700]!,
+                                          FontWeight.w400, "NotoSansKR", 15.0),
                                       initialValue: context
                                               .read<ColorBloc>()
                                               .state
@@ -1129,10 +1134,10 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                       textAlign: TextAlign.left,
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -1161,11 +1166,11 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             Tab(
                 child: Text("기본 이미지",
                     style: textStyle(
-                        Colors.black, FontWeight.w700, "NotoSansKR", 12.0))),
+                        Colors.black, FontWeight.w500, "NotoSansKR", 13.0))),
             Tab(
                 child: Text("색상별 이미지",
                     style: textStyle(
-                        Colors.black, FontWeight.w700, "NotoSansKR", 12.0))),
+                        Colors.black, FontWeight.w500, "NotoSansKR", 13.0))),
           ],
         ),
         Container(
