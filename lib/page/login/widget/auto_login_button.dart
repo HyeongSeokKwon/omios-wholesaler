@@ -10,6 +10,7 @@ class AutoLoginButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
+        print(context.read<AuthenticationBloc>().state.autoLogin);
         return Padding(
           padding: EdgeInsets.only(left: 22 * Scale.width),
           child: InkWell(

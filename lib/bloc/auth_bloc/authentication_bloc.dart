@@ -51,6 +51,12 @@ class AuthenticationBloc
     emit(state.copyWith(authStatus: AuthStatus.loading));
     try {
       Map response = await authRepository.basicLogin(event.id, event.password);
+      if (Jwt.parseJwt(response['data']['access'])['user_type'] == 'shopper') {
+        emit(state.copyWith(
+            authStatus: AuthStatus.loginFailure,
+            error: "아이디 패스워드가 존재하지 않습니다."));
+        return;
+      }
       switch (response['code']) {
         case 201:
           authRepository.setAccessToken(response['data']['access']);
@@ -76,7 +82,7 @@ class AuthenticationBloc
     bool? isAutoLoginClicked = prefs.getBool('autoLogin');
     String? refreshToken = prefs.getString('refreshToken');
     Map response;
-
+    print(isAutoLoginClicked);
     if (isAutoLoginClicked == true && refreshToken != null) {
       try {
         response = await authRepository.autoLogin(refreshToken);
