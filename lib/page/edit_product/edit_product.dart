@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:deepy_wholesaler/page/regist_product/regist_product.dart';
 import 'package:deepy_wholesaler/util/util.dart';
-import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:deepy_wholesaler/widget/progress_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../bloc/bloc.dart';
 
@@ -62,7 +62,7 @@ class _ScrollAreaState extends State<ScrollArea> {
         } else if (state.fetchState == FetchState.success) {
           return SingleChildScrollView(
             child: Column(children: [
-              const ImageArea(),
+              ImageArea(),
               Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: 22 * Scale.width, vertical: 22 * Scale.height),
@@ -142,13 +142,60 @@ class _ScrollAreaState extends State<ScrollArea> {
 }
 
 class ImageArea extends StatelessWidget {
-  const ImageArea({Key? key}) : super(key: key);
+  final PageController _pageController = PageController();
+  final List imageUrls = [];
 
+  ImageArea({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
-        imageUrl: context.read<InitEditItemBloc>().state.data['images'][0]
-            ['image_url']);
+    for (var value in context.read<InitEditItemBloc>().state.data['images']) {
+      imageUrls.add(value['image_url']);
+    }
+    for (var value in context.read<InitEditItemBloc>().state.data['colors']) {
+      imageUrls.add(value['image_url']);
+    }
+    return SizedBox(
+      width: 414 * Scale.width,
+      height: 1.2 * 414 * Scale.width,
+      child: Stack(
+        children: [
+          PageView.builder(
+            controller: _pageController,
+            itemCount: imageUrls.length,
+            itemBuilder: (BuildContext context, int index) {
+              return SizedBox(
+                child: GestureDetector(
+                  child: CachedNetworkImage(
+                    imageUrl: "${imageUrls[index]}",
+                    fit: BoxFit.fill,
+                    width: 414 * Scale.width,
+                    height: 1.2 * 414 * Scale.width,
+                  ),
+                  onTap: () {},
+                ),
+              );
+            },
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: SmoothPageIndicator(
+                controller: _pageController,
+                count: imageUrls.length,
+                effect: const WormEffect(
+                    spacing: 8.0,
+                    dotWidth: 15.0,
+                    dotHeight: 15.0,
+                    strokeWidth: 1.5,
+                    dotColor: Colors.grey,
+                    activeDotColor: Colors.black),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -522,17 +569,26 @@ class ProductInfo extends StatelessWidget {
   Widget productInfoValueWidget(String subject, String value) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 7 * Scale.height),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(
-          subject,
-          style: textStyle(Colors.black, FontWeight.w400, 'NotoSansKR', 15.0),
-        ),
-        Text(
-          value,
-          style:
-              textStyle(Colors.grey[700]!, FontWeight.w400, 'NotoSansKR', 15.0),
-        ),
-      ]),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            subject,
+            style: textStyle(Colors.black, FontWeight.w400, 'NotoSansKR', 15.0),
+          ),
+          Flexible(
+            child: Padding(
+              padding: EdgeInsets.only(left: 60 * Scale.width),
+              child: Text(
+                value,
+                style: textStyle(
+                    Colors.grey[700]!, FontWeight.w400, 'NotoSansKR', 15.0),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
