@@ -6,15 +6,19 @@ import 'package:flutter/material.dart';
 
 dynamic showAlertDialog(BuildContext context, String eString) {
   if (Platform.isIOS) {
+    print("ios alert");
     return showDialog(
         context: context,
         builder: (context) {
           return CupertinoAlertDialog(
             content: Text(eString),
-            actions: const <Widget>[
+            actions: <Widget>[
               CupertinoDialogAction(
                 isDefaultAction: true,
-                child: Text("확인"),
+                child: const Text("확인"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
             ],
           );
@@ -23,6 +27,7 @@ dynamic showAlertDialog(BuildContext context, String eString) {
     return showDialog(
       context: context,
       builder: (context) {
+        print("android alert");
         return AlertDialog(
           content: Text(
             eString,
