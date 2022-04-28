@@ -1,11 +1,10 @@
-import 'package:deepy_wholesaler/bloc/sign_up_bloc/store_location_bloc/store_location_bloc.dart';
 import 'package:deepy_wholesaler/bloc/sign_up_bloc/user_info/user_info_bloc.dart';
 import 'package:deepy_wholesaler/page/sign_up/sign_up_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../bloc/bloc.dart';
 import '../../util/util.dart';
 import 'sign_up_third.dart';
 
@@ -45,25 +44,85 @@ class _SignUpSecondState extends State<SignUpSecond> {
         backgroundColor: const Color(0xffffffff),
         body: GestureDetector(
           onTap: (() => FocusScope.of(context).requestFocus(FocusNode())),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  businessNameArea(),
-                  representativeNameArea(),
-                  idArea(),
-                  emailArea(),
-                  passwordArea(),
-                  passwordCheckArea(),
-                ],
-              ),
-            ),
+          child: BlocBuilder<UserInfoBloc, UserInfoState>(
+            builder: (context, state) {
+              if (context.read<UserInfoBloc>().state.fetchState ==
+                  FetchState.error) {
+                return networkErrorArea();
+              } else {
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        businessNameArea(),
+                        representativeNameArea(),
+                        idArea(),
+                        emailArea(),
+                        passwordArea(),
+                        passwordCheckArea(),
+                      ],
+                    ),
+                  ),
+                );
+              }
+            },
           ),
         ),
         bottomNavigationBar: bottomSheetArea(),
       ),
+    );
+  }
+
+  Widget networkErrorArea() {
+    return BlocBuilder<UserInfoBloc, UserInfoState>(
+      builder: (context, state) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "네트워크에 연결하지 못했어요",
+                style: textStyle(
+                    Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+              ),
+              Text(
+                "네트워크 연결상태를 확인하고",
+                style:
+                    textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+              ),
+              Text(
+                "다시 시도해 주세요",
+                style:
+                    textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+              ),
+              SizedBox(height: 15 * Scale.height),
+              InkWell(
+                onTap: () {
+                  context
+                      .read<UserInfoBloc>()
+                      .add(CheckIdDuplicatedEvent(id: 'mockdata'));
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: const BorderRadiusDirectional.all(
+                          Radius.circular(19))),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 17 * Scale.width,
+                        vertical: 14 * Scale.height),
+                    child: Text("다시 시도하기",
+                        style: textStyle(Colors.grey[800]!, FontWeight.w500,
+                            'NotoSansKR', 15.0)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -469,19 +528,10 @@ class _SignUpSecondState extends State<SignUpSecond> {
           ),
           BlocBuilder<UserInfoBloc, UserInfoState>(
             builder: (context, state) {
-              String errorText;
-              // if (state.isIdEffective == ValidateState.unvalid) {
-              //   errorText = "아이디는 영문 4~20글자 입니다 ";
-              // } else if (state.idUnique == ValidateState.unvalid) {
-              //   errorText = "중복된 아이디가 존재합니다.";
-              // } else {
-              //   errorText = "";
-              // }
               return Stack(
                 children: [
                   SizedBox(
                     child: TextFormField(
-                      enableSuggestions: true,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
                             RegExp('[a-zA-Z0-9!-~]')),
@@ -497,7 +547,6 @@ class _SignUpSecondState extends State<SignUpSecond> {
                       controller: emailController,
                       decoration: InputDecoration(
                         counterText: "",
-                        //errorText: errorText,
                         contentPadding: EdgeInsets.fromLTRB(
                           10 * Scale.width,
                           10 * Scale.height,
@@ -512,7 +561,6 @@ class _SignUpSecondState extends State<SignUpSecond> {
                           fontStyle: FontStyle.normal,
                           fontSize: 14.0,
                         ),
-
                         hintText: ("이메일을 입력하세요"),
                         hintStyle: textStyle(const Color(0xffcccccc),
                             FontWeight.w400, "NotoSansKR", 16.0),
@@ -889,17 +937,18 @@ class _SignUpSecondState extends State<SignUpSecond> {
             }
           },
           child: Container(
-              height: 70 * Scale.height,
-              color: context.read<UserInfoBloc>().state.secondPageDataValid
-                  ? Colors.indigo[500]
-                  : Colors.grey[400]!,
-              child: Center(
-                child: Text(
-                  "다음",
-                  style: textStyle(
-                      Colors.white, FontWeight.w500, "NotoSansKR", 20.0),
-                ),
-              )),
+            height: 70 * Scale.height,
+            color: context.read<UserInfoBloc>().state.secondPageDataValid
+                ? Colors.indigo[500]
+                : Colors.grey[350]!,
+            child: Center(
+              child: Text(
+                "다음",
+                style: textStyle(
+                    Colors.white, FontWeight.w500, "NotoSansKR", 20.0),
+              ),
+            ),
+          ),
         );
       },
     );

@@ -8,7 +8,11 @@ class SignUpRepository extends HttpRepository {
   late Map<String, String> queryParams;
 
   Future<dynamic> getBuildingInfos() async {
-    response = await super.httpPublicGet("users/wholesalers/buildings");
+    response = await super
+        .httpPublicGet("users/wholesalers/buildings")
+        .catchError((e) {
+      throw e;
+    });
     return response['data'];
   }
 

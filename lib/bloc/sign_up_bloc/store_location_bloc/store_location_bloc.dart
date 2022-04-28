@@ -19,17 +19,22 @@ class StoreLocationBloc extends Bloc<StoreLocationEvent, StoreLocationState> {
   Future<void> getBuildingList(ClickBuildingListButtonEvent event,
       Emitter<StoreLocationState> emit) async {
     emit(state.copyWith(fetchState: FetchState.loading));
-    List<dynamic> storeLocationInfo = await signUpRepository.getBuildingInfos();
+    List<dynamic> storeLocationInfo;
     List<dynamic> buildingInfo = [];
 
-    for (Map value in storeLocationInfo) {
-      buildingInfo.add(value['name']);
-    }
+    try {
+      storeLocationInfo = await signUpRepository.getBuildingInfos();
+      for (Map value in storeLocationInfo) {
+        buildingInfo.add(value['name']);
+      }
 
-    emit(state.copyWith(
-        fetchState: FetchState.success,
-        storeLocationInfo: storeLocationInfo,
-        buildingInfo: buildingInfo));
+      emit(state.copyWith(
+          fetchState: FetchState.success,
+          storeLocationInfo: storeLocationInfo,
+          buildingInfo: buildingInfo));
+    } catch (e) {
+      emit(state.copyWith(fetchState: FetchState.error));
+    }
   }
 
   void selectBuilding(

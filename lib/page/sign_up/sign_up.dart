@@ -1,6 +1,7 @@
 import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/page/sign_up/sign_up_appbar.dart';
 import 'package:deepy_wholesaler/page/sign_up/sign_up_second.dart';
+import 'package:deepy_wholesaler/widget/error_card.dart';
 import 'package:deepy_wholesaler/widget/progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -30,20 +31,29 @@ class _SignUpState extends State<SignUp> {
       child: Scaffold(
         appBar: const SignUpAppBar(),
         backgroundColor: const Color(0xffffffff),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                selectBuildingArea(),
-                selectFloorArea(),
-                inputRoomNumberArea(),
-                checkAddressArea(),
-                questionArea(),
-              ],
-            ),
-          ),
+        body: BlocBuilder<StoreLocationBloc, StoreLocationState>(
+          builder: (context, state) {
+            if (context.read<StoreLocationBloc>().state.fetchState ==
+                FetchState.error) {
+              return ErrorCard(parentState: state);
+            } else {
+              return SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      selectBuildingArea(),
+                      selectFloorArea(),
+                      inputRoomNumberArea(),
+                      checkAddressArea(),
+                      questionArea(),
+                    ],
+                  ),
+                ),
+              );
+            }
+          },
         ),
         bottomNavigationBar: bottomSheetArea(),
         resizeToAvoidBottomInset: false,
@@ -63,33 +73,34 @@ class _SignUpState extends State<SignUp> {
                   .add(ClickBuildingListButtonEvent());
               final storeLocationBloc =
                   BlocProvider.of<StoreLocationBloc>(context);
-              showModalBottomSheet<void>(
-                isDismissible: false,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                context: context,
-                builder: (context) => BlocProvider.value(
-                  value: storeLocationBloc,
-                  child: Stack(
-                    children: [
-                      GestureDetector(
-                        child: Container(
-                            width: 414 * Scale.width,
-                            height: 896 * Scale.height,
-                            color: Colors.transparent),
-                        onTap: Navigator.of(context).pop,
-                      ),
-                      Positioned(
-                        child: DraggableScrollableSheet(
-                          initialChildSize: 0.6,
-                          maxChildSize: 1.0,
-                          builder: (_, controller) {
-                            return BlocBuilder<StoreLocationBloc,
-                                StoreLocationState>(
-                              builder: (context, state) {
-                                if (state.fetchState == FetchState.success) {
+              if (context.read<StoreLocationBloc>().state.fetchState ==
+                  FetchState.success) {
+                showModalBottomSheet<void>(
+                  isDismissible: false,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  context: context,
+                  builder: (context) => BlocProvider.value(
+                    value: storeLocationBloc,
+                    child: Stack(
+                      children: [
+                        GestureDetector(
+                          child: Container(
+                              width: 414 * Scale.width,
+                              height: 896 * Scale.height,
+                              color: Colors.transparent),
+                          onTap: Navigator.of(context).pop,
+                        ),
+                        Positioned(
+                          child: DraggableScrollableSheet(
+                            initialChildSize: 0.6,
+                            maxChildSize: 1.0,
+                            builder: (_, controller) {
+                              return BlocBuilder<StoreLocationBloc,
+                                  StoreLocationState>(
+                                builder: (context, state) {
                                   return Stack(
                                     children: [
                                       Container(
@@ -189,18 +200,16 @@ class _SignUpState extends State<SignUp> {
                                       ),
                                     ],
                                   );
-                                } else {
-                                  return Container(child: progressBar());
-                                }
-                              },
-                            );
-                          },
-                        ),
-                      )
-                    ],
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              );
+                );
+              }
             },
             child: Container(
               height: 150 * Scale.height,
@@ -214,7 +223,7 @@ class _SignUpState extends State<SignUp> {
                               .selectedBuilding !=
                           ""
                       ? const Color.fromARGB(255, 56, 218, 61)
-                      : Colors.grey[400]!,
+                      : Colors.grey[300]!,
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(14)),
               ),
@@ -445,7 +454,7 @@ class _SignUpState extends State<SignUp> {
                       context.read<StoreLocationBloc>().state.selectedFloor !=
                               ""
                           ? const Color.fromARGB(255, 56, 218, 61)
-                          : Colors.grey[400]!,
+                          : Colors.grey[300]!,
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(14)),
               ),
@@ -642,7 +651,7 @@ class _SignUpState extends State<SignUp> {
                   width: 1.5 * Scale.width,
                   color:
                       context.read<StoreLocationBloc>().state.inputRoom.isEmpty
-                          ? Colors.grey[400]!
+                          ? Colors.grey[300]!
                           : const Color.fromARGB(255, 56, 218, 61),
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(14)),
@@ -741,6 +750,7 @@ class _SignUpState extends State<SignUp> {
             style: textStyle(
                 Colors.grey[400]!, FontWeight.w500, "NotoSansKR", 14.0),
           ),
+          SizedBox(height: 5 * Scale.height),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -792,7 +802,7 @@ class _SignUpState extends State<SignUp> {
               color:
                   context.read<StoreLocationBloc>().state.isLocationDataNotEmpty
                       ? Colors.indigo[500]
-                      : Colors.grey[400],
+                      : Colors.grey[350],
               child: Center(
                 child: Text(
                   "다음",

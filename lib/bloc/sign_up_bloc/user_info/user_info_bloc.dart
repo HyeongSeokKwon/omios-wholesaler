@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:async';
-import 'package:bloc/bloc.dart';
-import 'package:deepy_wholesaler/bloc/sign_up_bloc/store_location_bloc/store_location_bloc.dart';
 import 'package:deepy_wholesaler/repository/sign_up_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../bloc.dart';
 
 part 'user_info_event.dart';
 part 'user_info_state.dart';
@@ -31,7 +31,13 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
     on<GetImageFromGallery>(getImageFromGallery);
     on<GetImageFromCamera>(getImageFromCamera);
     on<ClickSignUpButtonEvent>(clickSignUp);
+    on<InitPageEvent>(initPageState);
   }
+
+  void initPageState(InitPageEvent event, Emitter<UserInfoState> emit) {
+    emit(state.copyWith(fetchState: FetchState.initial));
+  }
+
   void inputStoreName(InputStoreNameEvent event, Emitter<UserInfoState> emit) {
     emit(state.copyWith(
         storeName: event.storeName,
@@ -73,40 +79,46 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
     bool idUnique;
     RegExp regex = RegExp(r'^[a-zA-Z0-9]+$');
 
-    if (regex.hasMatch(event.id) &&
-        event.id.length >= 4 &&
-        event.id.length <= 20) {
-      idUnique = await signUpRepository.getIdUnique(event.id).catchError((e) {
-        throw Exception(e.toString());
-      });
-      print(idUnique);
-      if (idUnique) {
+    try {
+      if (regex.hasMatch(event.id) &&
+          event.id.length >= 4 &&
+          event.id.length <= 20) {
+        idUnique = await signUpRepository.getIdUnique(event.id).catchError((e) {
+          throw e;
+        });
+
+        if (idUnique) {
+          emit(state.copyWith(
+              idUnique: ValidateState.valid,
+              isIdEffective: ValidateState.valid,
+              signUpErrorType: '',
+              signUpState: RequestState.initial));
+        } else {
+          emit(state.copyWith(
+              idUnique: ValidateState.unvalid,
+              isIdEffective: ValidateState.valid,
+              signUpErrorType: '',
+              signUpState: RequestState.initial));
+        }
+      } else if (event.id.isEmpty) {
         emit(state.copyWith(
-            idUnique: ValidateState.valid,
-            isIdEffective: ValidateState.valid,
+            idUnique: ValidateState.initial,
+            isIdEffective: ValidateState.initial,
             signUpErrorType: '',
             signUpState: RequestState.initial));
       } else {
         emit(state.copyWith(
-            idUnique: ValidateState.unvalid,
-            isIdEffective: ValidateState.valid,
+            idUnique: ValidateState.initial,
+            isIdEffective: ValidateState.unvalid,
             signUpErrorType: '',
             signUpState: RequestState.initial));
       }
-    } else if (event.id.isEmpty) {
       emit(state.copyWith(
-          idUnique: ValidateState.initial,
-          isIdEffective: ValidateState.initial,
-          signUpErrorType: '',
-          signUpState: RequestState.initial));
-    } else {
-      emit(state.copyWith(
-          idUnique: ValidateState.initial,
-          isIdEffective: ValidateState.unvalid,
-          signUpErrorType: '',
-          signUpState: RequestState.initial));
+          secondPageDataValid: checkSecondPageDataValid(),
+          fetchState: FetchState.success));
+    } catch (e) {
+      emit(state.copyWith(fetchState: FetchState.error));
     }
-    emit(state.copyWith(secondPageDataValid: checkSecondPageDataValid()));
   }
 
   void validatePassword(
@@ -237,7 +249,7 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
   void inputCompanyRegistrationNumber(
       InputCompanyRegistrationNumberEvent event, Emitter<UserInfoState> emit) {
     emit(state.copyWith(
-        companyRegistrationNumber: event.first + event.second + event.third,
+        companyRegistrationNumber: event.number,
         signUpErrorType: '',
         signUpState: RequestState.initial));
     emit(state.copyWith(thirdPageDataValid: checkThirdPageDataValid()));
@@ -292,48 +304,53 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
     String s3ImageUrl;
     Map response;
     Map body;
-    emit(
-        state.copyWith(signUpState: RequestState.initial, signUpErrorType: ""));
-    s3ImageUrl = await signUpRepository
-        .registusinessRegistrationImage(state.companyRegistrationImage!.path);
 
-    body = {
-      'username': state.username,
-      'password': state.password,
-      'name': state.storeName,
-      'company_registration_number': state.companyRegistrationNumber,
-      'business_registration_image_url': s3ImageUrl,
-      'mobile_number': state.phoneNumber,
-      'phone_number': state.storeNumber,
-      'email': state.email,
-      'zip_code': storeLocationBloc.state.zipCode,
-      'base_address': storeLocationBloc.state.baseAddress,
-      'detail_address': storeLocationBloc.state.selectedBuilding +
-          " " +
-          storeLocationBloc.state.selectedFloor +
-          " " +
-          storeLocationBloc.state.inputRoom,
-    };
-    print(body);
-    response = await signUpRepository.signUpRequest(body);
+    try {
+      emit(state.copyWith(
+          signUpState: RequestState.initial, signUpErrorType: ""));
+      s3ImageUrl = await signUpRepository
+          .registusinessRegistrationImage(state.companyRegistrationImage!.path);
 
-    switch (response['code']) {
-      case 201:
-        emit(state.copyWith(signUpState: RequestState.success));
-        break;
-      case 400:
-        if (response['message']['non_field_errors'][0] ==
-            "The similarity between password and username is too large.") {
+      body = {
+        'username': state.username,
+        'password': state.password,
+        'name': state.storeName,
+        'company_registration_number': state.companyRegistrationNumber,
+        'business_registration_image_url': s3ImageUrl,
+        'mobile_number': state.phoneNumber,
+        'phone_number': state.storeNumber,
+        'email': state.email,
+        'zip_code': storeLocationBloc.state.zipCode,
+        'base_address': storeLocationBloc.state.baseAddress,
+        'detail_address': storeLocationBloc.state.selectedBuilding +
+            " " +
+            storeLocationBloc.state.selectedFloor +
+            " " +
+            storeLocationBloc.state.inputRoom,
+      };
+
+      response = await signUpRepository.signUpRequest(body);
+
+      switch (response['code']) {
+        case 201:
+          emit(state.copyWith(signUpState: RequestState.success));
+          break;
+        case 400:
+          if (response['message']['non_field_errors'][0] ==
+              "The similarity between password and username is too large.") {
+            emit(state.copyWith(
+                signUpState: RequestState.failure,
+                signUpErrorType: "아이디와 비밀번호가 유사합니다."));
+            return;
+          }
           emit(state.copyWith(
-              signUpState: RequestState.failure,
-              signUpErrorType: "아이디와 비밀번호가 유사합니다."));
-          return;
-        }
-        emit(state.copyWith(
-          signUpState: RequestState.failure,
-        ));
-        break;
-      default:
+            signUpState: RequestState.failure,
+          ));
+          break;
+        default:
+      }
+    } catch (e) {
+      emit(state.copyWith(fetchState: FetchState.error));
     }
   }
 }

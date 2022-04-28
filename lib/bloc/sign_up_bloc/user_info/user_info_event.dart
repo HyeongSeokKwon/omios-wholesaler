@@ -3,6 +3,8 @@ part of 'user_info_bloc.dart';
 @immutable
 abstract class UserInfoEvent {}
 
+class InitPageEvent extends UserInfoEvent {}
+
 class InputUsernameEvent extends UserInfoEvent {
   final String username;
   InputUsernameEvent({
@@ -91,14 +93,10 @@ class InputPhoneNumberEvent extends UserInfoEvent {
 }
 
 class InputCompanyRegistrationNumberEvent extends UserInfoEvent {
-  final String first;
-  final String second;
-  final String third;
+  final String number;
 
   InputCompanyRegistrationNumberEvent({
-    required this.first,
-    required this.second,
-    required this.third,
+    required this.number,
   });
 }
 

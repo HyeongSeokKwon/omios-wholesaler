@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../bloc/bloc.dart';
 import '../../bloc/sign_up_bloc/user_info/user_info_bloc.dart';
 
 class SignUpThird extends StatelessWidget {
@@ -20,21 +21,81 @@ class SignUpThird extends StatelessWidget {
             appBar: const SignUpAppBar(),
             backgroundColor: const Color(0xffffffff),
             resizeToAvoidBottomInset: false,
-            body: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  storeNumberArea(context),
-                  phoneNumberArea(),
-                  companyRegistrationNumberArea(context),
-                  pictureArea(context),
-                  termsArea(),
-                ],
-              ),
+            body: BlocBuilder<UserInfoBloc, UserInfoState>(
+              builder: (context, state) {
+                if (context.read<UserInfoBloc>().state.fetchState ==
+                    FetchState.error) {
+                  return networkErrorArea();
+                } else {
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 22 * Scale.width),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        storeNumberArea(context),
+                        phoneNumberArea(),
+                        companyRegistrationNumberArea(context),
+                        pictureArea(context),
+                        termsArea(),
+                      ],
+                    ),
+                  );
+                }
+              },
             ),
             bottomNavigationBar: bottomSheetArea()),
       ),
+    );
+  }
+
+  Widget networkErrorArea() {
+    return BlocBuilder<UserInfoBloc, UserInfoState>(
+      builder: (context, state) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "네트워크에 연결하지 못했어요",
+                style: textStyle(
+                    Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+              ),
+              Text(
+                "네트워크 연결상태를 확인하고",
+                style:
+                    textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+              ),
+              Text(
+                "다시 시도해 주세요",
+                style:
+                    textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+              ),
+              SizedBox(height: 15 * Scale.height),
+              InkWell(
+                onTap: () {
+                  context
+                      .read<UserInfoBloc>()
+                      .add(CheckIdDuplicatedEvent(id: 'mockdata'));
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      borderRadius: const BorderRadiusDirectional.all(
+                          Radius.circular(19))),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: 17 * Scale.width,
+                        vertical: 14 * Scale.height),
+                    child: Text("다시 시도하기",
+                        style: textStyle(Colors.grey[800]!, FontWeight.w500,
+                            'NotoSansKR', 15.0)),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -335,34 +396,8 @@ class SignUpThird extends StatelessWidget {
   }
 
   Widget companyRegistrationNumberArea(BuildContext context) {
-    TextEditingController first = TextEditingController();
-    TextEditingController second = TextEditingController();
-    TextEditingController third = TextEditingController();
     return BlocBuilder<UserInfoBloc, UserInfoState>(
       builder: (context, state) {
-        if (context
-            .read<UserInfoBloc>()
-            .state
-            .companyRegistrationNumber
-            .isNotEmpty) {
-          first.text = context
-              .read<UserInfoBloc>()
-              .state
-              .companyRegistrationNumber
-              .substring(0, 3);
-
-          second.text = context
-              .read<UserInfoBloc>()
-              .state
-              .companyRegistrationNumber
-              .substring(3, 5);
-
-          third.text = context
-              .read<UserInfoBloc>()
-              .state
-              .companyRegistrationNumber
-              .substring(5, 10);
-        }
         return Padding(
           padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
           child: Column(
@@ -396,23 +431,19 @@ class SignUpThird extends StatelessWidget {
               Row(
                 children: [
                   SizedBox(
-                    width: 60 * Scale.width,
+                    width: 190 * Scale.width,
                     child: TextFormField(
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp('[0-9]')),
                       ],
-                      maxLength: 3,
+                      maxLength: 10,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
                       showCursor: false,
-                      controller: first,
                       onChanged: (text) {
                         context.read<UserInfoBloc>().add(
-                            InputCompanyRegistrationNumberEvent(
-                                first: text,
-                                second: second.text,
-                                third: third.text));
-                        if (text.length == 3) {
+                            InputCompanyRegistrationNumberEvent(number: text));
+                        if (text.length == 10) {
                           FocusScope.of(context).nextFocus();
                         }
                       },
@@ -445,113 +476,7 @@ class SignUpThird extends StatelessWidget {
                               BorderSide(color: Color(0xffcccccc), width: 1),
                         ),
                       ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(width: 5 * Scale.width),
-                  SizedBox(
-                    width: 50 * Scale.width,
-                    child: TextFormField(
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp('[0-9]')),
-                      ],
-                      maxLength: 2,
-                      textInputAction: TextInputAction.next,
-                      controller: second,
-                      keyboardType: TextInputType.number,
-                      showCursor: false,
-                      onChanged: (text) {
-                        context.read<UserInfoBloc>().add(
-                            InputCompanyRegistrationNumberEvent(
-                                first: first.text,
-                                second: text,
-                                third: third.text));
-
-                        if (text.length == 2) {
-                          FocusScope.of(context).nextFocus();
-                        }
-                      },
-                      decoration: InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.fromLTRB(
-                          10 * Scale.width,
-                          10 * Scale.height,
-                          10 * Scale.width,
-                          10 * Scale.height,
-                        ),
-                        counterText: "",
-                        floatingLabelBehavior: FloatingLabelBehavior.auto,
-                        labelStyle: TextStyle(
-                          color: const Color(0xff666666),
-                          height: 0.6,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "NotoSansKR",
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14 * Scale.height,
-                        ),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          borderSide:
-                              BorderSide(color: Color(0xffcccccc), width: 1),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          borderSide:
-                              BorderSide(color: Color(0xffcccccc), width: 1),
-                        ),
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  SizedBox(width: 5 * Scale.width),
-                  SizedBox(
-                    width: 80 * Scale.width,
-                    child: TextFormField(
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp('[0-9]')),
-                      ],
-                      maxLength: 5,
-                      textInputAction: TextInputAction.next,
-                      controller: third,
-                      keyboardType: TextInputType.number,
-                      onChanged: (text) {
-                        context.read<UserInfoBloc>().add(
-                            InputCompanyRegistrationNumberEvent(
-                                first: first.text,
-                                second: second.text,
-                                third: text));
-                      },
-                      showCursor: false,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.fromLTRB(
-                          10 * Scale.width,
-                          10 * Scale.height,
-                          10 * Scale.width,
-                          10 * Scale.height,
-                        ),
-                        counterText: "",
-                        floatingLabelBehavior: FloatingLabelBehavior.auto,
-                        labelStyle: TextStyle(
-                          color: const Color(0xff666666),
-                          height: 0.6,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "NotoSansKR",
-                          fontStyle: FontStyle.normal,
-                          fontSize: 14 * Scale.height,
-                        ),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          borderSide:
-                              BorderSide(color: Color(0xffcccccc), width: 1),
-                        ),
-                        focusedBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          borderSide:
-                              BorderSide(color: Color(0xffcccccc), width: 1),
-                        ),
-                      ),
-                      textAlign: TextAlign.center,
+                      textAlign: TextAlign.left,
                     ),
                   ),
                 ],

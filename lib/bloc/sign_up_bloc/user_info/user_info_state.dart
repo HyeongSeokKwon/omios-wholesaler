@@ -24,6 +24,7 @@ class UserInfoState extends Equatable {
   final File? companyRegistrationImage;
   final RequestState signUpState;
   final String signUpErrorType;
+  final FetchState fetchState;
 
   const UserInfoState({
     required this.storeName,
@@ -46,29 +47,32 @@ class UserInfoState extends Equatable {
     required this.companyRegistrationImage,
     required this.signUpState,
     required this.signUpErrorType,
+    required this.fetchState,
   });
   factory UserInfoState.initial() {
     return const UserInfoState(
-        storeName: '',
-        name: '',
-        username: '',
-        email: '',
-        password: '',
-        checkPassword: '',
-        storeNumber: '',
-        phoneNumber: '',
-        companyRegistrationNumber: '',
-        idUnique: ValidateState.initial,
-        isIdEffective: ValidateState.initial,
-        isPasswordEffective: ValidateState.initial,
-        isPasswordSame: ValidateState.initial,
-        isPhoneNumberEffective: ValidateState.initial,
-        isStoreNumberEffective: ValidateState.initial,
-        secondPageDataValid: false,
-        thirdPageDataValid: false,
-        companyRegistrationImage: null,
-        signUpState: RequestState.initial,
-        signUpErrorType: '');
+      storeName: '',
+      name: '',
+      username: '',
+      email: '',
+      password: '',
+      checkPassword: '',
+      storeNumber: '',
+      phoneNumber: '',
+      companyRegistrationNumber: '',
+      idUnique: ValidateState.initial,
+      isIdEffective: ValidateState.initial,
+      isPasswordEffective: ValidateState.initial,
+      isPasswordSame: ValidateState.initial,
+      isPhoneNumberEffective: ValidateState.initial,
+      isStoreNumberEffective: ValidateState.initial,
+      secondPageDataValid: false,
+      thirdPageDataValid: false,
+      companyRegistrationImage: null,
+      signUpState: RequestState.initial,
+      signUpErrorType: '',
+      fetchState: FetchState.initial,
+    );
   }
 
   @override
@@ -94,6 +98,7 @@ class UserInfoState extends Equatable {
       companyRegistrationImage,
       signUpState,
       signUpErrorType,
+      fetchState,
     ];
   }
 
@@ -118,6 +123,7 @@ class UserInfoState extends Equatable {
     File? companyRegistrationImage,
     RequestState? signUpState,
     String? signUpErrorType,
+    FetchState? fetchState,
   }) {
     return UserInfoState(
       storeName: storeName ?? this.storeName,
@@ -144,6 +150,7 @@ class UserInfoState extends Equatable {
           companyRegistrationImage ?? this.companyRegistrationImage,
       signUpState: signUpState ?? RequestState.initial,
       signUpErrorType: signUpErrorType ?? '',
+      fetchState: fetchState ?? this.fetchState,
     );
   }
 }
