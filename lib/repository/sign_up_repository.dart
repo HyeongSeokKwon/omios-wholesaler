@@ -31,12 +31,15 @@ class SignUpRepository extends HttpRepository {
 
     response = await super.httpMultipartPost(
         'users/wholesalers/business_registration_images', formData, false);
+
     return response.data['data']['image'][0];
   }
 
   Future<dynamic> signUpRequest(Map body) async {
     response =
         await super.httpPublicPost('users/wholesalers', json.encode(body));
+
+    print(response);
     return response;
   }
 }

@@ -1,5 +1,6 @@
 import 'package:deepy_wholesaler/page/sign_up/sign_up_appbar.dart';
 import 'package:deepy_wholesaler/util/util.dart';
+import 'package:deepy_wholesaler/widget/alert_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -613,33 +614,11 @@ class SignUpThird extends StatelessWidget {
         if (context.read<UserInfoBloc>().state.signUpState ==
             RequestState.failure) {
           final userInfoBloc = BlocProvider.of<UserInfoBloc>(context);
-          showDialog(
-            context: context,
-            builder: (context) {
-              return BlocProvider.value(
-                value: userInfoBloc,
-                child: AlertDialog(
-                  content: Text(
-                    userInfoBloc.state.signUpErrorType,
-                    style: textStyle(
-                        Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text(
-                        "확인",
-                        style: textStyle(
-                            Colors.black, FontWeight.w500, 'NotoSansKR', 15.0),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                ),
-              );
-            },
+          showAlertDialog(
+            context,
+            userInfoBloc.state.signUpErrorType,
           );
+
           // showAlertDialog(
           //     context, context.read<UserInfoBloc>().state.signUpErrorType);
         }

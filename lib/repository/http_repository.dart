@@ -15,6 +15,7 @@ class HttpRepository {
   late SharedPreferences pref;
 
   dynamic _response(http.Response response) {
+    print(response.body);
     switch (response.statusCode) {
       case 200:
         var responseJson = jsonDecode(utf8.decode(response.bodyBytes));
@@ -190,7 +191,19 @@ class HttpRepository {
     Response response;
 
     try {
-      response = await updateToken().then(((value) async {
+      if (needAuth) {
+        response = await updateToken().then(((value) async {
+          return await Dio().post(
+            Uri.http(addressUrl, addtionalUrl).toString(),
+            options: Options(headers: {
+              HttpHeaders.authorizationHeader:
+                  needAuth ? 'Bearer $accessToken' : null,
+              "Content-Type": "multipart/form-data;",
+            }),
+            data: body,
+          );
+        }));
+      } else {
         return await Dio().post(
           Uri.http(addressUrl, addtionalUrl).toString(),
           options: Options(headers: {
@@ -200,7 +213,8 @@ class HttpRepository {
           }),
           data: body,
         );
-      }));
+      }
+
       // response = await updateToken().then(((value) async {
       //   return await http.post(
       //       Uri.http(

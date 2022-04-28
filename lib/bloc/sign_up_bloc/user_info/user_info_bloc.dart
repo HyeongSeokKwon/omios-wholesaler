@@ -309,7 +309,10 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
       emit(state.copyWith(
           signUpState: RequestState.initial, signUpErrorType: ""));
       s3ImageUrl = await signUpRepository
-          .registusinessRegistrationImage(state.companyRegistrationImage!.path);
+          .registusinessRegistrationImage(state.companyRegistrationImage!.path)
+          .catchError((e) {
+        print(e.toString());
+      });
 
       body = {
         'username': state.username,
@@ -328,7 +331,7 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
             " " +
             storeLocationBloc.state.inputRoom,
       };
-
+      print(body);
       response = await signUpRepository.signUpRequest(body);
 
       switch (response['code']) {
@@ -336,20 +339,24 @@ class UserInfoBloc extends Bloc<UserInfoEvent, UserInfoState> {
           emit(state.copyWith(signUpState: RequestState.success));
           break;
         case 400:
-          if (response['message']['non_field_errors'][0] ==
-              "The similarity between password and username is too large.") {
-            emit(state.copyWith(
-                signUpState: RequestState.failure,
-                signUpErrorType: "아이디와 비밀번호가 유사합니다."));
-            return;
-          }
+          // print(response);
+          // if (response['message']['non_field_errors'][0] ==
+          //     "The similarity between password and username is too large.") {
+          //   emit(state.copyWith(
+          //       signUpState: RequestState.failure,
+          //       signUpErrorType: "아이디와 비밀번호가 유사합니다."));
+          //   return;
+          // }
           emit(state.copyWith(
             signUpState: RequestState.failure,
+            signUpErrorType: response["message"].toString(),
           ));
+          //emit(state.copyWith(signUpState: RequestState.initial));
           break;
         default:
       }
     } catch (e) {
+      print(e.toString());
       emit(state.copyWith(fetchState: FetchState.error));
     }
   }
