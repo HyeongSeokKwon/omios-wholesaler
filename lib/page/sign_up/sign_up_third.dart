@@ -2,7 +2,6 @@ import 'package:deepy_wholesaler/page/sign_up/sign_up_appbar.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../bloc/bloc.dart';
@@ -436,6 +435,10 @@ class SignUpThird extends StatelessWidget {
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp('[0-9]')),
                       ],
+                      initialValue: context
+                          .read<UserInfoBloc>()
+                          .state
+                          .companyRegistrationNumber,
                       maxLength: 10,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
