@@ -8,7 +8,7 @@ enum FetchStatus {
 }
 
 class MypageState extends Equatable {
-  final List<dynamic> productsData;
+  final Map<String, dynamic> productsData;
   final Map<String, dynamic> userInfoData;
   final FetchStatus fetchStatus;
   final String error;
@@ -22,7 +22,7 @@ class MypageState extends Equatable {
 
   factory MypageState.initial() {
     return const MypageState(
-        productsData: [],
+        productsData: {},
         userInfoData: {},
         fetchStatus: FetchStatus.unfetched,
         error: '');
@@ -32,7 +32,7 @@ class MypageState extends Equatable {
   List<Object?> get props => [productsData, userInfoData, fetchStatus, error];
 
   MypageState copyWith({
-    List<dynamic>? productsData,
+    Map<String, dynamic>? productsData,
     Map<String, dynamic>? userInfoData,
     FetchStatus? fetchStatus,
     String? error,

@@ -13,8 +13,18 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => MypageBloc(mypageRepository: MypageRepository()),
+    final InfinityScrollBloc infinityScrollBloc = InfinityScrollBloc();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (BuildContext context) => MypageBloc(
+              mypageRepository: MypageRepository(),
+              infinityBloc: infinityScrollBloc),
+        ),
+        BlocProvider<InfinityScrollBloc>(
+          create: (BuildContext context) => infinityScrollBloc,
+        ),
+      ],
       child: const Scaffold(
         body: ScrollArea(),
       ),

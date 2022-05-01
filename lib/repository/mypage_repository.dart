@@ -7,7 +7,7 @@ class MypageRepository extends HttpRepository {
 
   Future<dynamic> getMyproducts() async {
     response = await super.httpGet("products");
-    return response['data']['results'];
+    return response['data'];
   }
 
   Future<dynamic> getUserInfo() async {

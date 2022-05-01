@@ -19,3 +19,4 @@ export 'regist_product_bloc/manufacture_country_bloc/manufacturecountry_bloc.dar
 export 'regist_product_bloc/theme_bloc/theme_bloc.dart';
 export 'sign_up_bloc/store_location_bloc/store_location_bloc.dart';
 export 'edit_product_bloc/initItem_bloc/inititem_bloc.dart';
+export 'infinity_scroll_bloc/infinity_scroll_bloc.dart';
