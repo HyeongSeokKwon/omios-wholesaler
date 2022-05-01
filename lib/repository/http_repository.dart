@@ -47,7 +47,7 @@ class HttpRepository {
     }
   }
 
-  void getToken() async {
+  Future<void> getToken() async {
     pref = await SharedPreferences.getInstance();
     refreshToken = pref.getString('refreshToken');
     accessToken = pref.getString('accessToken');
