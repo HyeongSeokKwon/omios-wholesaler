@@ -51,14 +51,16 @@ class AuthenticationBloc
     emit(state.copyWith(authStatus: AuthStatus.loading));
     try {
       Map response = await authRepository.basicLogin(event.id, event.password);
-      if (Jwt.parseJwt(response['data']['access'])['user_type'] == 'shopper') {
-        emit(state.copyWith(
-            authStatus: AuthStatus.loginFailure,
-            error: "아이디 패스워드가 존재하지 않습니다."));
-        return;
-      }
+
       switch (response['code']) {
         case 201:
+          if (Jwt.parseJwt(response['data']['access'])['user_type'] ==
+              'shopper') {
+            emit(state.copyWith(
+                authStatus: AuthStatus.loginFailure,
+                error: "아이디 패스워드가 존재하지 않습니다."));
+            return;
+          }
           authRepository.setAccessToken(response['data']['access']);
           authRepository.setRefreshToken(response['data']['refresh']);
 
@@ -66,8 +68,10 @@ class AuthenticationBloc
           break;
 
         case 401:
-          emit(state.copyWith(authStatus: AuthStatus.loginFailure));
-          break;
+          emit(state.copyWith(
+              authStatus: AuthStatus.loginFailure,
+              error: "아이디 패스워드가 존재하지 않습니다."));
+          return;
       }
     } catch (e) {
       emit(state.copyWith(
@@ -82,7 +86,6 @@ class AuthenticationBloc
     bool? isAutoLoginClicked = prefs.getBool('autoLogin');
     String? refreshToken = prefs.getString('refreshToken');
     Map response;
-    print(isAutoLoginClicked);
     if (isAutoLoginClicked == true && refreshToken != null) {
       try {
         response = await authRepository.autoLogin(refreshToken);

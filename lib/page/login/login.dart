@@ -61,7 +61,11 @@ class _LoginState extends State<Login> {
                 break;
               case AuthStatus.loginFailure:
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('로그인 에러가 발생했습니다.')));
+                  SnackBar(
+                    content:
+                        Text(context.read<AuthenticationBloc>().state.error),
+                  ),
+                );
                 break;
 
               case AuthStatus.loginError:

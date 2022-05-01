@@ -1,5 +1,5 @@
 export 'auth_bloc/authentication_bloc.dart';
-export 'myproducts_bloc/myproducts_bloc.dart';
+export 'mypage_bloc/mypage_bloc.dart';
 export 'package:flutter_bloc/flutter_bloc.dart';
 export 'regist_product_bloc/name_bloc/name_bloc.dart';
 export 'regist_product_bloc/color_bloc/color_bloc.dart';
