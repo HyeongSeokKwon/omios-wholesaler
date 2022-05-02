@@ -10,3 +10,8 @@ abstract class MypageEvent extends Equatable {
 class LoadMyProductsEvent extends MypageEvent {}
 
 class LoadMyInfovEvent extends MypageEvent {}
+
+class SearchMyProductsEvent extends MypageEvent {
+  final String searchWord;
+  const SearchMyProductsEvent({required this.searchWord});
+}

@@ -15,9 +15,20 @@ class MypageRepository extends HttpRepository {
     int id = Jwt.parseJwt(super.accessToken!)['user_id'];
 
     response = await super.httpGet("users/wholesalers/$id");
-    print(response);
+
     return response['data'];
   }
 
-  Future<dynamic> getProductInfo() async {}
+  Future<dynamic> searchProducts(String searchWord) async {
+    queryParams = {};
+    if (searchWord.isNotEmpty) {
+      queryParams['search_word'] = searchWord;
+    }
+
+    response = await super.httpGet("products", queryParams).catchError((e) {
+      throw e;
+    });
+
+    return response['data'];
+  }
 }

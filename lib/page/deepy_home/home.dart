@@ -26,6 +26,7 @@ class _HomeState extends State<Home> {
         ),
       ],
       child: const Scaffold(
+        backgroundColor: Colors.white,
         body: ScrollArea(),
       ),
     );

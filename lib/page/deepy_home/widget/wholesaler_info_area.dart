@@ -67,7 +67,7 @@ class WholeSalerInfoArea extends StatelessWidget {
                                 Text("등록 상품 수",
                                     style: textStyle(Colors.black,
                                         FontWeight.w500, "NotoSansKR", 14.0)),
-                                Text("N개",
+                                Text("${state.totalProducts}개",
                                     style: textStyle(Colors.black,
                                         FontWeight.w500, "NotoSansKR", 14.0))
                               ],

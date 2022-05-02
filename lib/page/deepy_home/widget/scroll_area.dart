@@ -18,7 +18,6 @@ class _ScrollAreaState extends State<ScrollArea> {
   void initState() {
     super.initState();
     scrollController.addListener(() {
-      print(scrollController.offset);
       if (scrollController.offset ==
           scrollController.position.maxScrollExtent) {
         context.read<InfinityScrollBloc>().add(AddDataEvent());

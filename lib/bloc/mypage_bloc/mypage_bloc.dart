@@ -11,6 +11,7 @@ class MypageBloc extends Bloc<MypageEvent, MypageState> {
   MypageBloc({required this.mypageRepository, required this.infinityBloc})
       : super(MypageState.initial()) {
     on<LoadMyProductsEvent>(getMyproducts);
+    on<SearchMyProductsEvent>(searchProducts);
   }
 
   Future<void> getMyproducts(
@@ -22,11 +23,25 @@ class MypageBloc extends Bloc<MypageEvent, MypageState> {
 
       infinityBloc.state.getData = myproductsData;
       infinityBloc.state.productData = myproductsData['results'];
-
       emit(state.copyWith(
+          totalProducts: myproductsData['count'],
           productsData: myproductsData,
           userInfoData: userInfoData,
           fetchStatus: FetchStatus.fetched));
+    } catch (e) {
+      emit(state.copyWith(fetchStatus: FetchStatus.error));
+    }
+  }
+
+  Future<void> searchProducts(
+      SearchMyProductsEvent event, Emitter<MypageState> emit) async {
+    Map<String, dynamic> productData = {};
+    try {
+      productData = await mypageRepository.searchProducts(event.searchWord);
+      infinityBloc.state.getData = productData;
+      infinityBloc.state.productData = productData['results'];
+      emit(state.copyWith(
+          fetchStatus: FetchStatus.fetched, productsData: productData));
     } catch (e) {
       emit(state.copyWith(fetchStatus: FetchStatus.error));
     }

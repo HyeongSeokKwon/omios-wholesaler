@@ -23,7 +23,6 @@ class InfinityScrollBloc
       emit(state.copyWith(getState: FetchState.loading));
       response = await _httpRepository.httpGet(
           nextLink.path, nextLink.queryParameters);
-
       emit(state.copyWith(
           getState: FetchState.success,
           productData: List.of(state.productData)
