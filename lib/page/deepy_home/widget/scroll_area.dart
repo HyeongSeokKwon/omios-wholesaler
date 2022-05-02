@@ -27,27 +27,15 @@ class _ScrollAreaState extends State<ScrollArea> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<MypageBloc, MypageState>(
-      builder: (context, state) {
-        if (context.read<MypageBloc>().state.fetchStatus == FetchStatus.error) {
-          return Container();
-        } else if (context.read<MypageBloc>().state.fetchStatus ==
-            FetchStatus.unfetched) {
-          context.read<MypageBloc>().add(LoadMyProductsEvent());
-          return progressBar();
-        } else {
-          return SingleChildScrollView(
-            controller: scrollController,
-            physics: const ScrollPhysics(),
-            child: Column(
-              children: const [
-                WholeSalerInfoArea(),
-                WholeSalerProductArea(),
-              ],
-            ),
-          );
-        }
-      },
+    return SingleChildScrollView(
+      controller: scrollController,
+      physics: const ScrollPhysics(),
+      child: Column(
+        children: const [
+          WholeSalerInfoArea(),
+          WholeSalerProductArea(),
+        ],
+      ),
     );
   }
 }

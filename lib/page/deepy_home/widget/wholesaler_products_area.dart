@@ -48,6 +48,8 @@ class _WholeSalerProductAreaState extends State<WholeSalerProductArea> {
                               fontFamily: "NotoSansKR",
                               fontSize: 13.0,
                             ),
+                            cursorHeight: 18 * Scale.height,
+                            cursorColor: Colors.grey[600],
                             decoration: InputDecoration(
                               counterText: "",
                               contentPadding:
@@ -111,10 +113,10 @@ class _WholeSalerProductAreaState extends State<WholeSalerProductArea> {
                 ),
               ],
             );
-          } else if (state.fetchStatus == FetchStatus.error) {
+          } else if (state.fetchStatus == FetchStatus.unfetched) {
+            context.read<MypageBloc>().add(LoadMyProductsEvent());
             return progressBar();
           } else {
-            context.read<MypageBloc>().add(LoadMyProductsEvent());
             return progressBar();
           }
         });
