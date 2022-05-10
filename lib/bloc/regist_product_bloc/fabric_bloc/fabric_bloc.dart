@@ -43,8 +43,13 @@ class FabricBloc extends Bloc<FabricEvent, FabricState> {
 
   void editFabricName(EditFabricsNameEvent event, Emitter<FabricState> emit) {
     List<Map> copy = [...state.fabricList];
-
+    for (var value in state.selectedFabric) {
+      if (value['name'] == copy[event.fabricIndex]['name']) {
+        value['name'] = event.fabricName;
+      }
+    }
     copy[event.fabricIndex]['name'] = event.fabricName;
+
     emit(state.copyWith(fabricList: copy));
   }
 

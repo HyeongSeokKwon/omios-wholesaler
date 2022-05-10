@@ -85,6 +85,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     additionalInfoBloc.state.thicknessList = dynamicData['thickness'] ?? [];
     additionalInfoBloc.state.seeThroughList = dynamicData['see_through'] ?? [];
     additionalInfoBloc.state.liningList = dynamicData['lining'] ?? [];
+    print(additionalInfoBloc.state.thicknessList);
   }
 
   //registry-common api
@@ -134,6 +135,8 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     try {
       dynamicData = await registRepository
           .getRegistryData(categoryBloc.state.selectedSubCategory['id']);
+      print("info");
+      print(dynamicData);
       insertRegistryDynamicData(dynamicData);
 
       emit(state.copyWith(fetchState: FetchState.success));
@@ -186,6 +189,7 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     manufacturecountryBloc.state.selectedCountry =
         registedData['manufacturing_country'];
     //소재 주입 완료
+
     for (var value in registedData['materials']) {
       bool isCustomed = true;
       fabricBloc.state.selectedFabric.add({
@@ -281,7 +285,6 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
       }
 
       for (var option in value['options']) {
-        print(option);
         for (var sizeValue in sizeBloc.state.selectedSizeMap) {
           if (sizeValue['name'] == option['size'] &&
               option['on_sale'] == true) {
@@ -311,14 +314,17 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
         }
       }
     }
-    additionalInfoBloc.state.selectedAdditionalInfo.addAll({
-      'thickness': additionalInfoBloc
-          .state.thicknessList![registedData['thickness']['id'] - 1],
-      'see_through': additionalInfoBloc
-          .state.seeThroughList![registedData['see_through']['id'] - 1],
-      'flexibility': additionalInfoBloc
-          .state.elasticityList![registedData['flexibility']['id'] - 1],
-      'lining': registedData['lining'],
-    });
+
+    if (additionalInfoBloc.state.thicknessList!.isNotEmpty) {
+      additionalInfoBloc.state.selectedAdditionalInfo.addAll({
+        'thickness': additionalInfoBloc
+            .state.thicknessList![registedData['thickness']['id'] - 1],
+        'see_through': additionalInfoBloc
+            .state.seeThroughList![registedData['see_through']['id'] - 1],
+        'flexibility': additionalInfoBloc
+            .state.elasticityList![registedData['flexibility']['id'] - 1],
+        'lining': registedData['lining'],
+      });
+    }
   }
 }

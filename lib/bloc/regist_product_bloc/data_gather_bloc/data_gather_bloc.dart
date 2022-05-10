@@ -64,6 +64,7 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
     //기존 상품 정보 변경시
     if (event.registMode == RegistMode.edit) {
       var body = {};
+      print(body);
       body = compareUpdatedData();
       await _registRepository.updateProduct(
           body, initEditItemBloc!.state.data['id']);
@@ -405,7 +406,6 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
 
         if (color['customedName'] == infoByColor['color']['customedName']) {
           option['size'] = infoByColor['size']['name'];
-          option['price_difference'] = infoByColor['price_difference'];
           option['inventory'] = infoByColor['inventory'];
           options[color['customedName']].add(option);
         }
@@ -527,10 +527,18 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
           break;
         }
       }
-      if (isDeleted && registedValue['on_sale'] == true) {
+      if (isDeleted == true && registedValue['on_sale'] == true) {
         registData['colors'].add({'id': registedValue['id']});
+        print("deleted");
       }
     }
+
+    print("기존 등록된 데이터");
+    print(initEditItemBloc!.state.data['colors']);
+    print("===================================");
+    print("향후 업데이트 될 데이터");
+    print(registData['colors']);
+    print("===================================");
 
     List<int> notChangedColorIndex = [];
     for (Map willRegistValue in registData['colors']) {
@@ -552,7 +560,8 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
                 break;
               }
             }
-            if (isDeleted) {
+            if (isDeleted && registedOptionValue['on_sale'] == true) {
+              print("option is deleted");
               willRegistValue['options'].add({'id': registedOptionValue['id']});
             }
           }
@@ -560,7 +569,8 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
           for (Map willRegistOptionValue in willRegistValue['options']) {
             for (Map registedOptionValue in registedValue['options']) {
               if (willRegistOptionValue['size'] ==
-                  registedOptionValue['size']) {
+                      registedOptionValue['size'] &&
+                  registedOptionValue['on_sale']) {
                 willRegistOptionValue['id'] = registedOptionValue['id'];
                 willRegistOptionValue.remove('size');
 
@@ -568,6 +578,7 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
                     registedOptionValue['price_difference']) {
                   willRegistOptionValue.remove('price_difference');
                   willRegistOptionValue['isChanged'] = false;
+                  print('price_difference is same');
                 }
               }
               willRegistOptionValue.remove('inventory');

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 dynamic showAlertDialog(BuildContext context, String eString) {
   if (Platform.isIOS) {
-    print("ios alert");
     return showDialog(
         context: context,
         builder: (context) {
@@ -27,7 +26,6 @@ dynamic showAlertDialog(BuildContext context, String eString) {
     return showDialog(
       context: context,
       builder: (context) {
-        print("android alert");
         return AlertDialog(
           content: Text(
             eString,

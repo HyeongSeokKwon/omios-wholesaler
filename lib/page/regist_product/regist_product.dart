@@ -748,9 +748,6 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                   }
                 },
                 controller: state.textEditingController,
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9' ']")),
-                ],
                 onChanged: (value) {
                   context.read<NameBloc>().add(ChangeNameEvent(name: value));
                 },
