@@ -2,7 +2,6 @@ import 'package:deepy_wholesaler/model/product_model.dart';
 import 'package:deepy_wholesaler/page/edit_product/edit_product.dart';
 import 'package:deepy_wholesaler/widget/progress_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 import '../../../bloc/bloc.dart';
 import '../../../util/util.dart';

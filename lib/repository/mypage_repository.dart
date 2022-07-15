@@ -11,10 +11,7 @@ class MypageRepository extends HttpRepository {
   }
 
   Future<dynamic> getUserInfo() async {
-    await super.getToken();
-    int id = Jwt.parseJwt(super.accessToken!)['user_id'];
-
-    response = await super.httpGet("users/wholesalers/$id");
+    response = await super.httpGet("users/wholesalers");
 
     return response['data'];
   }

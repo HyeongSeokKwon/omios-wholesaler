@@ -1,7 +1,7 @@
 import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/page/deepy_home/widget/wholesaler_info_area.dart';
 import 'package:deepy_wholesaler/page/deepy_home/widget/wholesaler_products_area.dart';
-import 'package:deepy_wholesaler/widget/progress_bar.dart';
+
 import 'package:flutter/material.dart';
 
 class ScrollArea extends StatefulWidget {

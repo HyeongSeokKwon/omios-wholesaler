@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:deepy_wholesaler/page/deepy_home/home.dart';
 import 'package:deepy_wholesaler/page/splash.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +8,6 @@ import 'page/login/login.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-
-  SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((value) => runApp(const MyApp()));
