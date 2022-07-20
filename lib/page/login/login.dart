@@ -94,14 +94,14 @@ class _LoginState extends State<Login> {
                         content: Text(
                           state.error,
                           style: textStyle(Colors.black, FontWeight.w500,
-                              'NotoSansKR', 16.0),
+                              'Pretendard', 16.0),
                         ),
                         actions: <Widget>[
                           TextButton(
                             child: Text(
                               "확인",
                               style: textStyle(Colors.black, FontWeight.w500,
-                                  'NotoSansKR', 15.0),
+                                  'Pretendard', 15.0),
                             ),
                             onPressed: () {
                               setState(() {});

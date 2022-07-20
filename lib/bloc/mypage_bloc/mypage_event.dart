@@ -15,3 +15,7 @@ class SearchMyProductsEvent extends MypageEvent {
   final String searchWord;
   const SearchMyProductsEvent({required this.searchWord});
 }
+
+class GetWholeSalerInfoEvent extends MypageEvent {}
+
+class ClickPatchButtonEvent extends MypageEvent {}

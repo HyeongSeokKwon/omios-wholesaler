@@ -2,10 +2,12 @@ import 'package:deepy_wholesaler/page/mypage/userinfo_edit_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../bloc/mypage_bloc/mypage_bloc.dart';
 import '../../util/util.dart';
 
 class Mypage extends StatefulWidget {
-  const Mypage({Key? key}) : super(key: key);
+  final MypageBloc mypageBloc;
+  const Mypage({Key? key, required this.mypageBloc}) : super(key: key);
 
   @override
   State<Mypage> createState() => _MypageState();
@@ -56,7 +58,9 @@ class _MypageState extends State<Mypage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const UserInfoEditPage()));
+                      builder: (context) => UserInfoEditPage(
+                            mypageBloc: widget.mypageBloc,
+                          )));
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,7 +73,7 @@ class _MypageState extends State<Mypage> {
                         fit: BoxFit.scaleDown),
                     SizedBox(width: 16 * Scale.width),
                     Text(
-                      "개인정보 확인 및 변경",
+                      "회원정보 확인 및 변경",
                       style: textStyle(const Color(0xff333333), FontWeight.w500,
                           "NotoSansKR", 16.0),
                     ),

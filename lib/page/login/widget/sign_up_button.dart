@@ -14,7 +14,7 @@ class SignUpButton extends StatelessWidget {
           child: Text(
             "지금 회원가입하기!",
             style: textStyle(
-                const Color(0xff666666), FontWeight.w500, "NotoSansKR", 16.0),
+                const Color(0xff666666), FontWeight.w500, "Pretendard", 15.0),
           ),
           style: ButtonStyle(
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(

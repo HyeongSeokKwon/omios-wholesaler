@@ -145,13 +145,12 @@ class _RegistProductState extends State<RegistProduct> {
               SizedBox(width: 10 * Scale.width),
               Text("상품 등록",
                   style: textStyle(const Color(0xff333333), FontWeight.w700,
-                      "NotoSansKR", 20.0)),
+                      "Pretendard", 20.0)),
             ],
           ),
         ),
         body: BlocBuilder<NetworkConnectionBloc, NetworkConnectionState>(
           builder: (context, state) {
-            print(state.networkState);
             if (context.read<NetworkConnectionBloc>().state.networkState ==
                 NetworkState.active) {
               return ScrollArea(registMode: widget.registMode);
@@ -163,17 +162,17 @@ class _RegistProductState extends State<RegistProduct> {
                     Text(
                       "네트워크에 연결하지 못했어요",
                       style: textStyle(
-                          Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+                          Colors.black, FontWeight.w700, "Pretendard", 20.0),
                     ),
                     Text(
                       "네트워크 연결상태를 확인하고",
                       style: textStyle(
-                          Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                          Colors.grey, FontWeight.w500, "Pretendard", 13.0),
                     ),
                     Text(
                       "다시 시도해 주세요",
                       style: textStyle(
-                          Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                          Colors.grey, FontWeight.w500, "Pretendard", 13.0),
                     ),
                     SizedBox(height: 15 * Scale.height),
                     InkWell(
@@ -195,7 +194,7 @@ class _RegistProductState extends State<RegistProduct> {
                               vertical: 14 * Scale.height),
                           child: Text("다시 시도하기",
                               style: textStyle(Colors.black, FontWeight.w700,
-                                  'NotoSansKR', 15.0)),
+                                  'Pretendard', 15.0)),
                         ),
                       ),
                     ),
@@ -327,15 +326,15 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
         children: [
           Text(
             "네트워크에 연결하지 못했어요",
-            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+            style: textStyle(Colors.black, FontWeight.w700, "Pretendard", 20.0),
           ),
           Text(
             "네트워크 연결상태를 확인하고",
-            style: textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+            style: textStyle(Colors.grey, FontWeight.w500, "Pretendard", 13.0),
           ),
           Text(
             "다시 시도해 주세요",
-            style: textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+            style: textStyle(Colors.grey, FontWeight.w500, "Pretendard", 13.0),
           ),
           SizedBox(height: 15 * Scale.height),
           InkWell(
@@ -356,7 +355,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     horizontal: 17 * Scale.width, vertical: 14 * Scale.height),
                 child: Text("다시 시도하기",
                     style: textStyle(
-                        Colors.black, FontWeight.w700, 'NotoSansKR', 15.0)),
+                        Colors.black, FontWeight.w700, 'Pretendard', 15.0)),
               ),
             ),
           ),
@@ -376,7 +375,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
       child: Center(
         child: Text(
           "상품등록안내 & 유의사항",
-          style: textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 16.0),
+          style: textStyle(Colors.black, FontWeight.w500, "Pretendard", 16.0),
         ),
       ),
     );
@@ -390,7 +389,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
           children: [
             Text(
               "카테고리 선택(필수)",
-              style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 14),
+              style: textStyle(Colors.black, FontWeight.w600, "Pretendard", 15),
             ),
             InkWell(
               child: Padding(
@@ -416,7 +415,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                 ? "대분류"
                                 : "${state.selectedMainCategory['name']}",
                             style: textStyle(Colors.grey[600]!, FontWeight.w500,
-                                'NotoSansKR', 13.0)),
+                                'Pretendard', 13.0)),
                       ),
                       Icon(
                         Icons.keyboard_arrow_down,
@@ -482,7 +481,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                 style: textStyle(
                                                     const Color(0xff333333),
                                                     FontWeight.w700,
-                                                    "NotoSansKR",
+                                                    "Pretendard",
                                                     21.0)),
                                           ),
                                           Expanded(
@@ -523,7 +522,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                             style: textStyle(
                                                                 Colors.black,
                                                                 FontWeight.w300,
-                                                                "NotoSansKR",
+                                                                "Pretendard",
                                                                 19.0),
                                                           ),
                                                         ],
@@ -574,7 +573,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                   ? "소분류"
                                   : "${state.selectedSubCategory['name']}",
                               style: textStyle(Colors.grey[600]!,
-                                  FontWeight.w500, 'NotoSansKR', 13.0)),
+                                  FontWeight.w500, 'Pretendard', 13.0)),
                         ),
                         Icon(
                           Icons.keyboard_arrow_down,
@@ -644,7 +643,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                   style: textStyle(
                                                       const Color(0xff333333),
                                                       FontWeight.w700,
-                                                      "NotoSansKR",
+                                                      "Pretendard",
                                                       21.0)),
                                             ),
                                             Expanded(
@@ -690,7 +689,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                                   Colors.black,
                                                                   FontWeight
                                                                       .w300,
-                                                                  "NotoSansKR",
+                                                                  "Pretendard",
                                                                   19.0),
                                                             ),
                                                           ],
@@ -731,7 +730,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
           padding: EdgeInsets.symmetric(vertical: 5 * Scale.height),
           child: Text(
             "상품명 입력(필수)",
-            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 15.0),
+            style: textStyle(Colors.black, FontWeight.w600, "Pretendard", 15.0),
           ),
         ),
         BlocBuilder<NameBloc, NameState>(
@@ -759,7 +758,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     color: const Color(0xff666666),
                     height: 0.6,
                     fontWeight: FontWeight.w400,
-                    fontFamily: "NotoSansKR",
+                    fontFamily: "Pretendard",
                     fontStyle: FontStyle.normal,
                     fontSize: 14 * Scale.height,
                   ),
@@ -784,7 +783,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                   ),
                   hintText: ("상품명을 입력하세요"),
                   hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                      "NotoSansKR", 14.0),
+                      "Pretendard", 14.0),
                 ),
                 textAlign: TextAlign.left,
               ),
@@ -801,7 +800,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
         return TextButton(
           child: Text("$addPrice" + unit,
               style:
-                  textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 14.0)),
+                  textStyle(Colors.black, FontWeight.w500, "Pretendard", 14.0)),
           style: ButtonStyle(
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
@@ -843,7 +842,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
               child: Text(
                 "단가(필수)",
                 style: textStyle(
-                    Colors.black, FontWeight.w700, "NotoSansKR", 15.0),
+                    Colors.black, FontWeight.w600, "Pretendard", 15.0),
               ),
             ),
             Form(
@@ -880,7 +879,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     color: const Color(0xff666666),
                     height: 0.6,
                     fontWeight: FontWeight.w400,
-                    fontFamily: "NotoSansKR",
+                    fontFamily: "Pretendard",
                     fontStyle: FontStyle.normal,
                     fontSize: 14 * Scale.height,
                   ),
@@ -906,7 +905,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                   ),
                   hintText: ("상품명을 입력하세요"),
                   hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                      "NotoSansKR", 14.0),
+                      "Pretendard", 14.0),
                 ),
                 textAlign: TextAlign.left,
               ),
@@ -933,7 +932,11 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 ),
                 addPriceButton(2, "만원"),
               ],
-            )
+            ),
+            SizedBox(height: 5 * Scale.height),
+            state.retailPrice != '0'
+                ? Text("판매가격 ${state.retailPrice}")
+                : const SizedBox(),
           ],
         );
       },
@@ -949,7 +952,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             Text(
               "색상 선택 및 입력(필수)",
               style:
-                  textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                  textStyle(Colors.black, FontWeight.w600, "Pretendard", 17.0),
             ),
             GridView.builder(
               shrinkWrap: true,
@@ -990,8 +993,8 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     .contains(state.colorList[index]['name'])
                                 ? Colors.black
                                 : Colors.grey[400]!,
-                            FontWeight.w500,
-                            "NotoSansKR",
+                            FontWeight.w600,
+                            "Pretendard",
                             13.0),
                       ),
                     ),
@@ -1061,7 +1064,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                   Text(
                                     "계열 : ${context.read<ColorBloc>().state.selectedColorMap[index]['color']}",
                                     style: textStyle(Colors.grey[700]!,
-                                        FontWeight.w400, "NotoSansKR", 16.0),
+                                        FontWeight.w400, "Pretendard", 16.0),
                                   ),
                                 ],
                               ),
@@ -1070,7 +1073,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                   Text(
                                     "색상이름 : ",
                                     style: textStyle(Colors.grey[700]!,
-                                        FontWeight.w400, "NotoSansKR", 16.0),
+                                        FontWeight.w400, "Pretendard", 16.0),
                                   ),
                                   SizedBox(
                                     width: 100 * Scale.width,
@@ -1080,7 +1083,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                               ['colorId']
                                           .toString()),
                                       style: textStyle(Colors.grey[700]!,
-                                          FontWeight.w400, "NotoSansKR", 15.0),
+                                          FontWeight.w400, "Pretendard", 15.0),
                                       initialValue: context
                                               .read<ColorBloc>()
                                               .state
@@ -1109,7 +1112,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                           color: const Color(0xff666666),
                                           height: 0.6,
                                           fontWeight: FontWeight.w400,
-                                          fontFamily: "NotoSansKR",
+                                          fontFamily: "Pretendard",
                                           fontStyle: FontStyle.normal,
                                           fontSize: 150 * Scale.height,
                                         ),
@@ -1154,7 +1157,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
       children: [
         Text(
           "사진등록(필수)",
-          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+          style: textStyle(Colors.black, FontWeight.w600, "Pretendard", 17.0),
         ),
         TabBar(
           controller: photoTabController,
@@ -1163,11 +1166,11 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             Tab(
                 child: Text("기본 이미지",
                     style: textStyle(
-                        Colors.black, FontWeight.w500, "NotoSansKR", 13.0))),
+                        Colors.black, FontWeight.w500, "Pretendard", 13.0))),
             Tab(
                 child: Text("색상별 이미지",
                     style: textStyle(
-                        Colors.black, FontWeight.w500, "NotoSansKR", 13.0))),
+                        Colors.black, FontWeight.w500, "Pretendard", 13.0))),
           ],
         ),
         Container(
@@ -1227,12 +1230,14 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                               style: textStyle(
                                                   Colors.black,
                                                   FontWeight.w500,
-                                                  "NotoSansKR",
+                                                  "Pretendard",
                                                   12.0),
                                             ),
                                           ],
                                         )
                                       : ReorderableListView.builder(
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
                                           itemBuilder: (context, index) {
                                             return Container(
                                               color: Colors.indigo[50]!,
@@ -1279,7 +1284,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                                         500]!,
                                                                     FontWeight
                                                                         .w500,
-                                                                    'NotoSansKR',
+                                                                    'Pretendard',
                                                                     16 *
                                                                         Scale
                                                                             .width)),
@@ -1368,7 +1373,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                         child: Text(
                           color['customedName'],
                           style: textStyle(Colors.black, FontWeight.w500,
-                              "NotoSansKR", 12.0),
+                              "Pretendard", 12.0),
                         ),
                       ),
                     );
@@ -1408,7 +1413,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                             style: textStyle(
                                                 Colors.black,
                                                 FontWeight.w500,
-                                                "NotoSansKR",
+                                                "Pretendard",
                                                 12.0),
                                           ),
                                         ],
@@ -1447,7 +1452,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                               style: textStyle(
                                                   Colors.black,
                                                   FontWeight.w500,
-                                                  "NotoSansKR",
+                                                  "Pretendard",
                                                   16.0)),
                                         )
                                       : TabBarView(
@@ -1541,7 +1546,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     Text(
                       "사이즈 선택(필수)",
                       style: textStyle(
-                          Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                          Colors.black, FontWeight.w700, "Pretendard", 18.0),
                     ),
                     SizedBox(height: 10 * Scale.height),
                     Column(
@@ -1584,7 +1589,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                 style: textStyle(
                                                     Colors.black,
                                                     FontWeight.w500,
-                                                    "NotoSansKR",
+                                                    "Pretendard",
                                                     12.0),
                                               ),
                                               SizedBox(width: 4 * Scale.width),
@@ -1660,7 +1665,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                 ? Colors.black
                                                 : Colors.grey[400]!,
                                             FontWeight.w500,
-                                            "NotoSansKR",
+                                            "Pretendard",
                                             13.0),
                                       ),
                                     ),
@@ -1702,49 +1707,49 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                             child: Center(
                               child: Text("사이즈",
                                   style: textStyle(Colors.black,
-                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                                      FontWeight.w500, "Pretendard", 10.0)),
                             ),
                           ),
                           TableCell(
                             child: Center(
                               child: Text("허리둘레",
                                   style: textStyle(Colors.black,
-                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                                      FontWeight.w500, "Pretendard", 10.0)),
                             ),
                           ),
                           TableCell(
                             child: Center(
                               child: Text("힙둘레",
                                   style: textStyle(Colors.black,
-                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                                      FontWeight.w500, "Pretendard", 10.0)),
                             ),
                           ),
                           TableCell(
                             child: Center(
                               child: Text("밑위길이",
                                   style: textStyle(Colors.black,
-                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                                      FontWeight.w500, "Pretendard", 10.0)),
                             ),
                           ),
                           TableCell(
                             child: Center(
                               child: Text("허벅지둘레",
                                   style: textStyle(Colors.black,
-                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                                      FontWeight.w500, "Pretendard", 10.0)),
                             ),
                           ),
                           TableCell(
                             child: Center(
                               child: Text("밑단둘레",
                                   style: textStyle(Colors.black,
-                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                                      FontWeight.w500, "Pretendard", 10.0)),
                             ),
                           ),
                           TableCell(
                             child: Center(
                               child: Text("총길이",
                                   style: textStyle(Colors.black,
-                                      FontWeight.w500, "NotoSansKR", 10.0)),
+                                      FontWeight.w500, "Pretendard", 10.0)),
                             ),
                           ),
                         ])
@@ -1770,7 +1775,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
       children: [
         Text(
           "옵션별 재고,단가 등록",
-          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+          style: textStyle(Colors.black, FontWeight.w600, "Pretendard", 17.0),
         ),
         Divider(
           color: Colors.black,
@@ -1779,7 +1784,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
         Text(
           "재고 수량을 적어주시면 더 많은 리스트에 노출 됩니다. (미 작성시 수량은 무제한으로 간주합니다.)",
           style:
-              textStyle(Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
+              textStyle(Colors.grey[600]!, FontWeight.w500, "Pretendard", 11.0),
         ),
         SizedBox(height: 10 * Scale.height),
         BlocBuilder<PricePerOptionBloc, PricePerOptionState>(
@@ -1848,7 +1853,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                             .pricePerOptionList[index]['color']
                                         ['customedName'],
                                     style: textStyle(Colors.black,
-                                        FontWeight.w500, "NotoSansKR", 14.0),
+                                        FontWeight.w500, "Pretendard", 14.0),
                                   ),
                                   Text(
                                     context
@@ -1857,7 +1862,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                             .pricePerOptionList[index]['size']
                                         ['name'],
                                     style: textStyle(Colors.black,
-                                        FontWeight.w500, "NotoSansKR", 14.0),
+                                        FontWeight.w500, "Pretendard", 14.0),
                                   ),
                                   SizedBox(
                                     width: 60 * Scale.width,
@@ -1890,7 +1895,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                           style: const TextStyle(
                                             color: Color(0xff666666),
                                             fontWeight: FontWeight.w500,
-                                            fontFamily: "NotoSansKR",
+                                            fontFamily: "Pretendard",
                                             fontSize: 13.0,
                                           ),
                                           maxLength: 8,
@@ -1900,7 +1905,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                             hintStyle: textStyle(
                                                 const Color(0xffcccccc),
                                                 FontWeight.w500,
-                                                "NotoSansKR",
+                                                "Pretendard",
                                                 11.0),
                                             border: const OutlineInputBorder(
                                               borderRadius: BorderRadius.all(
@@ -1949,7 +1954,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
       children: [
         Text(
           "소재",
-          style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+          style: textStyle(Colors.black, FontWeight.w600, "Pretendard", 17.0),
         ),
         Divider(
           color: Colors.black,
@@ -1966,7 +1971,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             child: Text(
               " 소재와 혼용률을 직접 입력할 수 있습니다. 띄어쓰기로 구분해 입력됩니다.",
               style: textStyle(
-                  Colors.grey[600]!, FontWeight.w500, "NotoSansKR", 11.0),
+                  Colors.grey[600]!, FontWeight.w500, "Pretendard", 11.0),
             ),
           ),
         ),
@@ -1984,7 +1989,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                         child: Text(
                           "혼용률의 합은 100이어야 합니다!",
                           style: textStyle(
-                              Colors.red, FontWeight.w500, "NotoSansKR", 13),
+                              Colors.red, FontWeight.w500, "Pretendard", 13),
                         ),
                       ),
                 GridView.builder(
@@ -2050,7 +2055,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                           style: textStyle(
                                               Colors.black,
                                               FontWeight.w500,
-                                              "NotoSansKR",
+                                              "Pretendard",
                                               13.0),
                                         ),
                                       ],
@@ -2078,7 +2083,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                   style: textStyle(
                                                       Colors.black,
                                                       FontWeight.w500,
-                                                      'NotoSansKR',
+                                                      'Pretendard',
                                                       20.0),
                                                 ),
                                                 content: SingleChildScrollView(
@@ -2091,7 +2096,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                       color: Color(0xff666666),
                                                       fontWeight:
                                                           FontWeight.w500,
-                                                      fontFamily: "NotoSansKR",
+                                                      fontFamily: "Pretendard",
                                                       fontSize: 13.0,
                                                     ),
                                                     decoration: InputDecoration(
@@ -2104,7 +2109,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                           const Color(
                                                               0xffcccccc),
                                                           FontWeight.w500,
-                                                          "NotoSansKR",
+                                                          "Pretendard",
                                                           14.0),
                                                       border:
                                                           const OutlineInputBorder(
@@ -2142,7 +2147,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                           style: textStyle(
                                                               Colors.grey,
                                                               FontWeight.w400,
-                                                              'NotoSansKR',
+                                                              'Pretendard',
                                                               16.0),
                                                         ),
                                                         onPressed: () {
@@ -2167,7 +2172,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                                       style: textStyle(
                                                           Colors.grey,
                                                           FontWeight.w400,
-                                                          'NotoSansKR',
+                                                          'Pretendard',
                                                           16.0),
                                                     ),
                                                     onPressed: () {
@@ -2186,7 +2191,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                         style: textStyle(
                                             Colors.grey,
                                             FontWeight.w400,
-                                            "NotoSansKR",
+                                            "Pretendard",
                                             12.0),
                                       )),
                                     ),
@@ -2223,7 +2228,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                       style: const TextStyle(
                                         color: Color(0xff666666),
                                         fontWeight: FontWeight.w500,
-                                        fontFamily: "NotoSansKR",
+                                        fontFamily: "Pretendard",
                                         fontSize: 13.0,
                                       ),
                                       maxLength: 3,
@@ -2240,7 +2245,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                         hintStyle: textStyle(
                                             const Color(0xffcccccc),
                                             FontWeight.w500,
-                                            "NotoSansKR",
+                                            "Pretendard",
                                             11.0),
                                         border: const OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
@@ -2318,7 +2323,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                   child: Text(
                     selectList?[index]['name'],
                     style: textStyle(
-                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                        Colors.black, FontWeight.w500, "Pretendard", 12.0),
                   ),
                 ),
                 SizedBox(
@@ -2380,7 +2385,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                   Text(
                     "추가정보",
                     style: textStyle(
-                        Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                        Colors.black, FontWeight.w700, "Pretendard", 18.0),
                   ),
                   Divider(
                     color: Colors.black,
@@ -2403,7 +2408,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     child: Text(
                                       "두께감",
                                       style: textStyle(Colors.black,
-                                          FontWeight.w500, "NotoSansKR", 14.0),
+                                          FontWeight.w500, "Pretendard", 14.0),
                                     ),
                                   ),
                                   SizedBox(width: 40 * Scale.width),
@@ -2429,7 +2434,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     child: Text(
                                       "비침",
                                       style: textStyle(Colors.black,
-                                          FontWeight.w500, "NotoSansKR", 14.0),
+                                          FontWeight.w500, "Pretendard", 14.0),
                                     ),
                                   ),
                                   SizedBox(width: 40 * Scale.width),
@@ -2456,7 +2461,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     child: Text(
                                       "신축성",
                                       style: textStyle(Colors.black,
-                                          FontWeight.w500, "NotoSansKR", 14.0),
+                                          FontWeight.w500, "Pretendard", 14.0),
                                     ),
                                   ),
                                   SizedBox(width: 40 * Scale.width),
@@ -2483,7 +2488,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     child: Text(
                                       "안감",
                                       style: textStyle(Colors.black,
-                                          FontWeight.w500, "NotoSansKR", 14.0),
+                                          FontWeight.w500, "Pretendard", 14.0),
                                     ),
                                   ),
                                   SizedBox(width: 40 * Scale.width),
@@ -2520,7 +2525,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     Text(
                       "세탁정보 선택",
                       style: textStyle(
-                          Colors.black, FontWeight.w700, "NotoSansKR", 14.0),
+                          Colors.black, FontWeight.w700, "Pretendard", 14.0),
                     ),
                     GridView.builder(
                       shrinkWrap: true,
@@ -2572,7 +2577,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                         ? Colors.black
                                         : Colors.grey[400]!,
                                     FontWeight.w500,
-                                    "NotoSansKR",
+                                    "Pretendard",
                                     13.0),
                               ),
                             ),
@@ -2605,7 +2610,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
         children: [
           Text(
             "스타일",
-            style: textStyle(Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+            style: textStyle(Colors.black, FontWeight.w600, "Pretendard", 17.0),
           ),
           Divider(
             color: Colors.black,
@@ -2616,7 +2621,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             child: Text(
               "스타일을 선택하면 더 많은 리스트에서 노출됩니다.",
               style:
-                  textStyle(Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                  textStyle(Colors.black, FontWeight.w500, "Pretendard", 12.0),
             ),
           ),
           BlocBuilder<StyleBloc, StyleState>(
@@ -2674,7 +2679,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                 context.read<StyleBloc>().state.styleList[index]
                                     ['name'],
                                 style: textStyle(Colors.black, FontWeight.w500,
-                                    "NotoSansKR", 13.0),
+                                    "Pretendard", 13.0),
                               ),
                             ],
                           ),
@@ -2709,7 +2714,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                   Text(
                     "제조국",
                     style: textStyle(
-                        Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                        Colors.black, FontWeight.w600, "Pretendard", 17.0),
                   ),
                   GridView.builder(
                     shrinkWrap: true,
@@ -2763,7 +2768,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                       ? Colors.black
                                       : Colors.grey[400]!,
                                   FontWeight.w500,
-                                  "NotoSansKR",
+                                  "Pretendard",
                                   13.0),
                             ),
                           ),
@@ -2786,7 +2791,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     title: Text(
                                       "제조국 추가",
                                       style: textStyle(Colors.black,
-                                          FontWeight.w500, 'NotoSansKR', 20.0),
+                                          FontWeight.w500, 'Pretendard', 20.0),
                                     ),
                                     content: SingleChildScrollView(
                                       child: TextFormField(
@@ -2797,7 +2802,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                         style: const TextStyle(
                                           color: Color(0xff666666),
                                           fontWeight: FontWeight.w500,
-                                          fontFamily: "NotoSansKR",
+                                          fontFamily: "Pretendard",
                                           fontSize: 13.0,
                                         ),
                                         decoration: InputDecoration(
@@ -2807,7 +2812,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                           hintStyle: textStyle(
                                               const Color(0xffcccccc),
                                               FontWeight.w500,
-                                              "NotoSansKR",
+                                              "Pretendard",
                                               14.0),
                                           border: const OutlineInputBorder(
                                             borderRadius: BorderRadius.all(
@@ -2838,7 +2843,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                               style: textStyle(
                                                   Colors.grey,
                                                   FontWeight.w400,
-                                                  'NotoSansKR',
+                                                  'Pretendard',
                                                   16.0),
                                             ),
                                             onPressed: () {
@@ -2859,7 +2864,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                           style: textStyle(
                                               Colors.grey,
                                               FontWeight.w400,
-                                              'NotoSansKR',
+                                              'Pretendard',
                                               16.0),
                                         ),
                                         onPressed: () {
@@ -2907,7 +2912,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 Text(
                   "타겟 연령층",
                   style: textStyle(
-                      Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                      Colors.black, FontWeight.w600, "Pretendard", 17.0),
                 ),
                 Divider(
                   color: Colors.black,
@@ -2962,7 +2967,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     ? Colors.black
                                     : Colors.grey[400]!,
                                 FontWeight.w500,
-                                "NotoSansKR",
+                                "Pretendard",
                                 13.0),
                           ),
                         ),
@@ -3010,7 +3015,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 Text(
                   "태그 입력",
                   style: textStyle(
-                      Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                      Colors.black, FontWeight.w600, "Pretendard", 17.0),
                 ),
                 Divider(
                   color: Colors.black,
@@ -3021,7 +3026,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                   child: Text(
                     "태그를 등록하면 더 많은 곳에 추가 노출 됩니다.",
                     style: textStyle(
-                        Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                        Colors.black, FontWeight.w500, "Pretendard", 12.0),
                   ),
                 ),
                 Row(
@@ -3041,7 +3046,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                         style: const TextStyle(
                           color: Color(0xff666666),
                           fontWeight: FontWeight.w500,
-                          fontFamily: "NotoSansKR",
+                          fontFamily: "Pretendard",
                           fontSize: 13.0,
                         ),
                         decoration: InputDecoration(
@@ -3050,7 +3055,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                               EdgeInsets.only(left: 15 * Scale.width),
                           hintText: "태그를 입력해주세요",
                           hintStyle: textStyle(const Color(0xffcccccc),
-                              FontWeight.w500, "NotoSansKR", 14.0),
+                              FontWeight.w500, "Pretendard", 14.0),
                           border: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Color(0xffcccccc), width: 1),
@@ -3080,7 +3085,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                           child: Center(
                             child: Text("등록",
                                 style: textStyle(Colors.black, FontWeight.w400,
-                                    "NotoSansKR", 13.0)),
+                                    "Pretendard", 13.0)),
                           )),
                     )
                   ],
@@ -3106,7 +3111,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     .state
                                     .tagsList[index]['name'],
                                 style: textStyle(Colors.black, FontWeight.w400,
-                                    "NotoSansKR", 14.0),
+                                    "Pretendard", 14.0),
                               ),
                             ),
                           );
@@ -3136,7 +3141,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                       .state
                                       .selectedTags[index]['name'],
                                   style: textStyle(Colors.black,
-                                      FontWeight.w400, "NotoSansKR", 13.0),
+                                      FontWeight.w400, "Pretendard", 13.0),
                                 ),
                                 InkWell(
                                   child: const Icon(Icons.clear),
@@ -3177,7 +3182,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 Text(
                   "테마 선택",
                   style: textStyle(
-                      Colors.black, FontWeight.w700, "NotoSansKR", 18.0),
+                      Colors.black, FontWeight.w600, "Pretendard", 17.0),
                 ),
                 Divider(
                   color: Colors.black,
@@ -3228,7 +3233,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                     ? Colors.black
                                     : Colors.grey[400]!,
                                 FontWeight.w500,
-                                "NotoSansKR",
+                                "Pretendard",
                                 13.0),
                           ),
                         ),
@@ -3272,14 +3277,14 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     content: Text(
                       state.error,
                       style: textStyle(
-                          Colors.black, FontWeight.w500, 'NotoSansKR', 16.0),
+                          Colors.black, FontWeight.w500, 'Pretendard', 16.0),
                     ),
                     actions: <Widget>[
                       TextButton(
                         child: Text(
                           "확인",
                           style: textStyle(Colors.black, FontWeight.w500,
-                              'NotoSansKR', 15.0),
+                              'Pretendard', 15.0),
                         ),
                         onPressed: () {
                           Navigator.of(context).pop();
@@ -3308,7 +3313,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                 child: Text(
                   "다음",
                   style: textStyle(
-                      Colors.white, FontWeight.w500, "NotoSansKR", 20.0),
+                      Colors.white, FontWeight.w500, "Pretendard", 20.0),
                 ),
               )),
         );

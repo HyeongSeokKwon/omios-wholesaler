@@ -17,7 +17,7 @@ class AutoLoginButton extends StatelessWidget {
             child: SizedBox(
               height: 20 * Scale.height,
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(
@@ -29,12 +29,12 @@ class AutoLoginButton extends StatelessWidget {
                         : SvgPicture.asset("assets/images/svg/autoLogin.svg"),
                   ),
                   SizedBox(
-                    width: 10 * Scale.width,
+                    width: 5 * Scale.width,
                   ),
                   Text(
                     "자동로그인",
                     style: textStyle(const Color(0xff666666), FontWeight.w400,
-                        "NotoSansKR", 14.0),
+                        "Pretendard", 14.0),
                   ),
                 ],
               ),

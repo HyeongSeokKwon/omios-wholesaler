@@ -50,7 +50,7 @@ class IdTextField extends StatelessWidget {
                       color: const Color(0xff666666),
                       height: 0.6,
                       fontWeight: FontWeight.w400,
-                      fontFamily: "NotoSansKR",
+                      fontFamily: "Pretendard",
                       fontStyle: FontStyle.normal,
                       fontSize: 14 * Scale.height,
                     ),
@@ -65,7 +65,7 @@ class IdTextField extends StatelessWidget {
                     ),
                     hintText: ("아이디를 입력하세요"),
                     hintStyle: textStyle(const Color(0xffcccccc),
-                        FontWeight.w400, "NotoSansKR", 16.0),
+                        FontWeight.w400, "Pretendard", 16.0),
                     border: OutlineInputBorder(
                       borderRadius: const BorderRadius.all(Radius.circular(16)),
                       borderSide: BorderSide(

@@ -61,7 +61,7 @@ class ProductCard extends StatelessWidget {
           Text(
             product.name,
             style: textStyle(
-                const Color(0xff999999), FontWeight.w400, "NotoSansKR", 12.0),
+                const Color(0xff999999), FontWeight.w400, "Pretendard", 12.0),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -69,7 +69,7 @@ class ProductCard extends StatelessWidget {
           Text(
             setNumberFormat(product.price) + '원',
             style: textStyle(
-                const Color(0xff333333), FontWeight.w700, "NotoSansKR", 15.0),
+                const Color(0xff333333), FontWeight.w500, "Pretendard", 15.0),
           ),
           SizedBox(height: 4 * Scale.height),
         ],

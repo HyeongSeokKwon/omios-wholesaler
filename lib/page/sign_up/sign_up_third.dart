@@ -58,17 +58,17 @@ class SignUpThird extends StatelessWidget {
               Text(
                 "네트워크에 연결하지 못했어요",
                 style: textStyle(
-                    Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+                    Colors.black, FontWeight.w700, "Pretendard", 20.0),
               ),
               Text(
                 "네트워크 연결상태를 확인하고",
                 style:
-                    textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                    textStyle(Colors.grey, FontWeight.w500, "Pretendard", 13.0),
               ),
               Text(
                 "다시 시도해 주세요",
                 style:
-                    textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                    textStyle(Colors.grey, FontWeight.w500, "Pretendard", 13.0),
               ),
               SizedBox(height: 15 * Scale.height),
               InkWell(
@@ -88,7 +88,7 @@ class SignUpThird extends StatelessWidget {
                         vertical: 14 * Scale.height),
                     child: Text("다시 시도하기",
                         style: textStyle(Colors.grey[800]!, FontWeight.w500,
-                            'NotoSansKR', 15.0)),
+                            'Pretendard', 15.0)),
                   ),
                 ),
               ),
@@ -121,7 +121,7 @@ class SignUpThird extends StatelessWidget {
                         style: textStyle(
                           const Color(0xff555555),
                           FontWeight.w400,
-                          "NotoSansKR",
+                          "Pretendard",
                           13.0,
                         ),
                         text: "매장 전화번호 "),
@@ -129,7 +129,7 @@ class SignUpThird extends StatelessWidget {
                         style: textStyle(
                           const Color(0xfff84457),
                           FontWeight.w400,
-                          "NotoSansKR",
+                          "Pretendard",
                           13.0,
                         ),
                         text: "*")
@@ -176,7 +176,7 @@ class SignUpThird extends StatelessWidget {
                           color: const Color(0xff666666),
                           height: 0.6,
                           fontWeight: FontWeight.w400,
-                          fontFamily: "NotoSansKR",
+                          fontFamily: "Pretendard",
                           fontStyle: FontStyle.normal,
                           fontSize: 14 * Scale.height,
                         ),
@@ -237,7 +237,7 @@ class SignUpThird extends StatelessWidget {
                       style: textStyle(
                         const Color(0xff555555),
                         FontWeight.w400,
-                        "NotoSansKR",
+                        "Pretendard",
                         13.0,
                       ),
                       text: "휴대폰 번호 "),
@@ -245,7 +245,7 @@ class SignUpThird extends StatelessWidget {
                       style: textStyle(
                         const Color(0xfff84457),
                         FontWeight.w400,
-                        "NotoSansKR",
+                        "Pretendard",
                         13.0,
                       ),
                       text: "*")
@@ -288,7 +288,7 @@ class SignUpThird extends StatelessWidget {
                           color: const Color(0xff666666),
                           height: 0.6,
                           fontWeight: FontWeight.w400,
-                          fontFamily: "NotoSansKR",
+                          fontFamily: "Pretendard",
                           fontStyle: FontStyle.normal,
                           fontSize: 14 * Scale.height,
                         ),
@@ -326,7 +326,7 @@ class SignUpThird extends StatelessWidget {
                   child: TextButton(
                     child: Text("인증번호 발송",
                         style: textStyle(
-                            Colors.white, FontWeight.w500, "NotoSansKR", 14.0)),
+                            Colors.white, FontWeight.w500, "Pretendard", 14.0)),
                     style: ButtonStyle(
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
@@ -349,7 +349,7 @@ class SignUpThird extends StatelessWidget {
                     padding: EdgeInsets.only(bottom: 8 * Scale.height),
                     child: Text(errorText,
                         style: textStyle(
-                            Colors.red, FontWeight.w400, "NotoSansKR", 12.0)),
+                            Colors.red, FontWeight.w400, "Pretendard", 12.0)),
                   ),
             TextField(
               maxLength: 11,
@@ -370,7 +370,7 @@ class SignUpThird extends StatelessWidget {
                   color: const Color(0xff666666),
                   height: 0.6,
                   fontWeight: FontWeight.w400,
-                  fontFamily: "NotoSansKR",
+                  fontFamily: "Pretendard",
                   fontStyle: FontStyle.normal,
                   fontSize: 14 * Scale.height,
                 ),
@@ -388,7 +388,7 @@ class SignUpThird extends StatelessWidget {
             SizedBox(height: 3 * Scale.height),
             Text("휴대폰 번호를 입력하신 후 인증번호 받기 버튼을 눌러주세요,",
                 style: textStyle(
-                    Colors.grey[400]!, FontWeight.w500, 'NotoSansKR', 11.0))
+                    Colors.grey[400]!, FontWeight.w500, 'Pretendard', 11.0))
           ],
         );
       },
@@ -410,7 +410,7 @@ class SignUpThird extends StatelessWidget {
                         style: textStyle(
                           const Color(0xff555555),
                           FontWeight.w400,
-                          "NotoSansKR",
+                          "Pretendard",
                           13.0,
                         ),
                         text: "사업자 등록 번호 "),
@@ -418,7 +418,7 @@ class SignUpThird extends StatelessWidget {
                         style: textStyle(
                           const Color(0xfff84457),
                           FontWeight.w400,
-                          "NotoSansKR",
+                          "Pretendard",
                           13.0,
                         ),
                         text: "*")
@@ -465,7 +465,7 @@ class SignUpThird extends StatelessWidget {
                           color: const Color(0xff666666),
                           height: 0.6,
                           fontWeight: FontWeight.w400,
-                          fontFamily: "NotoSansKR",
+                          fontFamily: "Pretendard",
                           fontStyle: FontStyle.normal,
                           fontSize: 14 * Scale.height,
                         ),
@@ -507,7 +507,7 @@ class SignUpThird extends StatelessWidget {
                         style: textStyle(
                           const Color(0xff555555),
                           FontWeight.w400,
-                          "NotoSansKR",
+                          "Pretendard",
                           13.0,
                         ),
                         text: "사업자 등록번호 사진 "),
@@ -515,7 +515,7 @@ class SignUpThird extends StatelessWidget {
                         style: textStyle(
                           const Color(0xfff84457),
                           FontWeight.w400,
-                          "NotoSansKR",
+                          "Pretendard",
                           13.0,
                         ),
                         text: "*")
@@ -639,7 +639,7 @@ class SignUpThird extends StatelessWidget {
               child: Text(
                 "완료",
                 style: textStyle(
-                    Colors.white, FontWeight.w500, "NotoSansKR", 20.0),
+                    Colors.white, FontWeight.w500, "Pretendard", 20.0),
               ),
             ),
           ),
@@ -658,7 +658,7 @@ class SignUpThird extends StatelessWidget {
                   style: textStyle(
                     const Color(0xff555555),
                     FontWeight.w400,
-                    "NotoSansKR",
+                    "Pretendard",
                     13.0,
                   ),
                   text: "약관 동의 "),
@@ -666,7 +666,7 @@ class SignUpThird extends StatelessWidget {
                   style: textStyle(
                     const Color(0xfff84457),
                     FontWeight.w400,
-                    "NotoSansKR",
+                    "Pretendard",
                     13.0,
                   ),
                   text: "*"),

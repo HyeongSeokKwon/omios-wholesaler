@@ -58,6 +58,7 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
   Future<void> registingData(
       RegistEvent event, Emitter<DataGatherState> emit) async {
     if (event.registMode == RegistMode.regist) {
+      print("regist");
       await _registRepository.registProduct(registData);
       return;
     }
@@ -578,7 +579,6 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
                     registedOptionValue['price_difference']) {
                   willRegistOptionValue.remove('price_difference');
                   willRegistOptionValue['isChanged'] = false;
-                  print('price_difference is same');
                 }
               }
               willRegistOptionValue.remove('inventory');

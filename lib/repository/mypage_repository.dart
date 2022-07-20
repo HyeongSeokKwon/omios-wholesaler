@@ -1,5 +1,6 @@
+import 'dart:convert';
+
 import 'package:deepy_wholesaler/repository/http_repository.dart';
-import 'package:jwt_decode/jwt_decode.dart';
 
 class MypageRepository extends HttpRepository {
   late Map response;
@@ -27,5 +28,14 @@ class MypageRepository extends HttpRepository {
     });
 
     return response['data'];
+  }
+
+  Future<dynamic> patchUserInfo(Map body) async {
+    try {
+      response = await super.httpPatch("users/wholesalers", jsonEncode(body));
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

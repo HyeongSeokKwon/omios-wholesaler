@@ -46,6 +46,7 @@ dependencies:
   path: ^1.8.0
   shared_preferences: ^2.0.12
   smooth_page_indicator: ^1.0.0+2
+  url_launcher: ^6.1.5
 
 dev_dependencies:
 
@@ -93,6 +94,73 @@ flutter:
         - asset: fonts/NotoSansKR-Bold.otf
           weight: 700
         - asset: fonts/NotoSansKR-Black.otf
+          weight: 900
+    - family: NanumGothic
+      fonts: 
+        - asset: fonts/NanumGothic.otf
+        - asset: fonts/NanumGothicLight.otf
+          weight: 100
+        - asset: fonts/NanumGothic.otf
+          weight: 300
+        - asset: fonts/NanumGothicBold.otf
+          weight: 500
+        - asset: fonts/NanumGothicExtraBold.otf
+          weight: 700
+    - family: NanumSquare
+      fonts: 
+        - asset: fonts/NanumSquareR.otf
+        - asset: fonts/NanumSquareL.otf
+          weight: 100
+        - asset: fonts/NanumSquareR.otf
+          weight: 300
+        - asset: fonts/NanumSquareB.otf
+          weight: 500
+        - asset: fonts/NanumSquareEB.otf
+          weight: 700
+    - family: NanumSquareRound
+      fonts: 
+        - asset: fonts/NanumSquareRoundOTFR.otf
+        - asset: fonts/NanumSquareRoundOTFL.otf
+          weight: 100
+        - asset: fonts/NanumSquareRoundOTFR.otf
+          weight: 300
+        - asset: fonts/NanumSquareRoundOTFB.otf
+          weight: 500
+        - asset: fonts/NanumSquareRoundOTFEB.otf
+          weight: 700
+    - family: SpoqaHanSansNeo
+      fonts: 
+        - asset: fonts/SpoqaHanSansNeo-Medium.otf
+        - asset: fonts/SpoqaHanSansNeo-Thin.otf
+          weight: 100
+        - asset: fonts/SpoqaHanSansNeo-Light.otf
+          weight: 300
+        - asset: fonts/SpoqaHanSansNeo-Regular.otf
+          weight: 500
+        - asset: fonts/SpoqaHanSansNeo-Medium.otf
+          weight: 700
+        - asset: fonts/SpoqaHanSansNeo-Bold.otf
+          weight: 700
+    - family: Pretendard
+      fonts: 
+        - asset: fonts/Pretendard-Regular.otf
+        - asset: fonts/Pretendard-Thin.otf
+          weight: 100
+        - asset: fonts/Pretendard-ExtraLight.otf
+          weight: 200
+        - asset: fonts/Pretendard-Light.otf
+          weight: 300
+        - asset: fonts/Pretendard-Regular.otf
+          weight: 400
+        - asset: fonts/Pretendard-Medium.otf
+          weight: 500
+        - asset: fonts/Pretendard-SemiBold.otf
+          weight: 600
+        - asset: fonts/Pretendard-Bold.otf
+          weight: 700
+        - asset: fonts/Pretendard-ExtraBold.otf
+          weight: 800
+        - asset: fonts/Pretendard-Black.otf
           weight: 900
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

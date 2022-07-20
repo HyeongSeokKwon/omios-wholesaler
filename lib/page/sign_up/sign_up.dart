@@ -126,8 +126,8 @@ class _SignUpState extends State<SignUp> {
                                                 child: Text("건물명 선택",
                                                     style: textStyle(
                                                         const Color(0xff333333),
-                                                        FontWeight.w700,
-                                                        "NotoSansKR",
+                                                        FontWeight.w600,
+                                                        "Pretendard",
                                                         21.0)),
                                               ),
                                               Expanded(
@@ -174,7 +174,7 @@ class _SignUpState extends State<SignUp> {
                                                                         .black,
                                                                     FontWeight
                                                                         .w300,
-                                                                    "NotoSansKR",
+                                                                    "Pretendard",
                                                                     19.0),
                                                               ),
                                                               storeLocationBloc
@@ -255,13 +255,13 @@ class _SignUpState extends State<SignUp> {
                                     Text(
                                       "건물 선택",
                                       style: textStyle(Colors.black,
-                                          FontWeight.w700, "NotoSansKR", 19.0),
+                                          FontWeight.w600, "Pretendard", 19.0),
                                     ),
                                     Text("STEP 1. 건물을 선택해주세요",
                                         style: textStyle(
                                             Colors.grey[400]!,
-                                            FontWeight.w500,
-                                            "NotoSansKR",
+                                            FontWeight.w400,
+                                            "Pretendard",
                                             14.0))
                                   ],
                                 )
@@ -271,7 +271,7 @@ class _SignUpState extends State<SignUp> {
                                       .state
                                       .selectedBuilding,
                                   style: textStyle(Colors.black,
-                                      FontWeight.w700, "NotoSansKR", 19.0),
+                                      FontWeight.w600, "Pretendard", 19.0),
                                 ),
                         ),
                       ],
@@ -354,8 +354,8 @@ class _SignUpState extends State<SignUp> {
                                                       style: textStyle(
                                                           const Color(
                                                               0xff333333),
-                                                          FontWeight.w700,
-                                                          "NotoSansKR",
+                                                          FontWeight.w600,
+                                                          "Pretendard",
                                                           21.0)),
                                                 ),
                                                 Expanded(
@@ -404,7 +404,7 @@ class _SignUpState extends State<SignUp> {
                                                                           .black,
                                                                       FontWeight
                                                                           .w300,
-                                                                      "NotoSansKR",
+                                                                      "Pretendard",
                                                                       19.0),
                                                                 ),
                                                                 storeLocationBloc
@@ -489,15 +489,15 @@ class _SignUpState extends State<SignUp> {
                                         "층 선택",
                                         style: textStyle(
                                             Colors.black,
-                                            FontWeight.w700,
-                                            "NotoSansKR",
+                                            FontWeight.w600,
+                                            "Pretendard",
                                             19.0),
                                       ),
                                       Text("STEP 2. 층을 선택해주세요",
                                           style: textStyle(
                                               Colors.grey[400]!,
-                                              FontWeight.w500,
-                                              "NotoSansKR",
+                                              FontWeight.w400,
+                                              "Pretendard",
                                               14.0))
                                     ],
                                   )
@@ -507,7 +507,7 @@ class _SignUpState extends State<SignUp> {
                                         .state
                                         .selectedFloor,
                                     style: textStyle(Colors.black,
-                                        FontWeight.w700, "NotoSansKR", 19.0),
+                                        FontWeight.w600, "Pretendard", 19.0),
                                   )),
                       ],
                     ),
@@ -567,7 +567,7 @@ class _SignUpState extends State<SignUp> {
                             children: [
                               Text("호수 입력",
                                   style: textStyle(Colors.black,
-                                      FontWeight.w700, "NotoSansKR", 19.0)),
+                                      FontWeight.w600, "Pretendard", 19.0)),
                               SizedBox(height: 10 * Scale.height),
                               Row(
                                 children: [
@@ -619,7 +619,7 @@ class _SignUpState extends State<SignUp> {
                                             style: textStyle(
                                               Colors.white,
                                               FontWeight.w400,
-                                              "NotoSansKR",
+                                              "Pretendard",
                                               15.0,
                                             ),
                                           ),
@@ -687,15 +687,296 @@ class _SignUpState extends State<SignUp> {
                                         "호수 선택",
                                         style: textStyle(
                                             Colors.black,
-                                            FontWeight.w700,
-                                            "NotoSansKR",
+                                            FontWeight.w600,
+                                            "Pretendard",
                                             19.0),
                                       ),
                                       Text("STEP 3. 호수를 입력해주세요",
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
+                                     
                                           style: textStyle(
                                               Colors.grey[400]!,
-                                              FontWeight.w500,
-                                              "NotoSansKR",
+                                              FontWeight.w400,
+                                              "Pretendard",
                                               14.0))
                                     ],
                                   )
@@ -705,7 +986,7 @@ class _SignUpState extends State<SignUp> {
                                         .state
                                         .inputRoom,
                                     style: textStyle(Colors.black,
-                                        FontWeight.w700, "NotoSansKR", 19.0),
+                                        FontWeight.w600, "Pretendard", 19.0),
                                   )),
                       ],
                     ),
@@ -731,7 +1012,7 @@ class _SignUpState extends State<SignUp> {
           context.read<StoreLocationBloc>().state.inputRoom.isNotEmpty) {
         return Text(
           "${context.read<StoreLocationBloc>().state.baseAddress} ${context.read<StoreLocationBloc>().state.selectedBuilding} ${context.read<StoreLocationBloc>().state.selectedFloor} ${context.read<StoreLocationBloc>().state.inputRoom}",
-          style: textStyle(Colors.black, FontWeight.w500, 'NotoSansKR', 14.0),
+          style: textStyle(Colors.black, FontWeight.w500, 'Pretendard', 14.0),
         );
       } else {
         return const SizedBox();
@@ -748,7 +1029,7 @@ class _SignUpState extends State<SignUp> {
           Text(
             "나의 매장을 못 찾으시겠나요?",
             style: textStyle(
-                Colors.grey[400]!, FontWeight.w500, "NotoSansKR", 14.0),
+                Colors.grey[400]!, FontWeight.w500, "Pretendard", 14.0),
           ),
           SizedBox(height: 5 * Scale.height),
           Row(
@@ -759,7 +1040,7 @@ class _SignUpState extends State<SignUp> {
                 child: Text(
                   "카카오톡 문의하기",
                   style: textStyle(
-                      Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                      Colors.black, FontWeight.w500, "Pretendard", 12.0),
                 ),
               ),
               SizedBox(
@@ -773,7 +1054,7 @@ class _SignUpState extends State<SignUp> {
                 child: Text(
                   "E-mail 문의하기",
                   style: textStyle(
-                      Colors.black, FontWeight.w500, "NotoSansKR", 12.0),
+                      Colors.black, FontWeight.w500, "Pretendard", 12.0),
                 ),
               )
             ],
@@ -807,7 +1088,7 @@ class _SignUpState extends State<SignUp> {
                 child: Text(
                   "다음",
                   style: textStyle(
-                      Colors.white, FontWeight.w500, "NotoSansKR", 20.0),
+                      Colors.white, FontWeight.w500, "Pretendard", 20.0),
                 ),
               )),
         );

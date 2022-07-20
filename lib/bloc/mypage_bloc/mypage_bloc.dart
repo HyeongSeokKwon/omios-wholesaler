@@ -12,6 +12,7 @@ class MypageBloc extends Bloc<MypageEvent, MypageState> {
       : super(MypageState.initial()) {
     on<LoadMyProductsEvent>(getMyproducts);
     on<SearchMyProductsEvent>(searchProducts);
+    on<ClickPatchButtonEvent>(patchUserInfo);
   }
 
   Future<void> getMyproducts(
@@ -42,6 +43,19 @@ class MypageBloc extends Bloc<MypageEvent, MypageState> {
       infinityBloc.state.productData = productData['results'];
       emit(state.copyWith(
           fetchStatus: FetchStatus.fetched, productsData: productData));
+    } catch (e) {
+      emit(state.copyWith(fetchStatus: FetchStatus.error));
+    }
+  }
+
+  Future<void> patchUserInfo(
+      ClickPatchButtonEvent event, Emitter<MypageState> emit) async {
+    Map response;
+    try {
+      response = await mypageRepository.patchUserInfo(state.userInfoData);
+      if (response['code'] == 201) {
+        emit(state.copyWith(fetchStatus: FetchStatus.fetched));
+      }
     } catch (e) {
       emit(state.copyWith(fetchStatus: FetchStatus.error));
     }

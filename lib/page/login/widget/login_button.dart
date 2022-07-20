@@ -13,7 +13,7 @@ class LoginButton extends StatelessWidget {
           child: TextButton(
             child: Text("로그인",
                 style: textStyle(
-                    Colors.white, FontWeight.w400, "NotoSansKR", 16.0)),
+                    Colors.white, FontWeight.w400, "Pretendard", 16.0)),
             style: ButtonStyle(
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(

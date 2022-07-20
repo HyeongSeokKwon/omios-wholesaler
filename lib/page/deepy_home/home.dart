@@ -2,8 +2,9 @@ import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/page/deepy_home/widget/scroll_area.dart';
 import 'package:deepy_wholesaler/repository/mypage_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../util/util.dart';
 import '../mypage/mypage.dart';
@@ -18,14 +19,13 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
-    final InfinityScrollBloc infinityScrollBloc = InfinityScrollBloc();
-
+    final infinityScrollBloc = InfinityScrollBloc();
+    final mypageBloc = MypageBloc(
+        mypageRepository: MypageRepository(), infinityBloc: infinityScrollBloc);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (BuildContext context) => MypageBloc(
-              mypageRepository: MypageRepository(),
-              infinityBloc: infinityScrollBloc),
+          create: (BuildContext context) => mypageBloc,
         ),
         BlocProvider<InfinityScrollBloc>(
           create: (BuildContext context) => infinityScrollBloc,
@@ -37,7 +37,12 @@ class _HomeState extends State<Home> {
             Padding(
               padding: EdgeInsets.only(right: 22 * Scale.width),
               child: GestureDetector(
-                onTap: () {},
+                onTap: () async {
+                  // const url = 'https://play.google.com';
+                  // if (await canLaunchUrlString(url)) { // 앱스토어 or Playstore로 이동.
+                  //   await launchUrlString(url);
+                  // }
+                },
                 child: SvgPicture.asset("assets/images/svg/alarm.svg",
                     width: 26 * Scale.width, height: 26 * Scale.height),
               ),
@@ -48,7 +53,10 @@ class _HomeState extends State<Home> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const Mypage()),
+                    MaterialPageRoute(
+                        builder: (context) => Mypage(
+                              mypageBloc: mypageBloc,
+                            )),
                   );
                 },
                 child: SvgPicture.asset("assets/images/svg/myPage.svg",

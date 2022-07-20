@@ -28,7 +28,7 @@ class SignUpAppBar extends StatelessWidget with PreferredSizeWidget {
               SizedBox(width: 10 * Scale.width),
               Text("회원가입",
                   style: textStyle(const Color(0xff333333), FontWeight.w700,
-                      "NotoSansKR", 20.0)),
+                      "Pretendard", 20.0)),
             ],
           ),
         ),

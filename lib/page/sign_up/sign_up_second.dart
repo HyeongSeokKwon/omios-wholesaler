@@ -85,17 +85,17 @@ class _SignUpSecondState extends State<SignUpSecond> {
               Text(
                 "네트워크에 연결하지 못했어요",
                 style: textStyle(
-                    Colors.black, FontWeight.w700, "NotoSansKR", 20.0),
+                    Colors.black, FontWeight.w700, "Pretendard", 20.0),
               ),
               Text(
                 "네트워크 연결상태를 확인하고",
                 style:
-                    textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                    textStyle(Colors.grey, FontWeight.w500, "Pretendard", 13.0),
               ),
               Text(
                 "다시 시도해 주세요",
                 style:
-                    textStyle(Colors.grey, FontWeight.w500, "NotoSansKR", 13.0),
+                    textStyle(Colors.grey, FontWeight.w500, "Pretendard", 13.0),
               ),
               SizedBox(height: 15 * Scale.height),
               InkWell(
@@ -115,7 +115,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                         vertical: 14 * Scale.height),
                     child: Text("다시 시도하기",
                         style: textStyle(Colors.grey[800]!, FontWeight.w500,
-                            'NotoSansKR', 15.0)),
+                            'Pretendard', 15.0)),
                   ),
                 ),
               ),
@@ -137,7 +137,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                   style: textStyle(
                     const Color(0xff555555),
                     FontWeight.w400,
-                    "NotoSansKR",
+                    "Pretendard",
                     13.0,
                   ),
                   text: "상호명 "),
@@ -145,7 +145,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                   style: textStyle(
                     const Color(0xfff84457),
                     FontWeight.w400,
-                    "NotoSansKR",
+                    "Pretendard",
                     13.0,
                   ),
                   text: "*")
@@ -181,13 +181,13 @@ class _SignUpSecondState extends State<SignUpSecond> {
                     color: Color(0xff666666),
                     height: 0.6,
                     fontWeight: FontWeight.w400,
-                    fontFamily: "NotoSansKR",
+                    fontFamily: "Pretendard",
                     fontStyle: FontStyle.normal,
                     fontSize: 14.0,
                   ),
                   hintText: ("상호를 입력하세요"),
                   hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                      "NotoSansKR", 16.0),
+                      "Pretendard", 16.0),
                   border: OutlineInputBorder(
                     borderRadius: const BorderRadius.all(Radius.circular(12)),
                     borderSide: BorderSide(
@@ -221,7 +221,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
             style: textStyle(
               Colors.grey[400]!,
               FontWeight.w400,
-              "NotoSansKR",
+              "Pretendard",
               11.0,
             ),
           ),
@@ -233,7 +233,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
             style: textStyle(
               Colors.grey[400]!,
               FontWeight.w400,
-              "NotoSansKR",
+              "Pretendard",
               11.0,
             ),
           ),
@@ -253,7 +253,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                   style: textStyle(
                     const Color(0xff555555),
                     FontWeight.w400,
-                    "NotoSansKR",
+                    "Pretendard",
                     13.0,
                   ),
                   text: "대표자 이름 "),
@@ -261,7 +261,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                   style: textStyle(
                     const Color(0xfff84457),
                     FontWeight.w400,
-                    "NotoSansKR",
+                    "Pretendard",
                     13.0,
                   ),
                   text: "*")
@@ -296,13 +296,13 @@ class _SignUpSecondState extends State<SignUpSecond> {
                     color: Color(0xff666666),
                     height: 0.6,
                     fontWeight: FontWeight.w400,
-                    fontFamily: "NotoSansKR",
+                    fontFamily: "Pretendard",
                     fontStyle: FontStyle.normal,
                     fontSize: 14.0,
                   ),
                   hintText: ("대표자 성함을 입력하세요"),
                   hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
-                      "NotoSansKR", 16.0),
+                      "Pretendard", 16.0),
                   border: OutlineInputBorder(
                     borderRadius: const BorderRadius.all(Radius.circular(12)),
                     borderSide: BorderSide(
@@ -348,7 +348,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                     style: textStyle(
                       const Color(0xff555555),
                       FontWeight.w400,
-                      "NotoSansKR",
+                      "Pretendard",
                       13.0,
                     ),
                     text: "아이디 "),
@@ -356,7 +356,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                     style: textStyle(
                       const Color(0xfff84457),
                       FontWeight.w400,
-                      "NotoSansKR",
+                      "Pretendard",
                       13.0,
                     ),
                     text: "*")
@@ -408,7 +408,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                           color: Color(0xff666666),
                           height: 0.6,
                           fontWeight: FontWeight.w400,
-                          fontFamily: "NotoSansKR",
+                          fontFamily: "Pretendard",
                           fontStyle: FontStyle.normal,
                           fontSize: 14.0,
                         ),
@@ -451,7 +451,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                         ),
                         hintText: ("아이디를 입력하세요"),
                         hintStyle: textStyle(const Color(0xffcccccc),
-                            FontWeight.w400, "NotoSansKR", 16.0),
+                            FontWeight.w400, "Pretendard", 16.0),
                         border: OutlineInputBorder(
                           borderRadius:
                               const BorderRadius.all(Radius.circular(12)),
@@ -508,7 +508,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                     style: textStyle(
                       const Color(0xff555555),
                       FontWeight.w400,
-                      "NotoSansKR",
+                      "Pretendard",
                       13.0,
                     ),
                     text: "이메일 "),
@@ -516,7 +516,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                     style: textStyle(
                       const Color(0xfff84457),
                       FontWeight.w400,
-                      "NotoSansKR",
+                      "Pretendard",
                       13.0,
                     ),
                     text: "*")
@@ -557,13 +557,13 @@ class _SignUpSecondState extends State<SignUpSecond> {
                           color: Color(0xff666666),
                           height: 0.6,
                           fontWeight: FontWeight.w400,
-                          fontFamily: "NotoSansKR",
+                          fontFamily: "Pretendard",
                           fontStyle: FontStyle.normal,
                           fontSize: 14.0,
                         ),
                         hintText: ("이메일을 입력하세요"),
                         hintStyle: textStyle(const Color(0xffcccccc),
-                            FontWeight.w400, "NotoSansKR", 16.0),
+                            FontWeight.w400, "Pretendard", 16.0),
                         border: OutlineInputBorder(
                           borderRadius:
                               const BorderRadius.all(Radius.circular(12)),
@@ -621,7 +621,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                     style: textStyle(
                       const Color(0xff555555),
                       FontWeight.w400,
-                      "NotoSansKR",
+                      "Pretendard",
                       13.0,
                     ),
                     text: "비밀번호 "),
@@ -629,7 +629,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                     style: textStyle(
                       const Color(0xfff84457),
                       FontWeight.w400,
-                      "NotoSansKR",
+                      "Pretendard",
                       13.0,
                     ),
                     text: "*")
@@ -685,7 +685,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                           color: Color(0xff666666),
                           height: 0.6,
                           fontWeight: FontWeight.w400,
-                          fontFamily: "NotoSansKR",
+                          fontFamily: "Pretendard",
                           fontStyle: FontStyle.normal,
                           fontSize: 14.0,
                         ),
@@ -725,7 +725,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                         }),
                         hintText: ("비밀번호를 입력하세요"),
                         hintStyle: textStyle(const Color(0xffcccccc),
-                            FontWeight.w400, "NotoSansKR", 16.0),
+                            FontWeight.w400, "Pretendard", 16.0),
                         border: OutlineInputBorder(
                           borderRadius:
                               const BorderRadius.all(Radius.circular(12)),
@@ -782,7 +782,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                     style: textStyle(
                       const Color(0xff555555),
                       FontWeight.w400,
-                      "NotoSansKR",
+                      "Pretendard",
                       13.0,
                     ),
                     text: "비밀번호 확인 "),
@@ -790,7 +790,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                     style: textStyle(
                       const Color(0xfff84457),
                       FontWeight.w400,
-                      "NotoSansKR",
+                      "Pretendard",
                       13.0,
                     ),
                     text: "*")
@@ -839,7 +839,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                         labelStyle: textStyle(
                           const Color(0xff666666),
                           FontWeight.w400,
-                          "NotoSansKR",
+                          "Pretendard",
                           14.0,
                         ),
                         suffixIcon: BlocBuilder<UserInfoBloc, UserInfoState>(
@@ -879,7 +879,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
                         ),
                         hintText: ("비밀번호를 입력하세요"),
                         hintStyle: textStyle(const Color(0xffcccccc),
-                            FontWeight.w400, "NotoSansKR", 16.0),
+                            FontWeight.w400, "Pretendard", 16.0),
                         border: OutlineInputBorder(
                           borderRadius:
                               const BorderRadius.all(Radius.circular(12)),
@@ -945,7 +945,7 @@ class _SignUpSecondState extends State<SignUpSecond> {
               child: Text(
                 "다음",
                 style: textStyle(
-                    Colors.white, FontWeight.w500, "NotoSansKR", 20.0),
+                    Colors.white, FontWeight.w500, "Pretendard", 20.0),
               ),
             ),
           ),

@@ -33,7 +33,7 @@ class _FindId extends StatelessWidget {
     return InkWell(
       child: Text("아이디 찾기",
           style: textStyle(
-              const Color(0xff999999), FontWeight.w400, "NotoSansKR", 14.0)),
+              const Color(0xff999999), FontWeight.w400, "Pretendard", 14.0)),
       onTap: () {},
     );
   }
@@ -47,7 +47,7 @@ class _FindPassword extends StatelessWidget {
     return InkWell(
       child: Text("비밀번호 찾기",
           style: textStyle(
-              const Color(0xff999999), FontWeight.w400, "NotoSansKR", 14.0)),
+              const Color(0xff999999), FontWeight.w400, "Pretendard", 14.0)),
       onTap: () {},
     );
   }
