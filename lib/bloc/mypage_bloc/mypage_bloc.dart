@@ -51,8 +51,11 @@ class MypageBloc extends Bloc<MypageEvent, MypageState> {
   Future<void> patchUserInfo(
       ClickPatchButtonEvent event, Emitter<MypageState> emit) async {
     Map response;
+    Map body = {};
     try {
-      response = await mypageRepository.patchUserInfo(state.userInfoData);
+      body['mobile_number'] = state.userInfoData['mobile_number'];
+      body['email'] = state.userInfoData['email'];
+      response = await mypageRepository.patchUserInfo(body);
       if (response['code'] == 201) {
         emit(state.copyWith(fetchStatus: FetchStatus.fetched));
       }

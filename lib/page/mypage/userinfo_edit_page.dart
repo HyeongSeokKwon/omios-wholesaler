@@ -19,8 +19,8 @@ class _UserInfoEditPageState extends State<UserInfoEditPage> {
   TextEditingController phoneNumberController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => widget.mypageBloc,
+    return BlocProvider.value(
+      value: widget.mypageBloc,
       child: Scaffold(
         appBar: AppBar(
           title: Row(
@@ -308,9 +308,7 @@ class _UserInfoEditPageState extends State<UserInfoEditPage> {
               ),
               SizedBox(height: 3 * Scale.height),
               TextFormField(
-                maxLength: 11,
                 initialValue: state.userInfoData['email'],
-                textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.emailAddress,
                 onChanged: (text) {
                   state.userInfoData['email'] = text;
