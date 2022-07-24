@@ -57,10 +57,11 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
 
   Future<void> registingData(
       RegistEvent event, Emitter<DataGatherState> emit) async {
+    emit(state.copyWith(registState: FetchState.initial));
     if (event.registMode == RegistMode.regist) {
       print("regist");
+      print(registData);
       await _registRepository.registProduct(registData);
-      return;
     }
     //기존 상품 정보 변경시
     if (event.registMode == RegistMode.edit) {
@@ -70,6 +71,8 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
       await _registRepository.updateProduct(
           body, initEditItemBloc!.state.data['id']);
     }
+    emit(state.copyWith(registState: FetchState.success));
+    return;
   }
 
   Future<void> combineData(

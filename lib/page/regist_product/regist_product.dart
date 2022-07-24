@@ -1,6 +1,7 @@
 import 'package:deepy_wholesaler/bloc/bloc.dart';
 import 'package:deepy_wholesaler/bloc/network_connection_bloc/network_connection_bloc.dart';
 import 'package:deepy_wholesaler/bloc/regist_product_bloc/data_gather_bloc/data_gather_bloc.dart';
+import 'package:deepy_wholesaler/page/deepy_home/home.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/progress_bar.dart';
 import 'package:flutter/material.dart';
@@ -3262,9 +3263,16 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
     final dataGatherBloc = BlocProvider.of<DataGatherBloc>(context);
     return BlocConsumer<DataGatherBloc, DataGatherState>(
       listener: ((context, state) {
+        print(state.registState);
         if (state.gatherState == GatherState.success) {
           BlocProvider.of<DataGatherBloc>(context)
               .add(RegistEvent(registMode: widget.registMode));
+        }
+        if (state.registState == FetchState.success) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const Home()),
+              (route) => false);
         }
         if (state.fetchState == FetchState.failure) {
           showDialog(
@@ -3301,9 +3309,9 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
       builder: (context, state) {
         return InkWell(
           onTap: () {
-            BlocProvider.of<DataGatherBloc>(context).add(CombineDataEvent(
-              registMode: widget.registMode,
-            ));
+            context.read<DataGatherBloc>().add(CombineDataEvent(
+                  registMode: widget.registMode,
+                ));
           },
           child: Container(
               height: 70 * Scale.height,

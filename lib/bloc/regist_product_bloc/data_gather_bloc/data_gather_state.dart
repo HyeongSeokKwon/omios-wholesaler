@@ -6,10 +6,12 @@ class DataGatherState extends Equatable {
   final FetchState fetchState;
   final bool isAllVerified;
   final GatherState gatherState;
+  final FetchState registState;
   final Map registData;
   final String error;
   const DataGatherState(
       {required this.fetchState,
+      required this.registState,
       required this.isAllVerified,
       required this.gatherState,
       required this.registData,
@@ -20,6 +22,7 @@ class DataGatherState extends Equatable {
         fetchState: FetchState.initial,
         isAllVerified: false,
         gatherState: GatherState.initial,
+        registState: FetchState.initial,
         registData: {},
         error: '');
   }
@@ -29,6 +32,7 @@ class DataGatherState extends Equatable {
     bool? isAllVerified,
     GatherState? gatherState,
     Map? registData,
+    FetchState? registState,
     String? error,
   }) {
     return DataGatherState(
@@ -36,11 +40,12 @@ class DataGatherState extends Equatable {
       isAllVerified: isAllVerified ?? this.isAllVerified,
       gatherState: gatherState ?? this.gatherState,
       registData: registData ?? this.registData,
+      registState: registState ?? this.registState,
       error: error ?? this.error,
     );
   }
 
   @override
   List<Object> get props =>
-      [fetchState, isAllVerified, gatherState, registData, error];
+      [fetchState, isAllVerified, gatherState, registState, registData, error];
 }
