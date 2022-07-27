@@ -7,6 +7,7 @@ import 'package:deepy_wholesaler/widget/progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:reorderables/reorderables.dart';
 
 class RegistProduct extends StatefulWidget {
   final RegistMode registMode;
@@ -864,6 +865,10 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                   if (text!.trim().isNotEmpty &&
                       int.parse(text.trim()) < 1000) {
                     return '단가의 최솟값은 1000원입니다.';
+                  } else if (text.trim().isNotEmpty &&
+                      int.parse(text.trim()) % 100 < 100 &&
+                      int.parse(text.trim()) % 100 > 0) {
+                    return '단가의 최소단위는 100원입니다.';
                   } else {
                     return null;
                   }
@@ -936,7 +941,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
             ),
             SizedBox(height: 5 * Scale.height),
             state.retailPrice != '0'
-                ? Text("판매가격 ${state.retailPrice}")
+                ? Text("예상 판매가격 ${state.retailPrice}")
                 : const SizedBox(),
           ],
         );
@@ -1236,106 +1241,160 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                                             ),
                                           ],
                                         )
-                                      : ReorderableListView.builder(
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          itemBuilder: (context, index) {
-                                            return Container(
-                                              color: Colors.indigo[50]!,
-                                              key: Key(index.toString()),
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 5 * Scale.height),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    SizedBox(
-                                                        width: 50 * Scale.width,
-                                                        height:
-                                                            50 * Scale.width,
-                                                        child: context
-                                                                .read<PhotoBloc>()
-                                                                .state
-                                                                .basicPhoto[
-                                                            index]['image']),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          right:
-                                                              20 * Scale.width),
-                                                      child: Container(
-                                                        alignment:
-                                                            Alignment.center,
-                                                        height:
-                                                            70 * Scale.height,
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Text("이미지 $index",
-                                                                style: textStyle(
-                                                                    Colors.grey[
-                                                                        500]!,
-                                                                    FontWeight
-                                                                        .w500,
-                                                                    'Pretendard',
-                                                                    16 *
-                                                                        Scale
-                                                                            .width)),
-                                                            SizedBox(
-                                                                width: 5 *
-                                                                    Scale
-                                                                        .width),
-                                                            Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .center,
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  context
-                                                                      .read<
-                                                                          PhotoBloc>()
-                                                                      .add(ClickBasicPhotoRemoveEvent(
-                                                                          photoIndex:
-                                                                              index));
-                                                                },
-                                                                child: Icon(
-                                                                  Icons.clear,
-                                                                  size: 20 *
-                                                                      Scale
-                                                                          .width,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
+                                      : ReorderableWrap(
+                                          spacing: 8.0,
+                                          runSpacing: 4.0,
+                                          padding: const EdgeInsets.all(8),
+                                          children: List.generate(
+                                            state.basicPhoto.length,
+                                            (index) => Stack(
+                                              children: [
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      const BorderRadius.all(
+                                                          Radius.circular(9)),
+                                                  child: state.basicPhoto[index]
+                                                      ['image'],
                                                 ),
-                                              ),
-                                            );
-                                          },
-                                          itemCount: context
-                                              .read<PhotoBloc>()
-                                              .state
-                                              .basicPhoto
-                                              .length,
+                                                Positioned(
+                                                  right: -10 * Scale.width,
+                                                  top: -10 * Scale.width,
+                                                  child: IconButton(
+                                                    iconSize: 20 * Scale.width,
+                                                    icon: const Icon(
+                                                        Icons.remove_circle),
+                                                    color: Colors.red,
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            0.0),
+                                                    onPressed: () {
+                                                      context.read<PhotoBloc>().add(
+                                                          ClickBasicPhotoRemoveEvent(
+                                                              photoIndex:
+                                                                  index));
+                                                    },
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
                                           onReorder:
                                               (int oldIndex, int newIndex) {
                                             context.read<PhotoBloc>().add(
                                                 ReorderPhotoEvent(
                                                     oldIndex: oldIndex,
                                                     newIndex: newIndex));
+                                          },
+                                          onNoReorder: (int index) {
+                                            //this callback is optional
+                                            debugPrint(
+                                                '${DateTime.now().toString().substring(5, 22)} reorder cancelled. index:$index');
+                                          },
+                                          onReorderStarted: (int index) {
+                                            //this callback is optional
+                                            debugPrint(
+                                                '${DateTime.now().toString().substring(5, 22)} reorder started: index:$index');
                                           })
+                                  // ReorderableListView.builder(
+                                  //     physics:
+                                  //         NeverScrollableScrollPhysics(),
+                                  //     itemBuilder: (context, index) {
+                                  //       return Container(
+                                  //         color: Colors.indigo[50]!,
+                                  //         key: Key(index.toString()),
+                                  //         child: Padding(
+                                  //           padding: EdgeInsets.symmetric(
+                                  //               vertical: 5 * Scale.height),
+                                  //           child: Row(
+                                  //             crossAxisAlignment:
+                                  //                 CrossAxisAlignment.center,
+                                  //             mainAxisAlignment:
+                                  //                 MainAxisAlignment
+                                  //                     .spaceBetween,
+                                  //             children: [
+                                  //               SizedBox(
+                                  //                   width: 50 * Scale.width,
+                                  //                   height:
+                                  //                       50 * Scale.width,
+                                  //                   child: context
+                                  //                           .read<PhotoBloc>()
+                                  //                           .state
+                                  //                           .basicPhoto[
+                                  //                       index]['image']),
+                                  //               Padding(
+                                  //                 padding: EdgeInsets.only(
+                                  //                     right:
+                                  //                         20 * Scale.width),
+                                  //                 child: Container(
+                                  //                   alignment:
+                                  //                       Alignment.center,
+                                  //                   height:
+                                  //                       70 * Scale.height,
+                                  //                   child: Row(
+                                  //                     mainAxisAlignment:
+                                  //                         MainAxisAlignment
+                                  //                             .center,
+                                  //                     crossAxisAlignment:
+                                  //                         CrossAxisAlignment
+                                  //                             .center,
+                                  //                     children: [
+                                  //                       Text("이미지 $index",
+                                  //                           style: textStyle(
+                                  //                               Colors.grey[
+                                  //                                   500]!,
+                                  //                               FontWeight
+                                  //                                   .w500,
+                                  //                               'Pretendard',
+                                  //                               16 *
+                                  //                                   Scale
+                                  //                                       .width)),
+                                  //                       SizedBox(
+                                  //                           width: 5 *
+                                  //                               Scale
+                                  //                                   .width),
+                                  //                       Align(
+                                  //                         alignment:
+                                  //                             Alignment
+                                  //                                 .center,
+                                  //                         child:
+                                  //                             GestureDetector(
+                                  //                           onTap: () {
+                                  //                             context
+                                  //                                 .read<
+                                  //                                     PhotoBloc>()
+                                  //                                 .add(ClickBasicPhotoRemoveEvent(
+                                  //                                     photoIndex:
+                                  //                                         index));
+                                  //                           },
+                                  //                           child: Icon(
+                                  //                             Icons.clear,
+                                  //                             size: 20 *
+                                  //                                 Scale
+                                  //                                     .width,
+                                  //                           ),
+                                  //                         ),
+                                  //                       ),
+                                  //                     ],
+                                  //                   ),
+                                  //                 ),
+                                  //               ),
+                                  //             ],
+                                  //           ),
+                                  //         ),
+                                  //       );
+                                  //     },
+                                  //     itemCount: context
+                                  //         .read<PhotoBloc>()
+                                  //         .state
+                                  //         .basicPhoto
+                                  //         .length,
+                                  //     onReorder:
+                                  //         (int oldIndex, int newIndex) {
+                                  //       context.read<PhotoBloc>().add(
+                                  //           ReorderPhotoEvent(
+                                  //               oldIndex: oldIndex,
+                                  //               newIndex: newIndex));
+                                  //     })
                                   // : context
                                   //     .read<PhotoBloc>()
                                   //     .state
@@ -3263,10 +3322,38 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
     final dataGatherBloc = BlocProvider.of<DataGatherBloc>(context);
     return BlocConsumer<DataGatherBloc, DataGatherState>(
       listener: ((context, state) {
-        print(state.registState);
         if (state.gatherState == GatherState.success) {
-          BlocProvider.of<DataGatherBloc>(context)
-              .add(RegistEvent(registMode: widget.registMode));
+          showDialog(
+            context: context,
+            builder: (context) => BlocProvider.value(
+              value: dataGatherBloc,
+              child: BlocBuilder<DataGatherBloc, DataGatherState>(
+                builder: (context, state) {
+                  return AlertDialog(
+                    content: Text(
+                      "상품을 등록하시겠습니까?",
+                      style: textStyle(
+                          Colors.black, FontWeight.w500, 'Pretendard', 16.0),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text(
+                          "확인",
+                          style: textStyle(Colors.black, FontWeight.w500,
+                              'Pretendard', 15.0),
+                        ),
+                        onPressed: () {
+                          BlocProvider.of<DataGatherBloc>(context)
+                              .add(RegistEvent(registMode: widget.registMode));
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          );
         }
         if (state.registState == FetchState.success) {
           Navigator.pushAndRemoveUntil(

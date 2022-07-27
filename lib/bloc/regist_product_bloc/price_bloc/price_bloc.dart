@@ -24,13 +24,14 @@ class PriceBloc extends Bloc<PriceEvent, PriceState> {
     int retailPrice;
     if (event.changePrice.isNotEmpty) {
       retailPrice = caculateRetailPrice(int.parse(event.changePrice));
+      emit(state.copyWith(
+          price: event.changePrice.toString(),
+          retailPrice: retailPrice.toString()));
     } else {
       retailPrice = 0;
+      emit(state.copyWith(
+          price: 0.toString(), retailPrice: retailPrice.toString()));
     }
-
-    emit(state.copyWith(
-        price: event.changePrice.toString(),
-        retailPrice: retailPrice.toString()));
   }
 
   int caculateRetailPrice(int price) {

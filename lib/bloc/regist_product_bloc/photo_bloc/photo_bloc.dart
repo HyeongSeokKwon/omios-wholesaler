@@ -12,7 +12,7 @@ part 'photo_event.dart';
 part 'photo_state.dart';
 
 class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
-  ImagePicker picker = ImagePicker();
+  final ImagePicker picker = ImagePicker();
   final ColorBloc colorBloc;
 
   PhotoBloc(this.colorBloc) : super(PhotoState.initial()) {
@@ -29,12 +29,16 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
     List<Map> copy = [...state.basicPhoto];
     if (copy.length < 10) {
       List<XFile>? pickedFile = await picker.pickMultiImage();
+
       if (pickedFile != null) {
         for (var file in pickedFile) {
           if (copy.length < 10) {
             copy.add({
               'image': Image.file(
                 File(file.path),
+                width: 90,
+                height: 90,
+                fit: BoxFit.cover,
               )
             });
           }
@@ -42,7 +46,6 @@ class PhotoBloc extends Bloc<PhotoEvent, PhotoState> {
       }
       emit(state.copyWith(basicPhoto: copy));
     }
-    return;
   }
 
   Future<void> getPhotoByColor(
