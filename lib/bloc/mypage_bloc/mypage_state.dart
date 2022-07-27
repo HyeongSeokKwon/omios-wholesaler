@@ -12,6 +12,7 @@ class MypageState extends Equatable {
   final Map<String, dynamic> productsData;
   final Map<String, dynamic> userInfoData;
   final FetchStatus fetchStatus;
+  final FetchStatus userInfoPatchStatus;
   final String error;
 
   const MypageState({
@@ -19,6 +20,7 @@ class MypageState extends Equatable {
     required this.productsData,
     required this.userInfoData,
     required this.fetchStatus,
+    required this.userInfoPatchStatus,
     required this.error,
   });
 
@@ -28,18 +30,26 @@ class MypageState extends Equatable {
         productsData: {},
         userInfoData: {},
         fetchStatus: FetchStatus.unfetched,
+        userInfoPatchStatus: FetchStatus.unfetched,
         error: '');
   }
 
   @override
-  List<Object?> get props =>
-      [totalProducts, productsData, userInfoData, fetchStatus, error];
+  List<Object?> get props => [
+        totalProducts,
+        productsData,
+        userInfoData,
+        fetchStatus,
+        userInfoPatchStatus,
+        error
+      ];
 
   MypageState copyWith({
     int? totalProducts,
     Map<String, dynamic>? productsData,
     Map<String, dynamic>? userInfoData,
     FetchStatus? fetchStatus,
+    FetchStatus? userInfoPatchStatus,
     String? error,
   }) {
     return MypageState(
@@ -47,6 +57,7 @@ class MypageState extends Equatable {
       productsData: productsData ?? this.productsData,
       userInfoData: userInfoData ?? this.userInfoData,
       fetchStatus: fetchStatus ?? this.fetchStatus,
+      userInfoPatchStatus: userInfoPatchStatus ?? this.userInfoPatchStatus,
       error: error ?? this.error,
     );
   }

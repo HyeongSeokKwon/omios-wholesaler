@@ -52,6 +52,7 @@ class MypageBloc extends Bloc<MypageEvent, MypageState> {
       ClickPatchButtonEvent event, Emitter<MypageState> emit) async {
     Map response;
     Map body = {};
+    emit(state.copyWith(userInfoPatchStatus: FetchStatus.unfetched));
     try {
       body['mobile_number'] = state.userInfoData['mobile_number'];
       body['email'] = state.userInfoData['email'];

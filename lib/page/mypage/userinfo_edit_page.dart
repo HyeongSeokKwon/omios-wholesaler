@@ -590,11 +590,12 @@ class _UserInfoEditPageState extends State<UserInfoEditPage> {
   Widget patchButton() {
     return BlocConsumer<MypageBloc, MypageState>(
       listener: ((context, state) {
-        if (state.fetchStatus == FetchStatus.fetched) {
+        if (state.userInfoPatchStatus == FetchStatus.fetched) {
           showAlertDialog(context, "변경되었습니다");
         }
       }),
       builder: (context, state) {
+        print(state.userInfoPatchStatus);
         return InkWell(
           child: Container(
             padding: const EdgeInsets.all(10),
