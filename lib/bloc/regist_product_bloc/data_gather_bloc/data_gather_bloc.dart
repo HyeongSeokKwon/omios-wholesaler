@@ -301,30 +301,32 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
   }
 
   void setAdditionalInfo() {
-    if (additionalInfoBloc.state.elasticityList == []) {
+    if (additionalInfoBloc.state.elasticityList!.isEmpty) {
       registData['flexibility'] = null;
     } else {
-      registData['thickness'] =
-          additionalInfoBloc.state.selectedAdditionalInfo['thickness']['id'];
+      registData['flexibility'] =
+          additionalInfoBloc.state.selectedAdditionalInfo['flexibility']['id'];
     }
 
-    if (additionalInfoBloc.state.liningList == []) {
+    if (additionalInfoBloc.state.liningList!.isEmpty) {
       registData['lining'] = null;
     } else {
       registData['lining'] =
-          additionalInfoBloc.state.selectedAdditionalInfo['lining'];
+          additionalInfoBloc.state.selectedAdditionalInfo['lining']['id'];
     }
-    if (additionalInfoBloc.state.seeThroughList == []) {
+
+    if (additionalInfoBloc.state.seeThroughList!.isEmpty) {
       registData['see_through'] = null;
     } else {
       registData['see_through'] =
           additionalInfoBloc.state.selectedAdditionalInfo['see_through']['id'];
     }
-    if (additionalInfoBloc.state.thicknessList == []) {
+
+    if (additionalInfoBloc.state.thicknessList!.isEmpty) {
       registData['thickness'] = null;
     } else {
-      registData['flexibility'] =
-          additionalInfoBloc.state.selectedAdditionalInfo['flexibility']['id'];
+      registData['thickness'] =
+          additionalInfoBloc.state.selectedAdditionalInfo['thickness']['id'];
     }
   }
 
