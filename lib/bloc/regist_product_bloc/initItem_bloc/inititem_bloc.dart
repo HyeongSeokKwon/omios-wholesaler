@@ -85,7 +85,6 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     additionalInfoBloc.state.thicknessList = dynamicData['thickness'] ?? [];
     additionalInfoBloc.state.seeThroughList = dynamicData['see_through'] ?? [];
     additionalInfoBloc.state.liningList = dynamicData['lining'] ?? [];
-    print(additionalInfoBloc.state.thicknessList);
   }
 
   //registry-common api
@@ -119,7 +118,6 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
 
       emit(state.copyWith(fetchState: FetchState.success));
     } catch (e) {
-      print(e.toString());
       emit(state.copyWith(fetchState: FetchState.error, error: e.toString()));
     }
   }
@@ -135,13 +133,11 @@ class InititemBloc extends Bloc<InititemEvent, InititemState> {
     try {
       dynamicData = await registRepository
           .getRegistryData(categoryBloc.state.selectedSubCategory['id']);
-      print("info");
-      print(dynamicData);
+
       insertRegistryDynamicData(dynamicData);
 
       emit(state.copyWith(fetchState: FetchState.success));
     } catch (e) {
-      print(e.toString());
       emit(state.copyWith(fetchState: FetchState.error, error: e.toString()));
     }
   }

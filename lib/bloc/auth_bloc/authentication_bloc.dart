@@ -44,7 +44,10 @@ class AuthenticationBloc
 
   Future<void> clickLoginButton(
       ClickLoginButtonEvent event, Emitter<AuthenticationState> emit) async {
-    if (event.id.isEmpty || event.password.isEmpty) {
+    if (event.id.isEmpty ||
+        event.id.length <= 4 ||
+        event.password.isEmpty ||
+        event.password.length <= 6) {
       return;
     }
 

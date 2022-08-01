@@ -4,6 +4,7 @@ import 'package:deepy_wholesaler/bloc/regist_product_bloc/data_gather_bloc/data_
 import 'package:deepy_wholesaler/page/deepy_home/home.dart';
 import 'package:deepy_wholesaler/util/util.dart';
 import 'package:deepy_wholesaler/widget/progress_bar.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -301,7 +302,15 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
 
                           SizedBox(height: 40 * Scale.height),
                           searchTagArea(),
-                          themeArea(), SizedBox(height: 100 * Scale.height),
+                          themeArea(),
+
+                          SizedBox(height: 40 * Scale.height),
+                          uiTestingWidget(),
+
+                          SizedBox(height: 40 * Scale.height),
+                          uiTestingWidget2(),
+
+                          SizedBox(height: 100 * Scale.height),
                         ],
                       ),
                     ),
@@ -909,7 +918,7 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
                     borderSide: BorderSide(
                         color: Colors.grey[400]!, width: 1 * Scale.width),
                   ),
-                  hintText: ("상품명을 입력하세요"),
+                  hintText: ("단가를 입력해주세요"),
                   hintStyle: textStyle(const Color(0xffcccccc), FontWeight.w400,
                       "Pretendard", 14.0),
                 ),
@@ -3413,6 +3422,132 @@ class _ScrollAreaState extends State<ScrollArea> with TickerProviderStateMixin {
               )),
         );
       },
+    );
+  }
+
+  Widget uiTestingWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "실측 사이즈",
+          style: textStyle(Colors.black, FontWeight.w600, "Pretendard", 17.0),
+        ),
+        Divider(
+          color: Colors.black,
+          thickness: 2 * Scale.height,
+        ),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const ScrollPhysics(),
+          padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+          itemCount: 4,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, childAspectRatio: 0.6),
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: const EdgeInsets.all(3.0),
+              child: DataTable(columns: [
+                DataColumn(label: Container()),
+                DataColumn(
+                    label: Text('size',
+                        style: textStyle(Colors.grey[400]!, FontWeight.w500,
+                            'Pretendard', 13.0)))
+              ], rows: [
+                DataRow(cells: [
+                  DataCell(Text('data',
+                      style: textStyle(Colors.grey[400]!, FontWeight.w500,
+                          'Pretendard', 13.0))),
+                  const DataCell(const TextField()),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text('data',
+                      style: textStyle(Colors.grey[400]!, FontWeight.w500,
+                          'Pretendard', 13.0))),
+                  const DataCell(const TextField()),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text('data',
+                      style: textStyle(Colors.grey[400]!, FontWeight.w500,
+                          'Pretendard', 13.0))),
+                  const DataCell(const TextField()),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text('data',
+                      style: textStyle(Colors.grey[400]!, FontWeight.w500,
+                          'Pretendard', 13.0))),
+                  const DataCell(const TextField()),
+                ]),
+                DataRow(cells: [
+                  DataCell(Text('data',
+                      style: textStyle(Colors.grey[400]!, FontWeight.w500,
+                          'Pretendard', 13.0))),
+                  const DataCell(const TextField()),
+                ])
+              ]),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget uiTestingWidget2() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "이미지 등록",
+          style: textStyle(Colors.black, FontWeight.w600, "Pretendard", 17.0),
+        ),
+        Divider(
+          color: Colors.black,
+          thickness: 2 * Scale.height,
+        ),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const ScrollPhysics(),
+          padding: EdgeInsets.symmetric(vertical: 15 * Scale.height),
+          itemCount: 8,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3, childAspectRatio: 0.8),
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  Text(
+                    "color",
+                    style: textStyle(
+                        Colors.black, FontWeight.w500, "Pretendard", 15.0),
+                  ),
+                  SizedBox(height: 5 * Scale.height),
+                  DottedBorder(
+                    color: Colors.grey[400]!,
+                    borderType: BorderType.RRect,
+                    radius: const Radius.circular(7),
+                    child: Padding(
+                      padding: EdgeInsets.all(20 * Scale.width),
+                      child: Center(
+                        child: Container(
+                          width: 60 * Scale.width,
+                          height: 60 * Scale.width,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.camera_alt_outlined),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
