@@ -301,7 +301,6 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
   }
 
   void setAdditionalInfo() {
-    print(additionalInfoBloc.state.selectedAdditionalInfo);
     if (additionalInfoBloc.state.elasticityList!.isEmpty) {
       registData['flexibility'] = null;
     } else {
@@ -313,7 +312,7 @@ class DataGatherBloc extends Bloc<DataGatherEvent, DataGatherState> {
       registData['lining'] = null;
     } else {
       registData['lining'] =
-          additionalInfoBloc.state.selectedAdditionalInfo['lining'];
+          additionalInfoBloc.state.selectedAdditionalInfo['lining']['id'];
     }
 
     if (additionalInfoBloc.state.seeThroughList!.isEmpty) {

@@ -68,15 +68,17 @@ class HttpRepository {
   bool isAccessExpired() {
     if (accessToken == null || Jwt.isExpired(accessToken!)) {
       return true;
+    } else {
+      return false;
     }
-    return false;
   }
 
   bool isRefreshExpired() {
     if (refreshToken == null || Jwt.isExpired(refreshToken!)) {
       return true;
+    } else {
+      return false;
     }
-    return false;
   }
 
   Future<void> updateToken() async {
@@ -89,8 +91,7 @@ class HttpRepository {
         // refresh token 만료 되지 않았으면
         try {
           var response = await http.post(
-            Uri.http(
-                addressUrl, 'users/tokens/refresh'), // refresh token 으로 재발급
+            Uri.http(addressUrl, '/token/refresh/'), // refresh token 으로 재발급
             headers: {"Content-Type": "application/json; charset=UTF-8"},
             body: json.encode(
               {"refresh": refreshToken},

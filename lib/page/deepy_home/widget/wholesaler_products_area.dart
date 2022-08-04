@@ -118,9 +118,9 @@ class _WholeSalerProductAreaState extends State<WholeSalerProductArea> {
               );
             } else if (state.fetchStatus == FetchStatus.unfetched) {
               context.read<MypageBloc>().add(LoadMyProductsEvent());
-              return const SizedBox();
+              return progressBar();
             } else {
-              return const SizedBox();
+              return progressBar();
             }
           });
         },
